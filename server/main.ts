@@ -24,7 +24,7 @@ import UserController from './resources/User/Controller';
 const dataSource = new DataSource({
     type: "postgres",
     url: process.env.DB_CSTR,
-    entities: [join(__dirname, './resources/**/*Entity.ts')], // [PersonEntity, HatEntity],
+    entities: [join(__dirname, './resources/**/*Entity.ts'), join(__dirname, './resources/relations/**/*.ts')], // [PersonEntity, HatEntity],
     logging: true,
     synchronize: true,
     namingStrategy: new SnakeNamingStrategy(),

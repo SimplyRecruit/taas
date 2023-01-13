@@ -1,12 +1,9 @@
 import CustomerContractType from "../../../models/CustomerContractType"
-import { Entity, Column, PrimaryColumn } from "typeorm"
-import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
+import { Entity, Column } from "typeorm"
+import EntityBase from "../../EntityBase"
 
 @Entity("customer")
-export class CustomerEntity extends EntityBaseOnlyDates {
-
-    @PrimaryColumn()
-    id: string
+export class CustomerEntity extends EntityBase {
 
     @Column()
     name: string
