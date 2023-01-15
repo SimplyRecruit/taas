@@ -1,5 +1,5 @@
 import LoginReqBody from '../../../models/LoginReqBody';
-import { Body, Get, Post, JsonController, Authorized, CurrentUser, BadRequestError, UnauthorizedError, HttpError, InternalServerError, BodyParam } from 'routing-controllers';
+import { Body, Get, Post, JsonController, Authorized, CurrentUser, BadRequestError, UnauthorizedError, HttpError, InternalServerError, BodyParam, Put, Param, Patch, NotFoundError, ForbiddenError } from 'routing-controllers';
 import { UserEntity } from '../User/Entity';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
@@ -9,9 +9,33 @@ import UserRole from '../../../models/UserRole';
 import { ResourceEntity } from './Entity';
 import Resource from '../../../models/Resource';
 import { dataSource } from '../../main';
+import { isUUID, IsUUID } from 'class-validator';
+import { EntityNotFoundError } from 'typeorm';
 
 @JsonController("/resource")
 export default class {
+
+    @Get()
+    async getAll(@CurrentUser() currentUser: UserEntity) {
+        return await ResourceEntity.findBy({ organization: { id: currentUser.organization.id } })
+    }
+
+    @Patch('/:id')
+    async update(@CurrentUser() currentUser: UserEntity, @Param("id") resourceId: string, @Body({ validate: { skipMissingProperties: true } }) body: Resource) {
+        await dataSource.transaction(async em => {
+            try {
+                const resource = await em.findOneOrFail(ResourceEntity, { where: { id: resourceId }, relations: { organization: true } })
+                if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+                await em.update(ResourceEntity, resourceId, body)
+            } catch (error: any) {
+                if (error instanceof EntityNotFoundError) throw new NotFoundError()
+                else if (error instanceof ForbiddenError) throw new ForbiddenError()
+                else if (error.code == 23505) throw new HttpError(409, "Resource already exists")
+                else throw new InternalServerError("Internal Server Error")
+            }
+        })
+        return "Resource Update Successful"
+    }
 
     @Post()
     async create(@BodyParam("user") { email, password, name }: RegisterReqBody, @BodyParam("resource") resource: Resource, @CurrentUser() currentUser: UserEntity) {
@@ -21,10 +45,10 @@ export default class {
                 const newUser = await em.save(UserEntity.create({ email, passwordHash, name, organization: currentUser.organization }))
                 const newResource = await em.save(ResourceEntity.create({ ...resource, organization: currentUser.organization, user: newUser }))
             } catch (error: any) {
-                if (error.code == 23505) throw new HttpError(409, "User already exists")
+                if (error.code == 23505) throw new HttpError(409, "Resource already exists")
                 else throw new InternalServerError("Internal Server Error")
             }
         })
-        return "Resource Creation Succesful"
+        return "Resource Creation Successful"
     }
 }
