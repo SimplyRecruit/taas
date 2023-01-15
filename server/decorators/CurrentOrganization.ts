@@ -8,7 +8,7 @@ export default function () {
         value: async action => {
             const currentUser = await checkCurrentUser(action)
             if (currentUser == null) throw new UnauthorizedError()
-            return (await UserEntity.findOne({ relations: { organization: true }, where: { id: currentUser.id } }))!.organization
+            return await OrganizationEntity.findOneBy({ users: { id: currentUser.id } })
         },
     });
 }
