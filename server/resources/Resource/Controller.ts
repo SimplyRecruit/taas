@@ -1,5 +1,5 @@
 import LoginReqBody from '../../../models/LoginReqBody';
-import { Body, Get, Post, JsonController, Authorized, CurrentUser, BadRequestError, UnauthorizedError, HttpError, InternalServerError, BodyParam, Put, Param, Patch, NotFoundError, ForbiddenError } from 'routing-controllers';
+import { Body, Get, Post, JsonController, Authorized, CurrentUser, BadRequestError, UnauthorizedError, HttpError, InternalServerError, BodyParam, Put, Param, Patch, NotFoundError, ForbiddenError, Delete } from 'routing-controllers';
 import { UserEntity } from '../User/Entity';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
@@ -50,5 +50,22 @@ export default class {
             }
         })
         return "Resource Creation Successful"
+    }
+
+    @Delete('/:id')
+    async delete(@Param("id") resourceId: string, @CurrentUser() currentUser: UserEntity) {
+        await dataSource.transaction(async em => {
+            try {
+                const resource = await em.findOneOrFail(ResourceEntity, { where: { id: resourceId }, relations: { organization: true, user: true } })
+                if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+                await em.remove(resource.user)
+                await em.remove(resource)
+            } catch (error) {
+                if (error instanceof EntityNotFoundError) throw new NotFoundError()
+                else if (error instanceof ForbiddenError) throw new ForbiddenError()
+                else throw new InternalServerError("Internal Server Error")
+            }
+        })
+        return "Resource Deletion Successful"
     }
 }
