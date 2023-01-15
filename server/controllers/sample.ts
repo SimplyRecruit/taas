@@ -1,12 +1,15 @@
 import Person from '../../models/Person';
 import { PersonEntity } from "../resources/Person/Entity"
-import { Param, Body, Get, Post, Put, Delete, JsonController, QueryParam, Authorized } from 'routing-controllers';
+import { Param, Body, Get, Post, Put, Delete, JsonController, QueryParam, Authorized, CurrentUser } from 'routing-controllers';
 import { HatEntity } from '../resources/Hat/Entity';
+import CurrentOrganization from '../decorators/CurrentOrganization';
+import { OrganizationEntity } from '../resources/Organization/Entity';
+import { UserEntity } from '../resources/User/Entity';
 
 @JsonController("/sample")
 export class SampleController {
     @Get('/')
-    async getAll() {
+    async getAll(@CurrentOrganization() zrg: any, @CurrentUser() user: UserEntity) {
         return await PersonEntity.find();
     }
 

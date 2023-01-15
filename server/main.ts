@@ -5,7 +5,7 @@ import { DataSource } from "typeorm"
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { useExpressServer } from 'routing-controllers'
 import { join } from "path"
-import { checkCurrentUser, checkIfAuthorized } from './resources/User/AuthService';
+import { authorizationChecker, currentUserChecker } from './resources/User/AuthService';
 
 
 const dev = process.env.NODE_ENV !== "production"
@@ -25,7 +25,7 @@ const dataSource = new DataSource({
     type: "postgres",
     url: process.env.DB_CSTR,
     entities: [join(__dirname, './resources/**/*Entity.ts'), join(__dirname, './resources/relations/**/*.ts')], // [PersonEntity, HatEntity],
-    logging: true,
+    logging: false,
     synchronize: true,
     namingStrategy: new SnakeNamingStrategy(),
 })
@@ -43,8 +43,8 @@ dataSource.initialize().then(() => {
         await app.prepare();
         const server = express();
         useExpressServer(server, {
-            authorizationChecker: checkIfAuthorized,
-            currentUserChecker: checkCurrentUser,
+            authorizationChecker: authorizationChecker,
+            currentUserChecker: currentUserChecker,
             controllers: [SampleController, UserController],
             routePrefix: '/api',
             validation: { validationError: { target: false, value: false } },
