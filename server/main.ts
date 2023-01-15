@@ -48,7 +48,7 @@ dataSource.initialize().then(() => {
             currentUserChecker: currentUserChecker,
             controllers: [SampleController, UserController, ResourceController],
             routePrefix: '/api',
-            validation: { validationError: { target: false, value: false } },
+            validation: { validationError: { target: false, value: false }, whitelist: true, forbidNonWhitelisted: true },
             cors: true,
             defaults: {
                 paramOptions: { required: true }
