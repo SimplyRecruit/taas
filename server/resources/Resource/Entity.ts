@@ -18,7 +18,7 @@ export class ResourceEntity extends EntityBaseOnlyDates {
     @Column({ type: "int2" })
     hourlyRate: number
 
-    @Column()
+    @Column({ default: true })
     active: boolean
 
     @OneToOne(() => UserEntity)

@@ -18,7 +18,7 @@ export class ProjectEntity extends EntityBaseOnlyDates {
     @Column()
     startDate: Date
 
-    @Column()
+    @Column({ default: true })
     active: boolean
 
 
