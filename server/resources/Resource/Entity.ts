@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm"
+import { UserEntity } from "../User/Entity"
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn } from "typeorm"
 import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
 
 @Entity("resource")
@@ -18,4 +19,8 @@ export class ResourceEntity extends EntityBaseOnlyDates {
 
     @Column()
     active: boolean
+
+    @OneToOne(() => UserEntity)
+    @JoinColumn()
+    user: UserEntity
 }
