@@ -1,8 +1,11 @@
-import { Entity, Column } from "typeorm"
-import EntityBase from "../../EntityBase"
+import { Entity, Column, PrimaryColumn } from "typeorm"
+import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
 
 @Entity("resource")
-export class ResourceEntity extends EntityBase {
+export class ResourceEntity extends EntityBaseOnlyDates {
+
+    @PrimaryColumn()
+    id: string
 
     @Column()
     name: string
