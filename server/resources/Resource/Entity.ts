@@ -21,11 +21,11 @@ export class ResourceEntity extends EntityBaseOnlyDates {
     @Column({ default: true })
     active: boolean
 
-    @OneToOne(() => UserEntity)
+    @OneToOne(() => UserEntity, { onDelete: 'CASCADE' })
     @JoinColumn()
     user: UserEntity
 
-    @ManyToOne(() => OrganizationEntity)
+    @ManyToOne(() => OrganizationEntity, { onDelete: 'CASCADE' })
     @JoinColumn()
     organization: OrganizationEntity
 }

@@ -30,7 +30,7 @@ export default class {
     async register(@Body() { email, password, name }: RegisterReqBody) {
         const passwordHash = Bcrypt.hashSync(password, 8)
         try {
-            await UserEntity.create({ email, passwordHash, name }).save()
+            await UserEntity.create({ email, passwordHash, name, role: UserRole.ADMIN }).save()
         } catch (error: any) {
             if (error.code == 23505) throw new HttpError(409, "User already exists")
             else throw new InternalServerError("Internal Server Error")

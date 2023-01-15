@@ -19,6 +19,7 @@ import "dotenv/config"
 // Controllers
 import { SampleController } from './controllers/sample'
 import UserController from './resources/User/Controller';
+import ResourceController from './resources/Resource/Controller';
 
 // Connecting to DB
 const dataSource = new DataSource({
@@ -45,7 +46,7 @@ dataSource.initialize().then(() => {
         useExpressServer(server, {
             authorizationChecker: authorizationChecker,
             currentUserChecker: currentUserChecker,
-            controllers: [SampleController, UserController],
+            controllers: [SampleController, UserController, ResourceController],
             routePrefix: '/api',
             validation: { validationError: { target: false, value: false } },
             cors: true,
@@ -79,3 +80,4 @@ dataSource.initialize().then(() => {
     }
 })();
 
+export { dataSource }
