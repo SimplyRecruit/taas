@@ -18,7 +18,7 @@ export class UserEntity extends EntityBase {
     @Column({
         type: "enum",
         enum: UserRole,
-        default: UserRole.EMPLOYEE
+        default: UserRole.END_USER
     })
     role: UserRole
 
