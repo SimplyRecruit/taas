@@ -26,7 +26,7 @@ export class UserEntity extends EntityBase {
     @OneToOne(() => ResourceEntity)
     resource: ResourceEntity
 
-    @ManyToOne(() => OrganizationEntity, organization => organization.users)
+    @ManyToOne(() => OrganizationEntity)
     organization: OrganizationEntity
 
 }
