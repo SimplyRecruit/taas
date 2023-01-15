@@ -1,7 +1,7 @@
 enum UserRole {
     ADMIN = "ADMIN",
-    COMPANY_OWNER = "COMPANY_OWNER",
-    EMPLOYEE = "EMPLOYEE"
+    TT_MANAGER = "TT_MANAGER",
+    END_USER = "END_USER",
 }
 
 export default UserRole
