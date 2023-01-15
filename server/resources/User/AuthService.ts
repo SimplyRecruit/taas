@@ -3,8 +3,6 @@ import { Action, BadRequestError, UnauthorizedError } from "routing-controllers"
 import { OrganizationEntity } from "../Organization/Entity";
 import { UserEntity } from "./Entity";
 
-const tokenRegex: RegExp = /^Bearer ((?:\.?(?:[A-Za-z0-9-_]+)){3})$/gm
-
 export async function resolveUserToken(action: Action): Promise<Jwt.JwtPayload | null> {
     const authorization: string = action.request.headers['authorization']
     const token = authorization.startsWith("Bearer ") ? authorization.substring(7, authorization.length) : null

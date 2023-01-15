@@ -1,5 +1,5 @@
 import UserRole from "../../../models/UserRole"
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn, OneToOne } from "typeorm"
+import { Entity, Column, ManyToOne, OneToOne } from "typeorm"
 import EntityBase from "../../EntityBase"
 import { ResourceEntity } from "../Resource/Entity"
 import { OrganizationEntity } from "../Organization/Entity"

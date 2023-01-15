@@ -10,8 +10,6 @@ import UserRole from '../../../models/UserRole';
 @JsonController("/user")
 export default class {
 
-    private readonly tokenRegex: RegExp = /^Bearer ((?:\.?(?:[A-Za-z0-9-_]+)){3})$/gm
-
     @Post('/login')
     async login(@Body() { email, password }: LoginReqBody) {
         const user = await UserEntity.findOneBy({ email })

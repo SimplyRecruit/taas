@@ -1,4 +1,4 @@
-import { IsEmail, IsStrongPassword, MaxLength, MinLength, IsDefined, IsOptional } from "class-validator";
+import { IsEmail, MaxLength, MinLength, IsOptional } from "class-validator";
 
 export default class {
     @IsEmail()

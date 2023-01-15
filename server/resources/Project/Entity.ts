@@ -1,5 +1,5 @@
 import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
-import { Entity, Column, BaseEntity, PrimaryColumn, JoinColumn, ManyToOne } from "typeorm"
+import { Entity, Column, PrimaryColumn, JoinColumn, ManyToOne } from "typeorm"
 import { CustomerEntity } from "../Customer/Entity"
 
 @Entity("project")

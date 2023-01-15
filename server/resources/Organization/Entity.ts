@@ -1,4 +1,3 @@
-import UserRole from "../../../models/UserRole"
 import { Entity, Column, OneToMany } from "typeorm"
 import EntityBase from "../../EntityBase"
 import { ResourceEntity } from "../Resource/Entity"

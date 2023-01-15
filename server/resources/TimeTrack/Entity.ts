@@ -1,5 +1,5 @@
 import EntityBase from "../../EntityBase"
-import { Entity, Column, BaseEntity, PrimaryColumn, JoinColumn, ManyToOne } from "typeorm"
+import { Entity, Column, JoinColumn, ManyToOne } from "typeorm"
 import { CustomerEntity } from "../Customer/Entity"
 import { ProjectEntity } from "../Project/Entity"
 import { ResourceEntity } from "../Resource/Entity"
