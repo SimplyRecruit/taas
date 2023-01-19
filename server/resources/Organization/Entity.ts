@@ -3,6 +3,7 @@ import EntityBase from "../../EntityBase"
 import { ResourceEntity } from "../Resource/Entity"
 import { UserEntity } from "../User/Entity"
 import { CustomerEntity } from "../Customer/Entity"
+import { WorkPeriodEntity } from "../WorkPeriod/Entity"
 
 @Entity("organization")
 export class OrganizationEntity extends EntityBase {
@@ -18,4 +19,7 @@ export class OrganizationEntity extends EntityBase {
 
     @OneToMany(() => CustomerEntity, customer => customer.organization)
     customers: CustomerEntity[]
+    
+    @OneToMany(() => WorkPeriodEntity, workPeriod => workPeriod.organization)
+    workPeriods: WorkPeriodEntity[]
 }
