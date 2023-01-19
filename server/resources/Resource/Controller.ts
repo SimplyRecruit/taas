@@ -11,6 +11,8 @@ import Resource from '../../../models/Resource';
 import { dataSource } from '../../main';
 import { isUUID, IsUUID } from 'class-validator';
 import { EntityNotFoundError } from 'typeorm';
+import { CustomerEntity } from '../Customer/Entity';
+import { CustomerResourceEntity } from '../relations/CustomerResource';
 
 @JsonController("/resource")
 export default class {
@@ -67,5 +69,17 @@ export default class {
             }
         })
         return "Resource Deletion Successful"
+    }
+
+    @Get('/customers')
+    async getCustomers(@CurrentUser() currentUser: UserEntity) {
+        try {
+            const currentResource = await ResourceEntity.findOneByOrFail({ user: { id: currentUser.id } })
+            const [customers, count] = await CustomerResourceEntity.findAndCount({ relations: { customer: true }, where: { resource: { id: currentResource.id } } })
+            return { customers, count }
+        } catch (error: any) {
+            if (error instanceof EntityNotFoundError) throw new ForbiddenError("You are not a resource")
+            else throw new InternalServerError("Internal Server Error")
+        }
     }
 }
