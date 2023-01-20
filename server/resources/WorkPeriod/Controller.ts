@@ -10,11 +10,11 @@ import TableQueryParameters from '../../../models/TableQueryParameters';
 import { EntityPropertyNotFoundError } from 'typeorm';
 import WorkPeriod from '../../../models/WorkPeriod';
 @JsonController("/work-period")
+@Authorized(UserRole.ADMIN)
 export default class {
 
     @Get()
     async getAll(@CurrentUser() currentUser: UserEntity, @QueryParams() { order, take, skip }: TableQueryParameters) {
-        if (currentUser.role !== UserRole.ADMIN) throw new UnauthorizedError()
         try {
             return await WorkPeriodEntity.findAndCount({
                 where: { organization: { id: currentUser.organization.id } },
