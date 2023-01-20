@@ -29,15 +29,17 @@ export default class {
 
     @Post()
     async create(@CurrentUser() currentUser: UserEntity, @Body() { periodDate }: WorkPeriod) {
-        const existing = await WorkPeriodEntity.findOneBy({
-            period: periodDate,
-            organization: { id: currentUser.organization.id }
+        await dataSource.transaction(async em => {
+            const existing = await WorkPeriodEntity.findOneBy({
+                period: periodDate,
+                organization: { id: currentUser.organization.id }
+            })
+            if (existing !== null) throw new HttpError(409, "Period already exists")
+            await WorkPeriodEntity.create({
+                organization: currentUser.organization,
+                period: periodDate
+            }).save()
         })
-        if (existing !== null) throw new HttpError(409, "Period already exists")
-        await WorkPeriodEntity.create({
-            organization: currentUser.organization,
-            period: periodDate
-        }).save()
         return "Done"
     }
 
