@@ -21,10 +21,8 @@ export default class {
         const order: { [column: string]: 'asc' | 'desc' } = {}
         if (this.sortBy == null) return order
         for (const sort of this.sortBy) {
-            const sortRegExpArray = sort.match(sortByRegex)!
-            const direction = sortRegExpArray[1] === '~' ? 'asc' : 'desc'
-            const column = sort.match(sortByRegex)![2]
-            order[column] = direction
+            const [_, direction, column] = sort.match(sortByRegex)!
+            order[column] = direction === '~' ? 'asc' : 'desc'
         }
         return order
     }
