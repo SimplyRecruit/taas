@@ -22,7 +22,7 @@ export default class {
                 order, take, skip
             })
             console.log(workPeriods);
-            return { workPeriods: workPeriods.map(wp => ({ ...wp, period: `${wp.period.getUTCMonth()}`.padStart(2, '0') + `/${wp.period.getUTCFullYear()}` })), count }
+            return { workPeriods: workPeriods.map(wp => ({ closed: wp.closed, period: `${wp.period.getUTCMonth()}`.padStart(2, '0') + `/${wp.period.getUTCFullYear()}` })), count }
         } catch (error) {
             if (error instanceof EntityPropertyNotFoundError) throw new BadRequestError("Invalid column name for sorting");
             else throw new InternalServerError("Internal Server Error")
