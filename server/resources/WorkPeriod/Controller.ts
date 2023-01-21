@@ -17,10 +17,12 @@ export default class {
     @Get()
     async getAll(@CurrentUser() currentUser: UserEntity, @QueryParams() { order, take, skip }: TableQueryParameters) {
         try {
-            return await WorkPeriodEntity.findAndCount({
+            const [workPeriods, count] = await WorkPeriodEntity.findAndCount({
                 where: { organization: { id: currentUser.organization.id } },
                 order, take, skip
             })
+            console.log(workPeriods);
+            return { workPeriods: workPeriods.map(wp => ({ ...wp, period: `${wp.period.getUTCMonth()}`.padStart(2, '0') + `/${wp.period.getUTCFullYear()}` })), count }
         } catch (error) {
             if (error instanceof EntityPropertyNotFoundError) throw new BadRequestError("Invalid column name for sorting");
             else throw new InternalServerError("Internal Server Error")

@@ -8,6 +8,6 @@ export default class {
 
     get periodDate() {
         const [_, month, year] = this.period.match(regex)!
-        return new Date(Number.parseInt(year), Number.parseInt(month))
+        return new Date(Date.UTC(Number.parseInt(year), Number.parseInt(month)))
     }
 }

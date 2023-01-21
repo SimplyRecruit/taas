@@ -4,7 +4,7 @@ import { OrganizationEntity } from "../Organization/Entity"
 @Entity("work_period")
 export class WorkPeriodEntity extends BaseEntity {
 
-    @PrimaryColumn()
+    @PrimaryColumn({ type: "timestamptz" })
     period: Date
 
     @Column({ default: false })
