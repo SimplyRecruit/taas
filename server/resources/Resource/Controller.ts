@@ -48,7 +48,7 @@ export default class {
                 const newUser = await em.save(UserEntity.create({ email, passwordHash, name, organization: currentUser.organization }))
                 const newResource = await em.save(ResourceEntity.create({ ...resource, organization: currentUser.organization, user: newUser }))
             } catch (error) {
-                if (error instanceof AlreadyExistsError) throw new HttpError(409, "Resource already exists")
+                if (error instanceof AlreadyExistsError) throw new AlreadyExistsError("Resource already exists")
                 else throw new InternalServerError("Internal Server Error")
             }
         })
