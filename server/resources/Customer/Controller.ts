@@ -55,20 +55,19 @@ export default class {
     }
 
     @Delete('/:id')
-    async delete(@Param("id") resourceId: string, @CurrentUser() currentUser: UserEntity) {
-        // await dataSource.transaction(async em => {
-        //     try {
-        //         const resource = await em.findOneOrFail(ResourceEntity, { where: { id: resourceId }, relations: { organization: true, user: true } })
-        //         if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
-        //         await em.remove(resource.user)
-        //         await em.remove(resource)
-        //     } catch (error) {
-        //         if (error instanceof EntityNotFoundError) throw new NotFoundError()
-        // else if (error instanceof ForbiddenError) throw new ForbiddenError()
-        //         else throw new InternalServerError("Internal Server Error")
-        //     }
-        // })
-        // return "Resource Deletion Successful"
+    async delete(@Param("id") customerId: string, @CurrentUser() currentUser: UserEntity) {
+        await dataSource.transaction(async em => {
+            try {
+                const customer = await em.findOneOrFail(CustomerEntity, { where: { id: customerId }, relations: { organization: true } })
+                if (customer.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+                await em.remove(customer)
+            } catch (error) {
+                if (error instanceof EntityNotFoundError) throw new NotFoundError()
+                else if (error instanceof ForbiddenError) throw new ForbiddenError()
+                else throw new InternalServerError("Internal Server Error")
+            }
+        })
+        return "Customer Deletion Successful"
     }
 
     @Get('/resources')
