@@ -17,6 +17,7 @@ import Customer from '../../../models/Customer';
 import { AlreadyExistsError } from '../../errors/AlreadyExistsError';
 
 @JsonController("/customer")
+@Authorized(UserRole.ADMIN)
 export default class {
 
     @Get()
@@ -70,15 +71,18 @@ export default class {
         return "Customer Deletion Successful"
     }
 
-    @Get('/resources')
-    async getResources(@CurrentUser() currentUser: UserEntity) {
-        // try {
-        //     const currentResource = await ResourceEntity.findOneByOrFail({ user: { id: currentUser.id } })
-        //     const [customers, count] = await CustomerResourceEntity.findAndCount({ relations: { customer: true }, where: { resource: { id: currentResource.id } } })
-        //     return { customers, count }
-        // } catch (error: any) {
-        //     if (error instanceof EntityNotFoundError) throw new ForbiddenError("You are not a resource")
-        //     else throw new InternalServerError("Internal Server Error")
-        // }
+    @Get('/:id/resources')
+    async getResources(@CurrentUser() currentUser: UserEntity, @Param("id") customerId: string) {
+        try {
+            const customer = await CustomerEntity.findOneOrFail({ where: { id: customerId }, relations: { organization: true } })
+            if (customer.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+            const [resources, count] = await CustomerResourceEntity.findAndCount({ relations: { resource: true }, where: { customer: { id: customer.id } } })
+            return { resources, count }
+        } catch (error) {
+            console.log(error);
+            if (error instanceof EntityNotFoundError) throw new NotFoundError()
+            else if (error instanceof ForbiddenError) throw new ForbiddenError()
+            else throw new InternalServerError("Internal Server Error")
+        }
     }
 }
