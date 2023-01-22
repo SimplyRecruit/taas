@@ -19,11 +19,13 @@ import { AlreadyExistsError } from '../../errors/AlreadyExistsError';
 export default class {
 
     @Get()
+    @Authorized(UserRole.ADMIN)
     async getAll(@CurrentUser() currentUser: UserEntity) {
         return await ResourceEntity.findBy({ organization: { id: currentUser.organization.id } })
     }
 
     @Patch('/:id')
+    @Authorized(UserRole.ADMIN)
     async update(@CurrentUser() currentUser: UserEntity, @Param("id") resourceId: string, @Body({ validate: { skipMissingProperties: true } }) body: Resource) {
         await dataSource.transaction(async em => {
             try {
@@ -40,6 +42,7 @@ export default class {
     }
 
     @Post()
+    @Authorized(UserRole.ADMIN)
     async create(@BodyParam("user") { email, password, name }: RegisterReqBody, @BodyParam("resource") resource: Resource, @CurrentUser() currentUser: UserEntity) {
         const passwordHash = Bcrypt.hashSync(password, 8)
         await dataSource.transaction(async (em) => {
@@ -56,6 +59,7 @@ export default class {
     }
 
     @Delete('/:id')
+    @Authorized(UserRole.ADMIN)
     async delete(@Param("id") resourceId: string, @CurrentUser() currentUser: UserEntity) {
         await dataSource.transaction(async em => {
             try {
