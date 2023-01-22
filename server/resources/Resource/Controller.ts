@@ -82,4 +82,18 @@ export default class {
             else throw new InternalServerError("Internal Server Error")
         }
     }
+
+    @Get('/:id/customers')
+    @Authorized(UserRole.ADMIN)
+    async getCustomersOf(@Param("id") resourceUserId: string) {
+        try {
+            const resource = await ResourceEntity.findOneByOrFail({ id: resourceUserId })
+            const customers = await CustomerResourceEntity.find({ relations: { customer: true }, where: { resource: { id: resource.id } } })
+            return customers
+        } catch (error) {
+            console.log(error);
+            if (error instanceof EntityNotFoundError) throw new ForbiddenError("You are not a resource")
+            else throw new InternalServerError("Internal Server Error")
+        }
+    }
 }
