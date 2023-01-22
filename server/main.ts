@@ -21,6 +21,7 @@ import { SampleController } from './controllers/sample'
 import UserController from './resources/User/Controller';
 import ResourceController from './resources/Resource/Controller';
 import WorkPeriodController from './resources/WorkPeriod/Controller';
+import CustomerController from './resources/Customer/Controller';
 
 // Connecting to DB
 const dataSource = new DataSource({
@@ -47,7 +48,7 @@ dataSource.initialize().then(() => {
         useExpressServer(server, {
             authorizationChecker: authorizationChecker,
             currentUserChecker: currentUserChecker,
-            controllers: [SampleController, UserController, ResourceController, WorkPeriodController],
+            controllers: [SampleController, UserController, ResourceController, WorkPeriodController, CustomerController],
             routePrefix: '/api',
             validation: { validationError: { target: false, value: false }, whitelist: true, forbidNonWhitelisted: true },
             cors: true,
