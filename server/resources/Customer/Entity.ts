@@ -22,6 +22,7 @@ export class CustomerEntity extends EntityBaseOnlyDates {
         type: "enum",
         enum: CustomerContractType,
     })
+    contractType: CustomerContractType
 
     @Column()
     partnerName: string
