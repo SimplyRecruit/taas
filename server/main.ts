@@ -17,7 +17,6 @@ const port = process.env.PORT || 3000;
 import "dotenv/config"
 
 // Controllers
-import { SampleController } from './controllers/sample'
 import UserController from './resources/User/Controller';
 import ResourceController from './resources/Resource/Controller';
 import WorkPeriodController from './resources/WorkPeriod/Controller';
@@ -48,7 +47,7 @@ dataSource.initialize().then(() => {
         useExpressServer(server, {
             authorizationChecker: authorizationChecker,
             currentUserChecker: currentUserChecker,
-            controllers: [SampleController, UserController, ResourceController, WorkPeriodController, CustomerController],
+            controllers: [UserController, ResourceController, WorkPeriodController, CustomerController],
             routePrefix: '/api',
             validation: { validationError: { target: false, value: false }, whitelist: true, forbidNonWhitelisted: true },
             cors: true,
