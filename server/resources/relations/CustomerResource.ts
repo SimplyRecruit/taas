@@ -7,13 +7,15 @@ import { ResourceEntity } from "../Resource/Entity"
 export class CustomerResourceEntity extends EntityBaseOnlyDates {
 
     @PrimaryColumn({ name: 'customer_id' })
-    @ManyToOne(() => CustomerEntity)
-    @JoinColumn()
-    customer: CustomerEntity
+    customerId: string
 
     @PrimaryColumn({ name: 'resource_id' })
-    @ManyToOne(() => ResourceEntity)
-    @JoinColumn()
+    resourceId: string
+
+    @ManyToOne(() => CustomerEntity, customer => customer.customerResource)
+    customer: CustomerEntity
+
+    @ManyToOne(() => ResourceEntity, resource => resource.customerResource)
     resource: ResourceEntity
 
     @Column({ default: true })
