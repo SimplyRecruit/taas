@@ -12,10 +12,10 @@ export class CustomerResourceEntity extends EntityBaseOnlyDates {
     @PrimaryColumn({ name: 'resource_id' })
     resourceId: string
 
-    @ManyToOne(() => CustomerEntity, customer => customer.customerResource)
+    @ManyToOne(() => CustomerEntity, customer => customer.customerResource, { onDelete: 'CASCADE' })
     customer: CustomerEntity
 
-    @ManyToOne(() => ResourceEntity, resource => resource.customerResource)
+    @ManyToOne(() => ResourceEntity, resource => resource.customerResource, { onDelete: 'CASCADE' })
     resource: ResourceEntity
 
     @Column({ default: true })
