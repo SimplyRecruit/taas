@@ -13,6 +13,7 @@ import { isUUID, IsUUID } from 'class-validator';
 import { EntityNotFoundError } from 'typeorm';
 import { CustomerEntity } from '../Customer/Entity';
 import { CustomerResourceEntity } from '../relations/CustomerResource';
+import { AlreadyExistsError } from '../../errors/AlreadyExistsError';
 
 @JsonController("/resource")
 export default class {
@@ -44,10 +45,11 @@ export default class {
         const passwordHash = Bcrypt.hashSync(password, 8)
         await dataSource.transaction(async (em) => {
             try {
+                if (await em.findOneBy(ResourceEntity, { id: resource.id }) != null) throw new AlreadyExistsError("Resource already exists")
                 const newUser = await em.save(UserEntity.create({ email, passwordHash, name, organization: currentUser.organization }))
                 const newResource = await em.save(ResourceEntity.create({ ...resource, organization: currentUser.organization, user: newUser }))
-            } catch (error: any) {
-                if (error.code == 23505) throw new HttpError(409, "Resource already exists")
+            } catch (error) {
+                if (error instanceof AlreadyExistsError) throw new HttpError(409, "Resource already exists")
                 else throw new InternalServerError("Internal Server Error")
             }
         })
