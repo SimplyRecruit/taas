@@ -91,7 +91,6 @@ export default class {
             const customers = await CustomerResourceEntity.find({ relations: { customer: true }, where: { resource: { id: resource.id } } })
             return customers
         } catch (error) {
-            console.log(error);
             if (error instanceof EntityNotFoundError) throw new ForbiddenError("You are not a resource")
             else throw new InternalServerError("Internal Server Error")
         }
