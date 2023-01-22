@@ -100,4 +100,28 @@ export default class {
             else throw new InternalServerError("Internal Server Error")
         }
     }
+
+    @Post('/:resourceId/customers/:customerId')
+    @Authorized(UserRole.ADMIN)
+    async assignCustomerToResource(@CurrentUser() currentUser: UserEntity, @Param("resourceId") resourceId: string, @Param("customerId") customerId: string) {
+        await dataSource.transaction(async em => {
+            try {
+                const existing = await em.findOne(CustomerResourceEntity, { where: { resource: { id: resourceId }, customer: { id: customerId } } })
+                if (existing != null) throw new AlreadyExistsError()
+                const resource = await em.findOneOrFail(ResourceEntity, { where: { id: resourceId }, relations: { organization: true } })
+                if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+                const customer = await em.findOneOrFail(CustomerEntity, { where: { id: customerId }, relations: { organization: true } })
+                if (customer.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+                console.log({ resource, customer });
+                await em.create(CustomerResourceEntity, { customer, resource }).save()
+            } catch (error) {
+                console.log(error);
+                if (error instanceof EntityNotFoundError) throw new NotFoundError()
+                else if (error instanceof ForbiddenError) throw new ForbiddenError()
+                else if (error instanceof AlreadyExistsError) throw new AlreadyExistsError("Customer is already assigned to resource")
+                else throw new InternalServerError("Internal Server Error")
+            }
+        })
+        return "Assigned Customer to Resource"
+    }
 }
