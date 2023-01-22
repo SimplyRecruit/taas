@@ -16,6 +16,6 @@ export class CustomerResourceEntity extends EntityBaseOnlyDates {
     @JoinColumn()
     resource: ResourceEntity
 
-    @Column()
+    @Column({ default: true })
     active: boolean
 }
