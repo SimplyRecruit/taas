@@ -30,10 +30,9 @@ export default class {
                 const resource = await em.findOneOrFail(ResourceEntity, { where: { id: resourceId }, relations: { organization: true } })
                 if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
                 await em.update(ResourceEntity, resourceId, body)
-            } catch (error: any) {
+            } catch (error) {
                 if (error instanceof EntityNotFoundError) throw new NotFoundError()
                 else if (error instanceof ForbiddenError) throw new ForbiddenError()
-                else if (error.code == 23505) throw new HttpError(409, "Resource already exists")
                 else throw new InternalServerError("Internal Server Error")
             }
         })
