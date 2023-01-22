@@ -1,5 +1,5 @@
 import LoginReqBody from '../../../models/LoginReqBody';
-import { Body, Get, Post, JsonController, UnauthorizedError, CurrentUser, InternalServerError, QueryParams, QueryParam, BadRequestError, HttpError, Delete, Authorized, Param, ForbiddenError, NotFoundError } from 'routing-controllers';
+import { Body, Get, Post, JsonController, UnauthorizedError, CurrentUser, InternalServerError, QueryParams, QueryParam, BadRequestError, HttpError, Delete, Authorized, Param, ForbiddenError, NotFoundError, Put } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
 import { UserEntity } from '../User/Entity';
@@ -59,5 +59,22 @@ export default class {
             }
         })
         return "Work Period Deletion Successful"
+    }
+
+    @Put()
+    async toggle(@CurrentUser() currentUser: UserEntity, @Body() { periodDate }: WorkPeriod) {
+        await dataSource.transaction(async em => {
+            try {
+                const workPeriod = await em.findOneOrFail(WorkPeriodEntity, { where: { period: periodDate }, relations: { organization: true } })
+                if (workPeriod.organization.id !== currentUser.organization.id) throw new ForbiddenError()
+                workPeriod.closed = !workPeriod.closed
+                await em.save(workPeriod)
+            } catch (error) {
+                if (error instanceof EntityNotFoundError) throw new NotFoundError()
+                else if (error instanceof ForbiddenError) throw new ForbiddenError()
+                else throw new InternalServerError("Internal Server Error")
+            }
+        })
+        return "Done"
     }
 }
