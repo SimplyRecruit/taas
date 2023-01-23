@@ -1,4 +1,4 @@
-import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req } from 'routing-controllers';
+import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
 import LoginReqBody from '@/models/LoginReqBody';
@@ -44,18 +44,19 @@ export default class {
     }
 
     @Post('/reset-password')
-    async resetPassword(@Body() { email, password, name }: RegisterReqBody) {
-
-        // tokenı kontrol et
-        // şifreyi değiştirs
-        const passwordHash = Bcrypt.hashSync(password, 8)
+    async resetPassword(@BodyParam("token") token: string, @BodyParam("email") email: string, @BodyParam("newPassword") newPassword: string) {
         try {
-            await UserEntity.create({ email, passwordHash, name, role: UserRole.ADMIN }).save()
+            const { tokenHash, expiration, user } = await SessionTokenEntity.findOneOrFail({ where: { user: { email } }, relations: { user: true } })
+            if (Date.now() > expiration.getTime() || !Bcrypt.compareSync(token, tokenHash))
+                throw new UnauthorizedError()
+            user.passwordHash = Bcrypt.hashSync(newPassword, 8)
+            await user.save()
         } catch (error: any) {
+            console.log(error)
             if (error.code == 23505) throw new AlreadyExistsError("User already exists")
             else throw new InternalServerError("Internal Server Error")
         }
-        return "Registration Succesful"
+        return "Reset password successfully"
     }
 
 
@@ -67,7 +68,7 @@ export default class {
             var user = await UserEntity.findOneByOrFail({ email })
             const expiration = new Date(Date.now() + 3 * 60 * 60 * 1000) // 3 hours
             await SessionTokenEntity.save({ tokenHash, user, expiration })
-            const link = createResetPasswordLink(req, token)
+            const link = createResetPasswordLink(req, token, email)
             await sendResetPasswordEmail(user, link)
         } catch (error: any) {
             console.log(error)

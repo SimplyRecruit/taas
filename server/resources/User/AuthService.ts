@@ -56,6 +56,6 @@ export async function sendResetPasswordEmail(user: UserEntity, link: string) {
     await smtp.send(message)
 }
 
-export function createResetPasswordLink(req: Request, token: string) {
-    return req.protocol + "://" + req.headers.host + "/reset-password/" + token
+export function createResetPasswordLink(req: Request, token: string, email: string,) {
+    return req.protocol + "://" + req.headers.host + "/reset-password?token=" + token + "&email=" + encodeURIComponent(email)
 }
