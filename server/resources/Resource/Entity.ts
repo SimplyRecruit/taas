@@ -13,7 +13,7 @@ export class ResourceEntity extends EntityBaseOnlyDates {
     @Column()
     name: string
 
-    @Column()
+    @Column({ type: "timestamptz" })
     startDate: Date
 
     @Column({ type: "int2" })

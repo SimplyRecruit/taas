@@ -15,7 +15,7 @@ export class ProjectEntity extends EntityBaseOnlyDates {
     @Column()
     name: string
 
-    @Column()
+    @Column({ type: "timestamptz" })
     startDate: Date
 
     @Column({ default: true })

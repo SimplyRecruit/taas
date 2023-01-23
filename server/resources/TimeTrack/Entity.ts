@@ -20,7 +20,7 @@ export class TimeTrackEntity extends EntityBase {
     project: ProjectEntity
 
 
-    @Column()
+    @Column({ type: "timestamptz" })
     date: Date
 
     @Column({ type: "decimal", precision: 1 })

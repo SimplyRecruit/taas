@@ -13,10 +13,10 @@ export class CustomerEntity extends EntityBaseOnlyDates {
     @Column()
     name: string
 
-    @Column()
+    @Column({ type: "timestamptz" })
     startDate: Date
 
-    @Column()
+    @Column({ type: "timestamptz" })
     contractDate: Date
 
     @Column({
