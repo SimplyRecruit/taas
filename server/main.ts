@@ -5,7 +5,7 @@ import { DataSource } from "typeorm"
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { useExpressServer } from 'routing-controllers'
 import { join } from "path"
-import { authorizationChecker, currentUserChecker } from './resources/User/AuthService';
+import { authorizationChecker, currentUserChecker } from '@/server/resources/User/AuthService';
 
 
 const dev = process.env.NODE_ENV !== "production"
@@ -17,10 +17,10 @@ const port = process.env.PORT || 3000;
 import "dotenv/config"
 
 // Controllers
-import UserController from './resources/User/Controller';
-import ResourceController from './resources/Resource/Controller';
-import WorkPeriodController from './resources/WorkPeriod/Controller';
-import CustomerController from './resources/Customer/Controller';
+import UserController from '@/server/resources/User/Controller';
+import ResourceController from '@/server/resources/Resource/Controller';
+import WorkPeriodController from '@/server/resources/WorkPeriod/Controller';
+import CustomerController from '@/server/resources/Customer/Controller';
 
 // Connecting to DB
 const dataSource = new DataSource({

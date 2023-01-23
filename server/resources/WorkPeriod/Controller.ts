@@ -1,15 +1,11 @@
-import LoginReqBody from '../../../models/LoginReqBody';
-import { Body, Get, Post, JsonController, UnauthorizedError, CurrentUser, InternalServerError, QueryParams, QueryParam, BadRequestError, HttpError, Delete, Authorized, Param, ForbiddenError, NotFoundError, Put } from 'routing-controllers';
-import Bcrypt from "bcrypt"
-import Jwt from "jsonwebtoken"
-import { UserEntity } from '../User/Entity';
-import UserRole from '../../../models/UserRole';
-import { WorkPeriodEntity } from './Entity';
-import { OrganizationEntity } from '../Organization/Entity';
-import TableQueryParameters from '../../../models/TableQueryParameters';
+import { Body, Get, Post, JsonController, CurrentUser, InternalServerError, QueryParams, BadRequestError, HttpError, Delete, Authorized, ForbiddenError, NotFoundError, Put } from 'routing-controllers';
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm';
-import WorkPeriod from '../../../models/WorkPeriod';
-import { dataSource } from '../../../server/main';
+import TableQueryParameters from '@/models/TableQueryParameters';
+import UserRole from '@/models/UserRole';
+import WorkPeriod from '@/models/WorkPeriod';
+import { dataSource } from '@/server/main';
+import { UserEntity } from '@/server/resources/User/Entity';
+import { WorkPeriodEntity } from '@/server/resources/WorkPeriod/Entity';
 @JsonController("/work-period")
 @Authorized(UserRole.ADMIN)
 export default class {

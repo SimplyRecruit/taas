@@ -1,19 +1,15 @@
-import LoginReqBody from '../../../models/LoginReqBody';
-import { Body, Get, Post, JsonController, Authorized, CurrentUser, BadRequestError, UnauthorizedError, HttpError, InternalServerError, BodyParam, Put, Param, Patch, NotFoundError, ForbiddenError, Delete } from 'routing-controllers';
-import { UserEntity } from '../User/Entity';
+import { Body, Get, Post, JsonController, Authorized, CurrentUser, InternalServerError, BodyParam, Param, Patch, NotFoundError, ForbiddenError, Delete } from 'routing-controllers';
 import Bcrypt from "bcrypt"
-import Jwt from "jsonwebtoken"
-import RegisterReqBody from '../../../models/RegisterReqBody';
-import User from '../../../models/User';
-import UserRole from '../../../models/UserRole';
-import { ResourceEntity } from './Entity';
-import Resource from '../../../models/Resource';
-import { dataSource } from '../../main';
-import { isUUID, IsUUID } from 'class-validator';
 import { EntityNotFoundError } from 'typeorm';
-import { CustomerEntity } from '../Customer/Entity';
-import { CustomerResourceEntity } from '../relations/CustomerResource';
-import { AlreadyExistsError } from '../../errors/AlreadyExistsError';
+import UserRole from '@/models/UserRole';
+import { UserEntity } from '@/server/resources/User/Entity';
+import RegisterReqBody from '@/models/RegisterReqBody';
+import Resource from '@/models/Resource';
+import { ResourceEntity } from '@/server/resources/Resource/Entity';
+import { dataSource } from '@/server/main';
+import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
+import { CustomerResourceEntity } from '@/server/resources/relations/CustomerResource';
+import { CustomerEntity } from '@/server/resources/Customer/Entity';
 
 @JsonController("/resource")
 export default class {

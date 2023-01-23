@@ -1,5 +1,5 @@
 import { Entity, Column, BaseEntity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
-import { OrganizationEntity } from "../Organization/Entity"
+import { OrganizationEntity } from "@/server/resources/Organization/Entity"
 
 @Entity("work_period")
 export class WorkPeriodEntity extends BaseEntity {

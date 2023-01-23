@@ -1,11 +1,11 @@
-import LoginReqBody from '../../../models/LoginReqBody';
-import { Body, Get, Post, JsonController, Authorized, CurrentUser, BadRequestError, UnauthorizedError, HttpError, InternalServerError } from 'routing-controllers';
-import { UserEntity } from './Entity';
+import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
-import RegisterReqBody from '../../../models/RegisterReqBody';
-import User from '../../../models/User';
-import UserRole from '../../../models/UserRole';
+import LoginReqBody from '@/models/LoginReqBody';
+import { UserEntity } from '@/server/resources/User/Entity';
+import RegisterReqBody from '@/models/RegisterReqBody';
+import UserRole from '@/models/UserRole';
+import User from '@/models/User';
 
 @JsonController("/user")
 export default class {

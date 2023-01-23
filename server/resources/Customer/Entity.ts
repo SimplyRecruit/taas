@@ -1,8 +1,9 @@
-import CustomerContractType from "../../../models/CustomerContractType"
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
-import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
-import { OrganizationEntity } from "../Organization/Entity"
-import { CustomerResourceEntity } from "../relations/CustomerResource"
+import CustomerContractType from "@/models/CustomerContractType"
+import EntityBaseOnlyDates from "@/server/EntityBaseOnlyDates"
+import { OrganizationEntity } from "@/server/resources/Organization/Entity"
+import { CustomerResourceEntity } from "@/server/resources/relations/CustomerResource"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm"
+
 
 @Entity("customer")
 export class CustomerEntity extends EntityBaseOnlyDates {
