@@ -72,7 +72,7 @@ export default class {
     }
 
     @Get('/:id/resources')
-    async getResources(@CurrentUser() currentUser: UserEntity, @Param("id") customerId: string) {
+    async getResourcesOf(@CurrentUser() currentUser: UserEntity, @Param("id") customerId: string) {
         try {
             const customer = await CustomerEntity.findOneOrFail({ where: { id: customerId }, relations: { organization: true } })
             if (customer.organization.id !== currentUser.organization.id) throw new ForbiddenError()
