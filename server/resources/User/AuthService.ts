@@ -1,5 +1,8 @@
+import { smtp } from "@/server/main";
 import { OrganizationEntity } from "@/server/resources/Organization/Entity";
+import { RESET_PASSWORD_EMAIL_TEMP } from "@/server/resources/User/Config";
 import { UserEntity } from "@/server/resources/User/Entity";
+import { Request } from "express";
 import Jwt from "jsonwebtoken";
 import { Action, BadRequestError, UnauthorizedError } from "routing-controllers";
 
@@ -34,4 +37,25 @@ export async function authorizationChecker(action: Action, roles: string[]): Pro
 export async function currentOrganizationChecker(action: Action): Promise<OrganizationEntity | false> {
     const user = await currentUserChecker(action)
     return user && user.organization
+}
+
+export async function sendResetPasswordEmail(user: UserEntity, link: string) {
+    const message = {
+        to: user.email, // Change to your recipient
+        from: 'no-reply@bowform.com', // Change to your verified sender
+        templateId: RESET_PASSWORD_EMAIL_TEMP.EN,
+        version: 'en',
+        dynamicTemplateData: {
+            name: user.name,
+            link: link
+        }
+        // subject: 'Taas Email Verification',
+        // text: 'Please verify your email by clicking the link below or type the following code: ' + otp,
+        // html: 'Please verify your email by clicking the link below or type the following code: <strong>${}</strong>',
+    }
+    await smtp.send(message)
+}
+
+export function createResetPasswordLink(req: Request, token: string) {
+    return req.protocol + "://" + req.headers.host + "/reset-password/" + token
 }

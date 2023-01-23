@@ -1,0 +1,4 @@
+export const RESET_PASSWORD_EMAIL_TEMP = {
+    EN: "d-808240c1787147a183cab644da1360ad"
+}
+

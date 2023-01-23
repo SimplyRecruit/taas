@@ -6,7 +6,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { useExpressServer } from 'routing-controllers'
 import { join } from "path"
 import { authorizationChecker, currentUserChecker } from '@/server/resources/User/AuthService';
-
+import smtp from '@sendgrid/mail'
 
 const dev = process.env.NODE_ENV !== "production"
 const app = next({ dev });
@@ -38,6 +38,9 @@ dataSource.initialize().then(() => {
     console.error("Error connecting to DB:")
     console.error(error)
 });
+
+// Set SMTP API Key
+smtp.setApiKey(process.env.SMTP_KEY!);
 
 (async () => {
     try {
@@ -82,4 +85,4 @@ dataSource.initialize().then(() => {
     }
 })();
 
-export { dataSource }
+export { dataSource, smtp }
