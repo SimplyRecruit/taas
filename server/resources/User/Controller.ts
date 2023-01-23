@@ -6,6 +6,7 @@ import { UserEntity } from '@/server/resources/User/Entity';
 import RegisterReqBody from '@/models/RegisterReqBody';
 import UserRole from '@/models/UserRole';
 import User from '@/models/User';
+import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
 
 @JsonController("/user")
 export default class {
@@ -32,7 +33,7 @@ export default class {
         try {
             await UserEntity.create({ email, passwordHash, name, role: UserRole.ADMIN }).save()
         } catch (error: any) {
-            if (error.code == 23505) throw new HttpError(409, "User already exists")
+            if (error.code == 23505) throw new AlreadyExistsError("User already exists")
             else throw new InternalServerError("Internal Server Error")
         }
         return "Registration Succesful"
