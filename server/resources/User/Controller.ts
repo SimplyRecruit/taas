@@ -11,6 +11,7 @@ import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
 import { SessionTokenEntity } from '@/server/resources/SessionToken/Entity';
 import { createResetPasswordLink, sendResetPasswordEmail } from '@/server/resources/User/AuthService';
 import type { Request } from 'express';
+import { dataSource } from '@/server/main';
 
 @JsonController("/user")
 export default class {
@@ -45,17 +46,20 @@ export default class {
 
     @Post('/reset-password')
     async resetPassword(@BodyParam("token") token: string, @BodyParam("email") email: string, @BodyParam("newPassword") newPassword: string) {
-        try {
-            const { tokenHash, expiration, user } = await SessionTokenEntity.findOneOrFail({ where: { user: { email } }, relations: { user: true } })
-            if (Date.now() > expiration.getTime() || !Bcrypt.compareSync(token, tokenHash))
-                throw new UnauthorizedError()
-            user.passwordHash = Bcrypt.hashSync(newPassword, 8)
-            await user.save()
-        } catch (error: any) {
-            console.log(error)
-            if (error.code == 23505) throw new AlreadyExistsError("User already exists")
-            else throw new InternalServerError("Internal Server Error")
-        }
+        await dataSource.transaction(async em => {
+            try {
+                const sessionToken = await em.findOneOrFail(SessionTokenEntity, { where: { user: { email } }, relations: { user: true } })
+                const { user, expiration, tokenHash } = sessionToken
+                if (Date.now() > expiration.getTime() || !Bcrypt.compareSync(token, tokenHash))
+                    throw new UnauthorizedError()
+                user.passwordHash = Bcrypt.hashSync(newPassword, 8)
+                await em.save(user)
+                await em.remove(sessionToken)
+            } catch (error: any) {
+                if (error.code == 23505) throw new AlreadyExistsError("User already exists")
+                else throw new InternalServerError("Internal Server Error")
+            }
+        })
         return "Reset password successfully"
     }
 
@@ -71,7 +75,6 @@ export default class {
             const link = createResetPasswordLink(req, token, email)
             await sendResetPasswordEmail(user, link)
         } catch (error: any) {
-            console.log(error)
             if (error.code == 23505) throw new AlreadyExistsError("User already exists")
             else throw new InternalServerError("Internal Server Error")
         }
