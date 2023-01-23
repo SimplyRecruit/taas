@@ -55,8 +55,8 @@ export default class {
                 user.passwordHash = Bcrypt.hashSync(newPassword, 8)
                 await em.save(user)
                 await em.remove(sessionToken)
-            } catch (error: any) {
-                if (error.code == 23505) throw new AlreadyExistsError("User already exists")
+            } catch (error) {
+                if (error instanceof UnauthorizedError) throw error
                 else throw new InternalServerError("Internal Server Error")
             }
         })
