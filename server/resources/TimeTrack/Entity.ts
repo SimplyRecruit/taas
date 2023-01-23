@@ -1,8 +1,8 @@
-import EntityBase from "../../EntityBase"
+import EntityBase from "@/server/EntityBase"
+import { CustomerEntity } from "@/server/resources/Customer/Entity"
+import { ProjectEntity } from "@/server/resources/Project/Entity"
+import { ResourceEntity } from "@/server/resources/Resource/Entity"
 import { Entity, Column, JoinColumn, ManyToOne } from "typeorm"
-import { CustomerEntity } from "../Customer/Entity"
-import { ProjectEntity } from "../Project/Entity"
-import { ResourceEntity } from "../Resource/Entity"
 
 @Entity("time_track")
 export class TimeTrackEntity extends EntityBase {
@@ -20,7 +20,7 @@ export class TimeTrackEntity extends EntityBase {
     project: ProjectEntity
 
 
-    @Column()
+    @Column({ type: "timestamptz" })
     date: Date
 
     @Column({ type: "decimal", precision: 1 })

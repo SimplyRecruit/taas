@@ -5,7 +5,7 @@ import { DataSource } from "typeorm"
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { useExpressServer } from 'routing-controllers'
 import { join } from "path"
-import { authorizationChecker, currentUserChecker } from './resources/User/AuthService';
+import { authorizationChecker, currentUserChecker } from '@/server/resources/User/AuthService';
 
 
 const dev = process.env.NODE_ENV !== "production"
@@ -17,9 +17,10 @@ const port = process.env.PORT || 3000;
 import "dotenv/config"
 
 // Controllers
-import { SampleController } from './controllers/sample'
-import UserController from './resources/User/Controller';
-import ResourceController from './resources/Resource/Controller';
+import UserController from '@/server/resources/User/Controller';
+import ResourceController from '@/server/resources/Resource/Controller';
+import WorkPeriodController from '@/server/resources/WorkPeriod/Controller';
+import CustomerController from '@/server/resources/Customer/Controller';
 
 // Connecting to DB
 const dataSource = new DataSource({
@@ -46,10 +47,11 @@ dataSource.initialize().then(() => {
         useExpressServer(server, {
             authorizationChecker: authorizationChecker,
             currentUserChecker: currentUserChecker,
-            controllers: [SampleController, UserController, ResourceController],
+            controllers: [UserController, ResourceController, WorkPeriodController, CustomerController],
             routePrefix: '/api',
             validation: { validationError: { target: false, value: false }, whitelist: true, forbidNonWhitelisted: true },
             cors: true,
+            classTransformer: true,
             defaults: {
                 paramOptions: { required: true }
             },

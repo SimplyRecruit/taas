@@ -1,7 +1,9 @@
-import CustomerContractType from "../../../models/CustomerContractType"
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
-import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
-import { OrganizationEntity } from "../Organization/Entity"
+import CustomerContractType from "@/models/CustomerContractType"
+import EntityBaseOnlyDates from "@/server/EntityBaseOnlyDates"
+import { OrganizationEntity } from "@/server/resources/Organization/Entity"
+import { CustomerResourceEntity } from "@/server/resources/relations/CustomerResource"
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm"
+
 
 @Entity("customer")
 export class CustomerEntity extends EntityBaseOnlyDates {
@@ -12,16 +14,17 @@ export class CustomerEntity extends EntityBaseOnlyDates {
     @Column()
     name: string
 
-    @Column()
+    @Column({ type: "timestamptz" })
     startDate: Date
 
-    @Column()
+    @Column({ type: "timestamptz" })
     contractDate: Date
 
     @Column({
         type: "enum",
         enum: CustomerContractType,
     })
+    contractType: CustomerContractType
 
     @Column()
     partnerName: string
@@ -32,5 +35,8 @@ export class CustomerEntity extends EntityBaseOnlyDates {
     @ManyToOne(() => OrganizationEntity)
     @JoinColumn()
     organization: OrganizationEntity
+
+    @OneToMany(() => CustomerResourceEntity, customerResource => customerResource.customer)
+    customerResource: CustomerResourceEntity
 
 }

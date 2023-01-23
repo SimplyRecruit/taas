@@ -1,21 +1,23 @@
-import { Entity, Column, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
-import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
-import { CustomerEntity } from "../Customer/Entity"
-import { ResourceEntity } from "../Resource/Entity"
+import EntityBaseOnlyDates from "@/server/EntityBaseOnlyDates"
+import { CustomerEntity } from "@/server/resources/Customer/Entity"
+import { ResourceEntity } from "@/server/resources/Resource/Entity"
+import { Entity, Column, ManyToOne, PrimaryColumn } from "typeorm"
 
 @Entity("customer_resource")
 export class CustomerResourceEntity extends EntityBaseOnlyDates {
 
     @PrimaryColumn({ name: 'customer_id' })
-    @ManyToOne(() => CustomerEntity)
-    @JoinColumn()
-    customer: CustomerEntity
+    customerId: string
 
     @PrimaryColumn({ name: 'resource_id' })
-    @ManyToOne(() => ResourceEntity)
-    @JoinColumn()
+    resourceId: string
+
+    @ManyToOne(() => CustomerEntity, customer => customer.customerResource, { onDelete: 'CASCADE' })
+    customer: CustomerEntity
+
+    @ManyToOne(() => ResourceEntity, resource => resource.customerResource, { onDelete: 'CASCADE' })
     resource: ResourceEntity
 
-    @Column()
+    @Column({ default: true })
     active: boolean
 }

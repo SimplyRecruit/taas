@@ -1,10 +1,10 @@
+import { OrganizationEntity } from "@/server/resources/Organization/Entity";
+import { UserEntity } from "@/server/resources/User/Entity";
 import Jwt from "jsonwebtoken";
 import { Action, BadRequestError, UnauthorizedError } from "routing-controllers";
-import { OrganizationEntity } from "../Organization/Entity";
-import { UserEntity } from "./Entity";
 
 export async function resolveUserToken(action: Action): Promise<Jwt.JwtPayload | null> {
-    const authorization: string = action.request.headers['authorization']
+    const authorization: string = action.request.headers['authorization'] ?? ''
     const token = authorization.startsWith("Bearer ") ? authorization.substring(7, authorization.length) : null
     if (token == null) return null
     try {

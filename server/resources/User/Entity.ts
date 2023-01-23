@@ -1,8 +1,8 @@
-import UserRole from "../../../models/UserRole"
+import UserRole from "@/models/UserRole"
+import EntityBase from "@/server/EntityBase"
+import { OrganizationEntity } from "@/server/resources/Organization/Entity"
+import { ResourceEntity } from "@/server/resources/Resource/Entity"
 import { Entity, Column, ManyToOne, OneToOne } from "typeorm"
-import EntityBase from "../../EntityBase"
-import { ResourceEntity } from "../Resource/Entity"
-import { OrganizationEntity } from "../Organization/Entity"
 
 @Entity("user")
 export class UserEntity extends EntityBase {

@@ -1,6 +1,6 @@
-import EntityBaseOnlyDates from "../../EntityBaseOnlyDates"
+import EntityBaseOnlyDates from "@/server/EntityBaseOnlyDates"
+import { CustomerEntity } from "@/server/resources/Customer/Entity"
 import { Entity, Column, PrimaryColumn, JoinColumn, ManyToOne } from "typeorm"
-import { CustomerEntity } from "../Customer/Entity"
 
 @Entity("project")
 export class ProjectEntity extends EntityBaseOnlyDates {
@@ -15,7 +15,7 @@ export class ProjectEntity extends EntityBaseOnlyDates {
     @Column()
     name: string
 
-    @Column()
+    @Column({ type: "timestamptz" })
     startDate: Date
 
     @Column({ default: true })

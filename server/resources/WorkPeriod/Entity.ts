@@ -1,12 +1,17 @@
-import { Entity, Column, BaseEntity, PrimaryColumn } from "typeorm"
+import { Entity, Column, BaseEntity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
+import { OrganizationEntity } from "@/server/resources/Organization/Entity"
 
 @Entity("work_period")
 export class WorkPeriodEntity extends BaseEntity {
 
-    @PrimaryColumn()
+    @PrimaryColumn({ type: "timestamptz" })
     period: Date
 
     @Column({ default: false })
     closed: boolean
+
+    @ManyToOne(() => OrganizationEntity, { onDelete: 'CASCADE' })
+    @JoinColumn()
+    organization: OrganizationEntity
 
 }
