@@ -1,9 +1,9 @@
 import { Body, Get, Post, JsonController, Authorized, CurrentUser, InternalServerError, BodyParam, Param, Patch, NotFoundError, ForbiddenError, Delete } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import { EntityNotFoundError } from 'typeorm';
-import UserRole from '@/models/UserRole';
+import UserRole from '@/models/User/UserRole';
 import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterReqBody from '@/models/RegisterReqBody';
+import RegisterReqBody from '@/models/User/RegisterReqBody';
 import Resource from '@/models/Resource';
 import { ResourceEntity } from '@/server/resources/Resource/Entity';
 import { dataSource } from '@/server/main';

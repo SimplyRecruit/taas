@@ -1,7 +1,7 @@
 import { Body, Get, Post, JsonController, CurrentUser, InternalServerError, QueryParams, BadRequestError, HttpError, Delete, Authorized, ForbiddenError, NotFoundError, Put } from 'routing-controllers';
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm';
 import TableQueryParameters from '@/models/TableQueryParameters';
-import UserRole from '@/models/UserRole';
+import UserRole from '@/models/User/UserRole';
 import WorkPeriod from '@/models/WorkPeriod';
 import { dataSource } from '@/server/main';
 import { UserEntity } from '@/server/resources/User/Entity';

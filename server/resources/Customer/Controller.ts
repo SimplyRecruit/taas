@@ -1,5 +1,5 @@
 import Customer from "@/models/Customer"
-import UserRole from "@/models/UserRole"
+import UserRole from "@/models/User/UserRole"
 import { AlreadyExistsError } from "@/server/errors/AlreadyExistsError"
 import { dataSource } from "@/server/main"
 import { CustomerEntity } from "@/server/resources/Customer/Entity"
