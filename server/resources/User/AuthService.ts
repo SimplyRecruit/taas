@@ -1,14 +1,13 @@
 import UserStatus from "@/models/User/UserStatus";
-import { smtp } from "@/server/main";
 import { OrganizationEntity } from "@/server/resources/Organization/Entity";
 import { SessionTokenEntity } from "@/server/resources/SessionToken/Entity";
-import { RESET_PASSWORD_EMAIL_TEMP } from "@/server/common/Config";
 import { UserEntity } from "@/server/resources/User/Entity";
 import { Request } from "express";
 import Jwt from "jsonwebtoken";
 import crypto from "crypto"
 import Bcrypt from "bcrypt"
 import { Action, BadRequestError, UnauthorizedError } from "routing-controllers";
+import { EntityManager } from "typeorm/entity-manager/EntityManager";
 
 export async function resolveUserToken(action: Action): Promise<Jwt.JwtPayload | null> {
     const authorization: string = action.request.headers['authorization'] ?? ''
@@ -49,12 +48,13 @@ export function createResetPasswordLink(req: Request, token: string, email: stri
     return req.protocol + "://" + req.headers.host + "/reset-password?token=" + token + "&email=" + encodeURIComponent(email)
 }
 
-export async function createSessionToken(user: UserEntity) {
+export async function createSessionToken(user: UserEntity, sudo: boolean, em?: EntityManager) {
     let token = crypto.randomBytes(64).toString('hex');
     const tokenHash = Bcrypt.hashSync(token, 8)
-    if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
+    if (!sudo && user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
     const expiration = new Date(Date.now() + 3 * 60 * 60 * 1000) // 3 hours
-    await SessionTokenEntity.save({ tokenHash, user, expiration })
+    em ? await em.save(SessionTokenEntity, { tokenHash, user, expiration })
+        : await SessionTokenEntity.save({ tokenHash, user, expiration })
 
     return token
 }

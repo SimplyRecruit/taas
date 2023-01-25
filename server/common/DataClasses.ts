@@ -3,13 +3,14 @@ export class EmailTemplateBase {
 
 export class ResetPasswordEmailTemplate extends EmailTemplateBase {
     constructor(
-        name: string,
-        link: string
+        public name: string,
+        public link: string
     ) {
         super()
     };
+
 }
-export class VerificationPasswordEmailTemplate extends EmailTemplateBase {
+export class VerificationEmailTemplate extends EmailTemplateBase {
     constructor(
         name: string,
         link: string

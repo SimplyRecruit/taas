@@ -14,7 +14,7 @@ import { dataSource } from '@/server/main';
 import UserStatus from '@/models/User/UserStatus';
 import { OrganizationEntity } from '@/server/resources/Organization/Entity';
 import { sendEmail } from '@/server/common/Util';
-import { ResetPasswordEmailTemplate, VerificationPasswordEmailTemplate } from '@/server/common/DataClasses';
+import { ResetPasswordEmailTemplate, VerificationEmailTemplate } from '@/server/common/DataClasses';
 import { EntityNotFoundError } from 'typeorm';
 import type Language from '@/models/Language';
 
@@ -42,14 +42,14 @@ export default class {
     async registerOrganization(@Body() { email, organizationName, name }: RegisterOrganizationReqBody, @Req() req: Request, @HeaderParam("Accept-Language") language: Language) {
         await dataSource.transaction(async em => {
             try {
-                const organization = await em.create(OrganizationEntity, { name: organizationName }).save()
-                await em.create(UserEntity, { email, name, role: UserRole.ADMIN, organization, status: UserStatus.CONFIRMED }).save()
-                var user = await UserEntity.findOneByOrFail({ email })
-                const token = await createSessionToken(user)
+                const organization = await em.save(OrganizationEntity, { name: organizationName })
+                const user = await em.save(UserEntity, { email, name, role: UserRole.ADMIN, organization, status: UserStatus.CONFIRMED })
+                const token = await createSessionToken(user, true, em)
                 const link = createResetPasswordLink(req, token, email)
-                const emailTemplate = new VerificationPasswordEmailTemplate(user.name, link)
+                const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
                 await sendEmail(user.email, language, emailTemplate)
             } catch (error: any) {
+                console.log(error)
                 if (error.code == 23505) throw new AlreadyExistsError("User already exists")
                 if (error instanceof UnauthorizedError) throw error
                 if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")
@@ -83,8 +83,8 @@ export default class {
     @Post('/forgot-password')
     async forgotPassword(@BodyParam("email") email: string, @Req() req: Request, @HeaderParam("Accept-Language") language: Language) {
         try {
-            var user = await UserEntity.findOneByOrFail({ email })
-            const token = await createSessionToken(user)
+            const user = await UserEntity.findOneByOrFail({ email })
+            const token = await createSessionToken(user, false)
             const link = createResetPasswordLink(req, token, email)
             const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
             await sendEmail(user.email, language, emailTemplate)

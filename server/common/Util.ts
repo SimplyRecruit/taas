@@ -5,6 +5,7 @@ import Language from "@/models/Language"
 
 
 export async function sendEmail(to: string, language: Language, emailTemplate: EmailTemplateBase) {
+    console.log(emailTemplate)
     const message = {
         to,
         from: 'no-reply@bowform.com',
