@@ -43,7 +43,7 @@ export default class {
         await dataSource.transaction(async em => {
             try {
                 const organization = await em.save(OrganizationEntity, { name: organizationName })
-                const user = await em.save(UserEntity, { email, name, role: UserRole.ADMIN, organization, status: UserStatus.CONFIRMED })
+                const user = await em.save(UserEntity, { email, name, role: UserRole.ADMIN, organization })
                 const token = await createSessionToken(user, true, em)
                 const link = createResetPasswordLink(req, token, email)
                 const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
