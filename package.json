@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon",
-    "build": "next build && tsc --project tsconfig.server.json",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "build": "next build && tsc --project tsconfig.server.json && cp tsconfig.json ./dist/tsconfig.prod.json",
+    "start": "cross-env NODE_ENV=production TS_NODE_PROJECT=dist/tsconfig.prod.json node -r tsconfig-paths/register ./dist/server/main.js",
     "lint": "next lint"
   },
   "dependencies": {
