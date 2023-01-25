@@ -1,13 +1,19 @@
 export class EmailTemplateBase {
-    params: any
 }
 
 export class ResetPasswordEmailTemplate extends EmailTemplateBase {
-    constructor(params: {
-        name: string
+    constructor(
+        name: string,
         link: string
-    }) {
+    ) {
         super()
-        this.params = params
+    };
+}
+export class VerificationPasswordEmailTemplate extends EmailTemplateBase {
+    constructor(
+        name: string,
+        link: string
+    ) {
+        super()
     };
 }
