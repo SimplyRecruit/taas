@@ -6,14 +6,15 @@ import { UserEntity } from '@/server/resources/User/Entity';
 import RegisterOrganizationReqBody from '@/models/User/RegisterOrganizationReqBody';
 import UserRole from '@/models/User/UserRole';
 import User from '@/models/User/User';
-import crypto from "crypto"
 import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
 import { SessionTokenEntity } from '@/server/resources/SessionToken/Entity';
-import { createResetPasswordLink, sendResetPasswordEmail } from '@/server/resources/User/AuthService';
+import { createResetPasswordLink, createSessionToken } from '@/server/resources/User/AuthService';
 import type { Request } from 'express';
 import { dataSource } from '@/server/main';
 import UserStatus from '@/models/User/UserStatus';
 import { OrganizationEntity } from '@/server/resources/Organization/Entity';
+import { sendEmail } from '@/server/common/Util';
+import { ResetPasswordEmailTemplate } from '@/server/common/DataClasses';
 
 @JsonController("/user")
 export default class {
@@ -40,7 +41,7 @@ export default class {
         await dataSource.transaction(async em => {
             try {
                 const organization = await em.create(OrganizationEntity, { name: organizationName }).save()
-                await em.create(UserEntity, { email, name, role: UserRole.ADMIN, organization }).save()
+                await em.create(UserEntity, { email, name, role: UserRole.ADMIN, organization, status: UserStatus.CONFIRMED }).save()
             } catch (error: any) {
                 if (error.code == 23505) throw new AlreadyExistsError("User already exists")
                 else throw new InternalServerError("Internal Server Error")
@@ -72,15 +73,13 @@ export default class {
 
     @Post('/forgot-password')
     async forgotPassword(@BodyParam("email") email: string, @Req() req: Request) {
-        let token = crypto.randomBytes(64).toString('hex');
-        const tokenHash = Bcrypt.hashSync(token, 8)
+
         try {
             var user = await UserEntity.findOneByOrFail({ email })
-            if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
-            const expiration = new Date(Date.now() + 3 * 60 * 60 * 1000) // 3 hours
-            await SessionTokenEntity.save({ tokenHash, user, expiration })
+            const token = await createSessionToken(user)
             const link = createResetPasswordLink(req, token, email)
-            await sendResetPasswordEmail(user, link)
+            const emailTemplate = new ResetPasswordEmailTemplate({ name: user.name, link })
+            await sendEmail(user.email, "EN", emailTemplate)
         } catch (error: any) {
             if (error.code == 23505) throw new AlreadyExistsError("User already exists")
             else if (error instanceof UnauthorizedError) throw error
