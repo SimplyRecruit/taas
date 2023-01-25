@@ -1,4 +1,4 @@
-import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError, Authorized } from 'routing-controllers';
+import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError, Authorized, NotFoundError, HeaderParam } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
 import LoginReqBody from '@/models/User/LoginReqBody';
@@ -14,7 +14,9 @@ import { dataSource } from '@/server/main';
 import UserStatus from '@/models/User/UserStatus';
 import { OrganizationEntity } from '@/server/resources/Organization/Entity';
 import { sendEmail } from '@/server/common/Util';
-import { ResetPasswordEmailTemplate } from '@/server/common/DataClasses';
+import { ResetPasswordEmailTemplate, VerificationPasswordEmailTemplate } from '@/server/common/DataClasses';
+import { EntityNotFoundError } from 'typeorm';
+import type Language from '@/models/Language';
 
 @JsonController("/user")
 export default class {
@@ -37,14 +39,21 @@ export default class {
 
     @Post('/register-organization')
     @Authorized(UserRole.SU)
-    async registerOrganization(@Body() { email, organizationName, name }: RegisterOrganizationReqBody) {
+    async registerOrganization(@Body() { email, organizationName, name }: RegisterOrganizationReqBody, @Req() req: Request, @HeaderParam("Accept-Language") language: Language) {
         await dataSource.transaction(async em => {
             try {
                 const organization = await em.create(OrganizationEntity, { name: organizationName }).save()
                 await em.create(UserEntity, { email, name, role: UserRole.ADMIN, organization, status: UserStatus.CONFIRMED }).save()
+                var user = await UserEntity.findOneByOrFail({ email })
+                const token = await createSessionToken(user)
+                const link = createResetPasswordLink(req, token, email)
+                const emailTemplate = new VerificationPasswordEmailTemplate(user.name, link)
+                await sendEmail(user.email, language, emailTemplate)
             } catch (error: any) {
                 if (error.code == 23505) throw new AlreadyExistsError("User already exists")
-                else throw new InternalServerError("Internal Server Error")
+                if (error instanceof UnauthorizedError) throw error
+                if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")
+                throw new InternalServerError("Internal Server Error")
             }
 
         })
@@ -65,7 +74,7 @@ export default class {
                 await em.remove(sessionToken)
             } catch (error) {
                 if (error instanceof UnauthorizedError) throw error
-                else throw new InternalServerError("Internal Server Error")
+                throw new InternalServerError("Internal Server Error")
             }
         })
         return "Reset password successfully"
@@ -73,17 +82,16 @@ export default class {
 
     @Post('/forgot-password')
     async forgotPassword(@BodyParam("email") email: string, @Req() req: Request) {
-
         try {
             var user = await UserEntity.findOneByOrFail({ email })
             const token = await createSessionToken(user)
             const link = createResetPasswordLink(req, token, email)
-            const emailTemplate = new ResetPasswordEmailTemplate({ name: user.name, link })
+            const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
             await sendEmail(user.email, "EN", emailTemplate)
         } catch (error: any) {
-            if (error.code == 23505) throw new AlreadyExistsError("User already exists")
-            else if (error instanceof UnauthorizedError) throw error
-            else throw new InternalServerError("Internal Server Error")
+            if (error instanceof UnauthorizedError) throw error
+            if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")
+            throw new InternalServerError("Internal Server Error")
         }
         return "Password reset email successfully sent"
     }
