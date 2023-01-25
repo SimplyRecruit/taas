@@ -108,7 +108,7 @@ export default class {
                 if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
                 const customer = await em.findOneOrFail(CustomerEntity, { where: { id: customerId }, relations: { organization: true } })
                 if (customer.organization.id !== currentUser.organization.id) throw new ForbiddenError()
-                await em.create(CustomerResourceEntity, { customer, resource }).save()
+                await em.save(CustomerResourceEntity, { customer, resource })
             } catch (error) {
                 if (error instanceof EntityNotFoundError) throw new NotFoundError()
                 else if (error instanceof ForbiddenError) throw new ForbiddenError()

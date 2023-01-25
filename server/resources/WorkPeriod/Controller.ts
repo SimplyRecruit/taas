@@ -33,10 +33,10 @@ export default class {
                 organization: { id: currentUser.organization.id }
             })
             if (existing !== null) throw new HttpError(409, "Period already exists")
-            await em.create(WorkPeriodEntity, {
+            await em.save(WorkPeriodEntity, {
                 organization: currentUser.organization,
                 period: periodDate
-            }).save()
+            })
         })
         return "Done"
     }
