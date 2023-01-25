@@ -81,13 +81,13 @@ export default class {
     }
 
     @Post('/forgot-password')
-    async forgotPassword(@BodyParam("email") email: string, @Req() req: Request) {
+    async forgotPassword(@BodyParam("email") email: string, @Req() req: Request, @HeaderParam("Accept-Language") language: Language) {
         try {
             var user = await UserEntity.findOneByOrFail({ email })
             const token = await createSessionToken(user)
             const link = createResetPasswordLink(req, token, email)
             const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
-            await sendEmail(user.email, "EN", emailTemplate)
+            await sendEmail(user.email, language, emailTemplate)
         } catch (error: any) {
             if (error instanceof UnauthorizedError) throw error
             if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")
