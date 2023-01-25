@@ -3,7 +3,7 @@ import Bcrypt from "bcrypt"
 import { EntityNotFoundError } from 'typeorm';
 import UserRole from '@/models/User/UserRole';
 import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterReqBody from '@/models/User/RegisterReqBody';
+import RegisterReqBody from '@/models/User/RegisterOrganizationReqBody';
 import Resource from '@/models/Resource';
 import { ResourceEntity } from '@/server/resources/Resource/Entity';
 import { dataSource } from '@/server/main';

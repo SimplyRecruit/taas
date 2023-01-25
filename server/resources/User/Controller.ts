@@ -1,9 +1,9 @@
-import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError } from 'routing-controllers';
+import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError, Authorized } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
 import LoginReqBody from '@/models/User/LoginReqBody';
 import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterReqBody from '@/models/User/RegisterReqBody';
+import RegisterOrganizationReqBody from '@/models/User/RegisterOrganizationReqBody';
 import UserRole from '@/models/User/UserRole';
 import User from '@/models/User/User';
 import crypto from "crypto"
@@ -13,6 +13,7 @@ import { createResetPasswordLink, sendResetPasswordEmail } from '@/server/resour
 import type { Request } from 'express';
 import { dataSource } from '@/server/main';
 import UserStatus from '@/models/User/UserStatus';
+import { OrganizationEntity } from '@/server/resources/Organization/Entity';
 
 @JsonController("/user")
 export default class {
@@ -33,15 +34,19 @@ export default class {
         return token
     }
 
-    @Post('/register')
-    async register(@Body() { email, password, name }: RegisterReqBody) {
-        const passwordHash = Bcrypt.hashSync(password, 8)
-        try {
-            await UserEntity.create({ email, passwordHash, name, role: UserRole.ADMIN }).save()
-        } catch (error: any) {
-            if (error.code == 23505) throw new AlreadyExistsError("User already exists")
-            else throw new InternalServerError("Internal Server Error")
-        }
+    @Post('/register-organization')
+    @Authorized(UserRole.SU)
+    async registerOrganization(@Body() { email, organizationName, name }: RegisterOrganizationReqBody) {
+        await dataSource.transaction(async em => {
+            try {
+                const organization = await em.create(OrganizationEntity, { name: organizationName }).save()
+                await em.create(UserEntity, { email, name, role: UserRole.ADMIN, organization }).save()
+            } catch (error: any) {
+                if (error.code == 23505) throw new AlreadyExistsError("User already exists")
+                else throw new InternalServerError("Internal Server Error")
+            }
+
+        })
         return "Registration Succesful"
     }
 
