@@ -26,7 +26,10 @@ import CustomerController from '@/server/resources/Customer/Controller';
 const dataSource = new DataSource({
     type: "postgres",
     url: process.env.DB_CSTR,
-    entities: [join(__dirname, './resources/**/*Entity.ts'), join(__dirname, './resources/relations/**/*.ts')], // [PersonEntity, HatEntity],
+    entities: [
+        join(__dirname, './resources/**/*Entity.{ts,js}'),
+        join(__dirname, './resources/relations/**/*.{ts,js}'),
+    ], // [PersonEntity, HatEntity],
     logging: false,
     synchronize: true,
     namingStrategy: new SnakeNamingStrategy(),
