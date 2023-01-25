@@ -16,7 +16,7 @@ export class UserEntity extends EntityBase {
     @Column({ unique: true })
     email: string
 
-    @Column()
+    @Column({ nullable: true })
     passwordHash: string
 
     @Column({
