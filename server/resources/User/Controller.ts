@@ -1,18 +1,22 @@
-import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError } from 'routing-controllers';
+import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError, Authorized, NotFoundError, HeaderParam } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
 import LoginReqBody from '@/models/User/LoginReqBody';
 import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterReqBody from '@/models/User/RegisterReqBody';
+import RegisterOrganizationReqBody from '@/models/User/RegisterOrganizationReqBody';
 import UserRole from '@/models/User/UserRole';
 import User from '@/models/User/User';
-import crypto from "crypto"
 import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
 import { SessionTokenEntity } from '@/server/resources/SessionToken/Entity';
-import { createResetPasswordLink, sendResetPasswordEmail } from '@/server/resources/User/AuthService';
+import { createResetPasswordLink, createSessionToken } from '@/server/resources/User/AuthService';
 import type { Request } from 'express';
 import { dataSource } from '@/server/main';
 import UserStatus from '@/models/User/UserStatus';
+import { OrganizationEntity } from '@/server/resources/Organization/Entity';
+import { sendEmail } from '@/server/common/Util';
+import { EntityNotFoundError } from 'typeorm';
+import type Language from '@/models/Language';
+import { EmailTemplate } from '@/server/common/DataClasses';
 
 @JsonController("/user")
 export default class {
@@ -33,15 +37,26 @@ export default class {
         return token
     }
 
-    @Post('/register')
-    async register(@Body() { email, password, name }: RegisterReqBody) {
-        const passwordHash = Bcrypt.hashSync(password, 8)
-        try {
-            await UserEntity.create({ email, passwordHash, name, role: UserRole.ADMIN }).save()
-        } catch (error: any) {
-            if (error.code == 23505) throw new AlreadyExistsError("User already exists")
-            else throw new InternalServerError("Internal Server Error")
-        }
+    @Post('/register-organization')
+    @Authorized(UserRole.SU)
+    async registerOrganization(@Body() { email, organizationName, name }: RegisterOrganizationReqBody, @Req() req: Request, @HeaderParam("Accept-Language") language: Language) {
+        await dataSource.transaction(async em => {
+            try {
+                const organization = await em.save(OrganizationEntity, { name: organizationName })
+                const user = await em.save(UserEntity, { email, name, role: UserRole.ADMIN, organization })
+                const token = await createSessionToken(user, true, em)
+                const link = createResetPasswordLink(req, token, email)
+                const emailTemplate = new EmailTemplate.ResetPassword(language, { name, link })
+                await sendEmail(email, emailTemplate)
+            } catch (error: any) {
+                console.log(error)
+                if (error.code == 23505) throw new AlreadyExistsError("User already exists")
+                if (error instanceof UnauthorizedError) throw error
+                if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")
+                throw new InternalServerError("Internal Server Error")
+            }
+
+        })
         return "Registration Succesful"
     }
 
@@ -59,27 +74,24 @@ export default class {
                 await em.remove(sessionToken)
             } catch (error) {
                 if (error instanceof UnauthorizedError) throw error
-                else throw new InternalServerError("Internal Server Error")
+                throw new InternalServerError("Internal Server Error")
             }
         })
         return "Reset password successfully"
     }
 
     @Post('/forgot-password')
-    async forgotPassword(@BodyParam("email") email: string, @Req() req: Request) {
-        let token = crypto.randomBytes(64).toString('hex');
-        const tokenHash = Bcrypt.hashSync(token, 8)
+    async forgotPassword(@BodyParam("email") email: string, @Req() req: Request, @HeaderParam("Accept-Language") language: Language) {
         try {
-            var user = await UserEntity.findOneByOrFail({ email })
-            if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
-            const expiration = new Date(Date.now() + 3 * 60 * 60 * 1000) // 3 hours
-            await SessionTokenEntity.save({ tokenHash, user, expiration })
+            const user = await UserEntity.findOneByOrFail({ email })
+            const token = await createSessionToken(user, false)
             const link = createResetPasswordLink(req, token, email)
-            await sendResetPasswordEmail(user, link)
+            const emailTemplate = new EmailTemplate.ResetPassword(language, { name: user.name, link })
+            await sendEmail(email, emailTemplate)
         } catch (error: any) {
-            if (error.code == 23505) throw new AlreadyExistsError("User already exists")
-            else if (error instanceof UnauthorizedError) throw error
-            else throw new InternalServerError("Internal Server Error")
+            if (error instanceof UnauthorizedError) throw error
+            if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")
+            throw new InternalServerError("Internal Server Error")
         }
         return "Password reset email successfully sent"
     }

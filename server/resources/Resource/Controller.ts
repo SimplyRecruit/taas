@@ -3,7 +3,7 @@ import Bcrypt from "bcrypt"
 import { EntityNotFoundError } from 'typeorm';
 import UserRole from '@/models/User/UserRole';
 import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterReqBody from '@/models/User/RegisterReqBody';
+import RegisterReqBody from '@/models/User/RegisterOrganizationReqBody';
 import Resource from '@/models/Resource';
 import { ResourceEntity } from '@/server/resources/Resource/Entity';
 import { dataSource } from '@/server/main';
@@ -37,22 +37,22 @@ export default class {
         return "Resource Update Successful"
     }
 
-    @Post()
-    @Authorized(UserRole.ADMIN)
-    async create(@BodyParam("user") { email, password, name }: RegisterReqBody, @BodyParam("resource") resource: Resource, @CurrentUser() currentUser: UserEntity) {
-        const passwordHash = Bcrypt.hashSync(password, 8)
-        await dataSource.transaction(async (em) => {
-            try {
-                if (await em.findOneBy(ResourceEntity, { id: resource.id }) != null) throw new AlreadyExistsError("Resource already exists")
-                const newUser = await em.save(UserEntity.create({ email, passwordHash, name, organization: currentUser.organization }))
-                const newResource = await em.save(ResourceEntity.create({ ...resource, organization: currentUser.organization, user: newUser }))
-            } catch (error) {
-                if (error instanceof AlreadyExistsError) throw new AlreadyExistsError("Resource already exists")
-                else throw new InternalServerError("Internal Server Error")
-            }
-        })
-        return "Resource Creation Successful"
-    }
+    // @Post()
+    // @Authorized(UserRole.ADMIN)
+    // async create(@BodyParam("user") { email, password, name }: RegisterReqBody, @BodyParam("resource") resource: Resource, @CurrentUser() currentUser: UserEntity) {
+    //     const passwordHash = Bcrypt.hashSync(password, 8)
+    //     await dataSource.transaction(async (em) => {
+    //         try {
+    //             if (await em.findOneBy(ResourceEntity, { id: resource.id }) != null) throw new AlreadyExistsError("Resource already exists")
+    //             const newUser = await em.save(UserEntity.create({ email, passwordHash, name, organization: currentUser.organization }))
+    //             const newResource = await em.save(ResourceEntity.create({ ...resource, organization: currentUser.organization, user: newUser }))
+    //         } catch (error) {
+    //             if (error instanceof AlreadyExistsError) throw new AlreadyExistsError("Resource already exists")
+    //             else throw new InternalServerError("Internal Server Error")
+    //         }
+    //     })
+    //     return "Resource Creation Successful"
+    // }
 
     @Delete('/:id')
     @Authorized(UserRole.ADMIN)
@@ -108,7 +108,7 @@ export default class {
                 if (resource.organization.id !== currentUser.organization.id) throw new ForbiddenError()
                 const customer = await em.findOneOrFail(CustomerEntity, { where: { id: customerId }, relations: { organization: true } })
                 if (customer.organization.id !== currentUser.organization.id) throw new ForbiddenError()
-                await em.create(CustomerResourceEntity, { customer, resource }).save()
+                await em.save(CustomerResourceEntity, { customer, resource })
             } catch (error) {
                 if (error instanceof EntityNotFoundError) throw new NotFoundError()
                 else if (error instanceof ForbiddenError) throw new ForbiddenError()
