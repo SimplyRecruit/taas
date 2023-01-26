@@ -14,9 +14,9 @@ import { dataSource } from '@/server/main';
 import UserStatus from '@/models/User/UserStatus';
 import { OrganizationEntity } from '@/server/resources/Organization/Entity';
 import { sendEmail } from '@/server/common/Util';
-import { ResetPasswordEmailTemplate, VerificationEmailTemplate } from '@/server/common/DataClasses';
 import { EntityNotFoundError } from 'typeorm';
 import type Language from '@/models/Language';
+import { EmailTemplate } from '@/server/common/DataClasses';
 
 @JsonController("/user")
 export default class {
@@ -46,8 +46,8 @@ export default class {
                 const user = await em.save(UserEntity, { email, name, role: UserRole.ADMIN, organization })
                 const token = await createSessionToken(user, true, em)
                 const link = createResetPasswordLink(req, token, email)
-                const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
-                await sendEmail(user.email, language, emailTemplate)
+                const emailTemplate = new EmailTemplate.ResetPassword(language, { name, link })
+                await sendEmail(email, emailTemplate)
             } catch (error: any) {
                 console.log(error)
                 if (error.code == 23505) throw new AlreadyExistsError("User already exists")
@@ -86,8 +86,8 @@ export default class {
             const user = await UserEntity.findOneByOrFail({ email })
             const token = await createSessionToken(user, false)
             const link = createResetPasswordLink(req, token, email)
-            const emailTemplate = new ResetPasswordEmailTemplate(user.name, link)
-            await sendEmail(user.email, language, emailTemplate)
+            const emailTemplate = new EmailTemplate.ResetPassword(language, { name: user.name, link })
+            await sendEmail(email, emailTemplate)
         } catch (error: any) {
             if (error instanceof UnauthorizedError) throw error
             if (error instanceof EntityNotFoundError) throw new NotFoundError("No user with given email")

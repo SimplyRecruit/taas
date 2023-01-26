@@ -1,17 +1,14 @@
 import { smtp } from "@/server/main"
-import { EMAIL_TEMPLATE_IDs } from "@/server/common/Config"
-import { EmailTemplateBase } from "@/server/common/DataClasses"
-import Language from "@/models/Language"
+import { EmailTemplate } from "@/server/common/DataClasses"
 
-
-export async function sendEmail(to: string, language: Language, emailTemplate: EmailTemplateBase) {
+export async function sendEmail(to: string, emailTemplate: EmailTemplate.Base) {
     console.log(emailTemplate)
     const message = {
         to,
         from: 'no-reply@bowform.com',
-        templateId: EMAIL_TEMPLATE_IDs[emailTemplate.constructor.name][language],
+        templateId: emailTemplate.id,
         version: 'en',
-        dynamicTemplateData: { ...emailTemplate }
+        dynamicTemplateData: emailTemplate.parameters
     }
     await smtp.send(message)
 }
