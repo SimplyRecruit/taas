@@ -12,4 +12,4 @@ enum Route {
   ProfileSettings = '/settings/account',
 }
 
-export default Route;
+export { Route };

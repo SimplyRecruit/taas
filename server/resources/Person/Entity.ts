@@ -1,4 +1,4 @@
-import { HatEntity } from "@/server/resources/Hat/Entity"
+import { HatEntity } from "~/resources/Hat/Entity"
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinColumn, OneToOne } from "typeorm"
 
 @Entity("person")

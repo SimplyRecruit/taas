@@ -1,7 +1,7 @@
-import EntityBase from "@/server/EntityBase"
-import { CustomerEntity } from "@/server/resources/Customer/Entity"
-import { ProjectEntity } from "@/server/resources/Project/Entity"
-import { ResourceEntity } from "@/server/resources/Resource/Entity"
+import EntityBase from "~/EntityBase"
+import { CustomerEntity } from "~/resources/Customer/Entity"
+import { ProjectEntity } from "~/resources/Project/Entity"
+import { ResourceEntity } from "~/resources/Resource/Entity"
 import { Entity, Column, JoinColumn, ManyToOne } from "typeorm"
 
 @Entity("time_track")

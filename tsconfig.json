@@ -8,7 +8,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "*"
+        "src/*"
+      ],
+      "~/*": [
+        "server/*"
       ]
     },
     "target": "es5",

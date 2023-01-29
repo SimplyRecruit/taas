@@ -1,11 +1,11 @@
 import { Body, Get, Post, JsonController, CurrentUser, InternalServerError, QueryParams, BadRequestError, HttpError, Delete, Authorized, ForbiddenError, NotFoundError, Put } from 'routing-controllers';
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm';
-import TableQueryParameters from '@/models/TableQueryParameters';
-import UserRole from '@/models/User/UserRole';
-import WorkPeriod from '@/models/WorkPeriod';
-import { dataSource } from '@/server/main';
-import { UserEntity } from '@/server/resources/User/Entity';
-import { WorkPeriodEntity } from '@/server/resources/WorkPeriod/Entity';
+import TableQueryParameters from 'models/TableQueryParameters';
+import UserRole from 'models/User/UserRole';
+import WorkPeriod from 'models/WorkPeriod';
+import { dataSource } from '~/main';
+import { UserEntity } from '~/resources/User/Entity';
+import { WorkPeriodEntity } from '~/resources/WorkPeriod/Entity';
 @JsonController("/work-period")
 @Authorized(UserRole.ADMIN)
 export default class {

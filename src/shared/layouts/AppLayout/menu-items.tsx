@@ -1,4 +1,4 @@
-import Route from '@/src/shared/routes';
+import { Route } from '@/shared/constants/routes';
 import Link from 'next/link';
 import {
   FiLogOut,
