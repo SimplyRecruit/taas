@@ -6,7 +6,13 @@ import {
   FiCalendar,
   FiUsers,
   FiClock,
+  FiFileText,
+  FiBarChart2,
+  FiPieChart,
 } from 'react-icons/fi';
+import { FaRegHandshake } from "react-icons/fa"
+import { BarChartOutlined } from "@ant-design/icons"
+import { IoGridOutline } from "react-icons/io5"
 
 type MenuItem = {
   icon: JSX.Element;
@@ -32,25 +38,42 @@ const topItems = [
     label: 'Periods',
     path: Route.Periods,
   },
-  {
-    icon: <FiUsers />,
-    label: 'People',
-    path: "Route.People",
-  },
 ];
 
-const bottomItems = [
+const analyseItems = [
+  {
+    icon: <IoGridOutline />,
+    label: 'Dashboard',
+    path: Route.DashBoard,
+  },
+  {
+    icon: <FiBarChart2 />,
+    label: 'Reports',
+    path: Route.Reports,
+  },
+];
+const adminItems = [
+  {
+    icon: <FiFileText />,
+    label: 'Projects',
+    path: Route.Projects,
+  },
+  {
+    icon: <FiUsers />,
+    label: 'Team',
+    path: Route.Team,
+  },
+  {
+    icon: <FaRegHandshake />,
+    label: 'Clients',
+    path: Route.Clients,
+  },
   {
     icon: <FiSettings />,
     label: 'Settings',
-    path: "Route.SettingsProfile",
-  },
-  {
-    icon: <FiLogOut />,
-    label: 'Log out',
-    path: "Route.Logout",
+    path: Route.OrganizationSettings,
   },
 ];
-
 export const topMenuItems = generateMenuItems(topItems);
-export const bottomMenuItems = generateMenuItems(bottomItems);
+export const analyseMenuItems = generateMenuItems(analyseItems);
+export const adminMenuItems = generateMenuItems(adminItems);

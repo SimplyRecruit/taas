@@ -3,8 +3,6 @@ import { GetServerSideProps } from 'next';
 
 export const authRoutes: string[] = [
   Route.Login,
-  Route.Register,
-  Route.ConfirmSignUp,
 ];
 
 const checkAuthentication: GetServerSideProps = async (context) => {
@@ -14,7 +12,7 @@ const checkAuthentication: GetServerSideProps = async (context) => {
     if (authRoutes.includes(resolvedPath)) {
       return {
         redirect: {
-          destination: Route.Home,
+          destination: Route.TimeTrack,
           permanent: false,
         },
       };
@@ -28,7 +26,7 @@ const checkAuthentication: GetServerSideProps = async (context) => {
     if (!authRoutes.includes(resolvedPath)) {
       return {
         redirect: {
-          destination: '/login',
+          destination: Route.Login,
           permanent: false,
         },
       };
