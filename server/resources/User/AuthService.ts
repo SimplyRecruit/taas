@@ -1,7 +1,7 @@
-import UserStatus from "@/models/User/UserStatus";
-import { OrganizationEntity } from "@/server/resources/Organization/Entity";
-import { SessionTokenEntity } from "@/server/resources/SessionToken/Entity";
-import { UserEntity } from "@/server/resources/User/Entity";
+import UserStatus from "models/User/UserStatus";
+import { OrganizationEntity } from "~/resources/Organization/Entity";
+import { SessionTokenEntity } from "~/resources/SessionToken/Entity";
+import { UserEntity } from "~/resources/User/Entity";
 import { Request } from "express";
 import Jwt from "jsonwebtoken";
 import crypto from "crypto"

@@ -1,15 +1,15 @@
 import { Body, Get, Post, JsonController, Authorized, CurrentUser, InternalServerError, BodyParam, Param, Patch, NotFoundError, ForbiddenError, Delete } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import { EntityNotFoundError } from 'typeorm';
-import UserRole from '@/models/User/UserRole';
-import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterReqBody from '@/models/User/RegisterOrganizationReqBody';
-import Resource from '@/models/Resource';
-import { ResourceEntity } from '@/server/resources/Resource/Entity';
-import { dataSource } from '@/server/main';
-import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
-import { CustomerResourceEntity } from '@/server/resources/relations/CustomerResource';
-import { CustomerEntity } from '@/server/resources/Customer/Entity';
+import UserRole from 'models/User/UserRole';
+import { UserEntity } from '~/resources/User/Entity';
+import RegisterReqBody from 'models/User/RegisterOrganizationReqBody';
+import Resource from 'models/Resource';
+import { ResourceEntity } from '~/resources/Resource/Entity';
+import { dataSource } from '~/main';
+import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
+import { CustomerResourceEntity } from '~/resources/relations/CustomerResource';
+import { CustomerEntity } from '~/resources/Customer/Entity';
 
 @JsonController("/resource")
 export default class {

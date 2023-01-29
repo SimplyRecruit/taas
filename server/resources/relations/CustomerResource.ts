@@ -1,6 +1,6 @@
-import EntityBaseOnlyDates from "@/server/EntityBaseOnlyDates"
-import { CustomerEntity } from "@/server/resources/Customer/Entity"
-import { ResourceEntity } from "@/server/resources/Resource/Entity"
+import EntityBaseOnlyDates from "~/EntityBaseOnlyDates"
+import { CustomerEntity } from "~/resources/Customer/Entity"
+import { ResourceEntity } from "~/resources/Resource/Entity"
 import { Entity, Column, ManyToOne, PrimaryColumn } from "typeorm"
 
 @Entity("customer_resource")

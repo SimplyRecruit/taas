@@ -1,9 +1,9 @@
 import { Entity, Column, OneToMany } from "typeorm"
-import EntityBase from "@/server/EntityBase"
-import { ResourceEntity } from "@/server/resources/Resource/Entity"
-import { UserEntity } from "@/server/resources/User/Entity"
-import { CustomerEntity } from "@/server/resources/Customer/Entity"
-import { WorkPeriodEntity } from "@/server/resources/WorkPeriod/Entity"
+import EntityBase from "~/EntityBase"
+import { ResourceEntity } from "~/resources/Resource/Entity"
+import { UserEntity } from "~/resources/User/Entity"
+import { CustomerEntity } from "~/resources/Customer/Entity"
+import { WorkPeriodEntity } from "~/resources/WorkPeriod/Entity"
 
 @Entity("organization")
 export class OrganizationEntity extends EntityBase {

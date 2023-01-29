@@ -7,9 +7,9 @@ import { QuestionCircleOutlined, BellOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
-import CurrentUserMenu from '@/src/shared/components/ProfileMenu';
-import { authRoutes } from '@/src/auth/utils/checkAuthentication';
-import Route from '@/src/shared/routes';
+import { authRoutes } from '@/auth/utils/checkAuthentication';
+import { Route } from '@/shared/constants';
+import ProfileMenu from '@/shared/components/ProfileMenu';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
@@ -67,7 +67,7 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
                   <FiBell size={18} />
                 </Badge>
               </div>
-              <CurrentUserMenu />
+              <ProfileMenu />
             </Space>
           </div>
 

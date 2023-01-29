@@ -1,22 +1,22 @@
 import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError, Authorized, NotFoundError, HeaderParam } from 'routing-controllers';
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
-import LoginReqBody from '@/models/User/LoginReqBody';
-import { UserEntity } from '@/server/resources/User/Entity';
-import RegisterOrganizationReqBody from '@/models/User/RegisterOrganizationReqBody';
-import UserRole from '@/models/User/UserRole';
-import User from '@/models/User/User';
-import { AlreadyExistsError } from '@/server/errors/AlreadyExistsError';
-import { SessionTokenEntity } from '@/server/resources/SessionToken/Entity';
-import { createResetPasswordLink, createSessionToken } from '@/server/resources/User/AuthService';
+import LoginReqBody from 'models/User/LoginReqBody';
+import { UserEntity } from '~/resources/User/Entity';
+import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody';
+import UserRole from 'models/User/UserRole';
+import User from 'models/User/User';
+import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
+import { SessionTokenEntity } from '~/resources/SessionToken/Entity';
+import { createResetPasswordLink, createSessionToken } from '~/resources/User/AuthService';
 import type { Request } from 'express';
-import { dataSource } from '@/server/main';
-import UserStatus from '@/models/User/UserStatus';
-import { OrganizationEntity } from '@/server/resources/Organization/Entity';
-import { sendEmail } from '@/server/common/Util';
+import { dataSource } from '~/main';
+import UserStatus from 'models/User/UserStatus';
+import { OrganizationEntity } from '~/resources/Organization/Entity';
+import { sendEmail } from '~/common/Util';
 import { EntityNotFoundError } from 'typeorm';
-import type Language from '@/models/Language';
-import { EmailTemplate } from '@/server/common/DataClasses';
+import type Language from 'models/Language';
+import { EmailTemplate } from '~/common/DataClasses';
 
 @JsonController("/user")
 export default class {
