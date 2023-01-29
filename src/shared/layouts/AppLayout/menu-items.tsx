@@ -1,10 +1,7 @@
+import Route from '@/src/shared/routes';
 import Link from 'next/link';
 import {
-  FiFilm,
-  FiHash,
-  // FiHome,
   FiLogOut,
-  // FiPlay,
   FiSettings,
   FiCalendar,
   FiUsers,
@@ -25,31 +22,21 @@ const generateMenuItems = (items: MenuItem[]) =>
   }));
 
 const topItems = [
-  // {
-  //   icon: <FiHome />,
-  //   label: 'Home',
-  //   path: Route.Home,
-  // },
   {
     icon: <FiClock />,
     label: 'Time Track',
-    path: "Route.Meetings",
+    path: Route.TimeTrack,
   },
   {
     icon: <FiCalendar />,
     label: 'Periods',
-    path: "",
+    path: Route.Periods,
   },
   {
     icon: <FiUsers />,
     label: 'People',
     path: "Route.People",
   },
-  // {
-  //   icon: <FiPlay />,
-  //   label: 'Academy',
-  //   path: Route.Academy,
-  // },
 ];
 
 const bottomItems = [

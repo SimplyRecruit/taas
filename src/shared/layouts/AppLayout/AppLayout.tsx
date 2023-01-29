@@ -48,13 +48,11 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
             </Typography.Title>
             <Space size="large" align="center" >
               <Button
+                icon={<QuestionCircleOutlined />}
                 target="_blank"
                 type="text"
               >
-                <Space size='small' align='center'>
-                  <QuestionCircleOutlined />
-                  <Typography>Help</Typography>
-                </Space>
+                Help
               </Button>
               <div style={{ marginTop: ICON_TOP_MARGIN_FIX }}>
                 <Badge
@@ -64,9 +62,9 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
                     cursor: "pointer",
                   }}
                   size="small"
-                  offset={[3, 0]}
+                  offset={[1, -1]}
                 >
-                  <FiBell size={16} />
+                  <FiBell size={18} />
                 </Badge>
               </div>
               <CurrentUserMenu />
@@ -96,7 +94,13 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
               />
               <Menu
                 style={{ height: '100%' }}
-                items={[{ label: "ADMIN", key: "AS", children: topMenuItems, type: "group" }]}
+                items={[{ label: "‏‏‎ ‎  Analyse", key: "AS", children: topMenuItems, type: "group" }]}
+                mode="inline"
+                selectedKeys={[router.pathname.split('/')[1]]}
+              />
+              <Menu
+                style={{ height: '100%' }}
+                items={[{ label: "‏‏‎ ‎  Manage", key: "AS", children: topMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
