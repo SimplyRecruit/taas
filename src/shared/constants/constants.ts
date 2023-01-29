@@ -1,5 +1,5 @@
 //  SIDER
 const SIDER_WIDTH = 168;
-const HEADER_HEIGHT = 64;
+const HEADER_HEIGHT = 80;
 
 export { SIDER_WIDTH, HEADER_HEIGHT };
