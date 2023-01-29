@@ -1,12 +1,15 @@
 enum Route {
-  Home = '/',
-  TimeTrack = '/tracker',
-  Periods = '/periods',
-  People = '/people',
   Login = '/login',
   Logout = '/logout',
-  Settings = '/settings',
-  SettingsProfile = '/settings/account',
+  TimeTrack = '/tracker',
+  Periods = '/periods',
+  DashBoard = '/dashboard',
+  Reports = '/reports',
+  Projects = '/projects',
+  Team = '/team',
+  Clients = '/clients',
+  OrganizationSettings = '/settings',
+  ProfileSettings = '/settings/account',
 }
 
 export default Route;

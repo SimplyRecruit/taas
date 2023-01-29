@@ -1,4 +1,4 @@
-import { bottomMenuItems, topMenuItems } from './menu-items';
+import { topMenuItems, analyseMenuItems, adminMenuItems } from './menu-items';
 import { HEADER_HEIGHT, SIDER_WIDTH, ICON_TOP_MARGIN_FIX } from 'src/shared/constants';
 import { Avatar, Badge, Button, ConfigProvider, Divider, Layout, Menu, Space, Typography } from 'antd';
 import { useRouter } from 'next/router';
@@ -94,13 +94,13 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
               />
               <Menu
                 style={{ height: '100%' }}
-                items={[{ label: "‏‏‎ ‎  Analyse", key: "AS", children: topMenuItems, type: "group" }]}
+                items={[{ label: "‏ ‏ Analyse", key: "analyse", children: analyseMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
                 style={{ height: '100%' }}
-                items={[{ label: "‏‏‎ ‎  Manage", key: "AS", children: topMenuItems, type: "group" }]}
+                items={[{ label: "‏ ‏ Manage", key: "admin", children: adminMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
