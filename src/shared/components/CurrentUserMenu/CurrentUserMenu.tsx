@@ -1,13 +1,14 @@
-import { FiSettings, FiLogOut, FiHelpCircle } from 'react-icons/fi';
-import { MenuProps, Dropdown, Space, Typography, Button } from 'antd';
+import { FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
+import { MenuProps, Dropdown, Space, Typography, Button, Avatar } from 'antd';
 import { useRouter } from 'next/router';
+import { ICON_TOP_MARGIN_FIX } from '@/src/shared/constants';
 
 
 export default function CurrentUserMenu() {
   const router = useRouter();
 
 
-  const name = 'test';
+  const name = 'John Doe';
 
   const items: MenuProps['items'] = [
     {
@@ -17,11 +18,6 @@ export default function CurrentUserMenu() {
       onClick: () => {
         router.push('/settings');
       },
-    },
-    {
-      key: 'help',
-      icon: <FiHelpCircle />,
-      label: 'Help',
     },
     {
       key: 'signOut',
@@ -34,21 +30,25 @@ export default function CurrentUserMenu() {
   ];
 
   return (
-    <Dropdown
-      menu={{
-        items,
-      }}
-      placement="bottomLeft"
-      trigger={['click']}
-    >
-      <Button type="link">
+    <div>
+      <Dropdown
+        menu={{
+          items,
+        }}
+        placement="bottomLeft"
+        trigger={['click']}
+      >
+        <Button type="text" style={{ paddingTop: 0, paddingBottom: 0 }} >
+          <Space size="small" align='center'>
+            <Avatar size={'small'} style={{
 
-        <Space size="small">
+            }}>BE</Avatar>
+            <Typography.Text style={{ margin: 0 }}>{name}</Typography.Text>
+            <FiChevronDown size={16} style={{ marginTop: ICON_TOP_MARGIN_FIX }} />
+          </Space>
+        </Button>
+      </Dropdown>
 
-          <Typography.Text>{name}</Typography.Text>
-        </Space>
-
-      </Button>
-    </Dropdown>
+    </div>
   );
 }

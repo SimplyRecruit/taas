@@ -1,9 +1,9 @@
 import { bottomMenuItems, topMenuItems } from './menu-items';
-import { HEADER_HEIGHT, SIDER_WIDTH } from 'src/shared/constants';
-import { Badge, Button, ConfigProvider, Layout, Menu, Space, Typography } from 'antd';
+import { HEADER_HEIGHT, SIDER_WIDTH, ICON_TOP_MARGIN_FIX } from 'src/shared/constants';
+import { Avatar, Badge, Button, ConfigProvider, Divider, Layout, Menu, Space, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import { FiBell } from 'react-icons/fi';
-import { SearchOutlined } from '@ant-design/icons';
+import { FiBell, FiChevronDown, FiHelpCircle } from 'react-icons/fi';
+import { QuestionCircleOutlined, BellOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -24,45 +24,53 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
         token: {
           controlHeight: 40,
           colorBgBase: '#F9FAFD',
+          colorBgLayout: "#F9FAFD",
         },
       }}
     >
       <Layout>
-        <Layout.Header >
+        <Layout.Header style={{ backgroundColor: "#F9FAFD", height: HEADER_HEIGHT, borderBottom: '1px solid #ddd' }}>
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              height: '100%'
+              height: '100%',
+
             }}
           >
             <Typography.Title level={5} style={{ margin: 0 }}>
               Test
             </Typography.Title>
-            <Space align="center" size="large">
+            <Space size="large" align="center" >
               <Button
-                icon={<SearchOutlined />}
                 target="_blank"
                 type="text"
               >
-                Need help?
+                <Space size='small' align='center'>
+                  <QuestionCircleOutlined />
+                  <Typography>Help</Typography>
+                </Space>
               </Button>
+              <div style={{ marginTop: ICON_TOP_MARGIN_FIX }}>
+                <Badge
+                  color="red"
+                  count={9}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  size="small"
+                  offset={[3, 0]}
+                >
+                  <FiBell size={16} />
+                </Badge>
+              </div>
               <CurrentUserMenu />
-              <Badge
-                color="red"
-                count={9}
-                style={{
-                  cursor: "pointer",
-                  marginTop: "1.8rem"
-                }}
-                offset={[5, -5]}
-              >
-                <FiBell size={16} />
-              </Badge>
             </Space>
           </div>
+
         </Layout.Header>
+
         <Layout style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
           <Layout.Sider
             collapsible
