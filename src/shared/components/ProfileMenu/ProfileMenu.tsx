@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { ICON_TOP_MARGIN_FIX } from '@/src/shared/constants';
 
 
-export default function CurrentUserMenu() {
+export default function ProfileMenu() {
   const router = useRouter();
 
 

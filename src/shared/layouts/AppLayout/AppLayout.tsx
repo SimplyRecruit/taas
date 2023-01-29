@@ -7,7 +7,9 @@ import { QuestionCircleOutlined, BellOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
-import CurrentUserMenu from '@/src/shared/components/CurrentUserMenu';
+import CurrentUserMenu from '@/src/shared/components/ProfileMenu';
+import { authRoutes } from '@/src/auth/utils/checkAuthentication';
+import Route from '@/src/shared/routes';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;
@@ -16,7 +18,9 @@ interface PlatformLayoutProps {
 export default function PlatformLayout({ children }: PlatformLayoutProps) {
   const router = useRouter();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-
+  if (authRoutes.includes(router.pathname as Route)) {
+    return <div>{children}</div>;
+  }
 
   return (
     <ConfigProvider

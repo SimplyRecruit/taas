@@ -25,7 +25,8 @@ const LoginPage = () => {
             style={{
                 backgroundImage: 'url(https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg?w=2000)',
                 backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
+                height: "100vh"
             }}>
             <Card className='elevation' style={{ width: '100%', maxWidth: 300 }}>
                 <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>Log In</Typography.Title>
