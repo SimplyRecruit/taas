@@ -29,7 +29,7 @@ const dataSource = new DataSource({
     entities: [
         join(__dirname, './resources/**/*Entity.{ts,js}'),
         join(__dirname, './resources/relations/**/*.{ts,js}'),
-    ], // [PersonEntity, HatEntity],
+    ],
     logging: false,
     synchronize: true,
     namingStrategy: new SnakeNamingStrategy(),
