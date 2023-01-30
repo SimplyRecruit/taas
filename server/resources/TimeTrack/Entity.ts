@@ -1,8 +1,8 @@
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm"
 import EntityBase from "~/EntityBase"
 import CustomerEntity from "~/resources/Customer/Entity"
 import ProjectEntity from "~/resources/Project/Entity"
 import ResourceEntity from "~/resources/Resource/Entity"
-import { Entity, Column, JoinColumn, ManyToOne } from "typeorm"
 
 @Entity("time_track")
 export default class TimeTrackEntity extends EntityBase {

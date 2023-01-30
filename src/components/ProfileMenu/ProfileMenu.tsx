@@ -1,7 +1,7 @@
-import { FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
-import { MenuProps, Dropdown, Space, Typography, Button, Avatar } from 'antd';
-import { useRouter } from 'next/router';
 import { ICON_TOP_MARGIN_FIX } from '@/constants';
+import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd';
+import { useRouter } from 'next/router';
+import { FiChevronDown, FiLogOut, FiSettings } from 'react-icons/fi';
 
 
 export default function ProfileMenu() {

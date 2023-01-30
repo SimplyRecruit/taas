@@ -1,18 +1,11 @@
 import { Route } from '@/constants/routes';
 import Link from 'next/link';
+import { FaRegHandshake } from "react-icons/fa";
 import {
-  FiLogOut,
-  FiSettings,
-  FiCalendar,
-  FiUsers,
-  FiClock,
-  FiFileText,
-  FiBarChart2,
-  FiPieChart,
+  FiBarChart2, FiCalendar, FiClock,
+  FiFileText, FiSettings, FiUsers
 } from 'react-icons/fi';
-import { FaRegHandshake } from "react-icons/fa"
-import { BarChartOutlined } from "@ant-design/icons"
-import { IoGridOutline } from "react-icons/io5"
+import { IoGridOutline } from "react-icons/io5";
 
 type MenuItem = {
   icon: JSX.Element;

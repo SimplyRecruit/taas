@@ -1,4 +1,4 @@
-import { Length, IsDate, IsPositive, Max, IsInt, IsDateString, IsEnum, IsBoolean } from "class-validator";
+import { IsBoolean, IsDateString, IsEnum, Length } from "class-validator";
 import CustomerContractType from "./CustomerContractType";
 
 export default class {

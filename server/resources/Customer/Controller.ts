@@ -1,12 +1,12 @@
 import Customer from "models/Customer"
 import UserRole from "models/User/UserRole"
-import { AlreadyExistsError } from "server/errors/AlreadyExistsError"
 import { Authorized, Body, CurrentUser, Delete, ForbiddenError, Get, InternalServerError, JsonController, NotFoundError, Param, Patch, Post } from "routing-controllers"
+import { AlreadyExistsError } from "server/errors/AlreadyExistsError"
 import { EntityNotFoundError } from "typeorm"
 import { dataSource } from "~/main"
 import CustomerEntity from "~/resources/Customer/Entity"
-import UserEntity from "~/resources/User/Entity"
 import CustomerResourceEntity from "~/resources/relations/CustomerResource"
+import UserEntity from "~/resources/User/Entity"
 
 
 @JsonController("/customer")

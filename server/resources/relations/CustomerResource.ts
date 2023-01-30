@@ -1,7 +1,7 @@
+import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm"
 import EntityBaseOnlyDates from "~/EntityBaseOnlyDates"
 import CustomerEntity from "~/resources/Customer/Entity"
 import ResourceEntity from "~/resources/Resource/Entity"
-import { Entity, Column, ManyToOne, PrimaryColumn } from "typeorm"
 
 @Entity("customer_resource")
 export default class CustomerResourceEntity extends EntityBaseOnlyDates {

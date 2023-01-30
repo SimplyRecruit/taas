@@ -1,13 +1,13 @@
+import Bcrypt from "bcrypt";
+import crypto from "crypto";
+import { Request } from "express";
+import Jwt from "jsonwebtoken";
 import UserStatus from "models/User/UserStatus";
+import { Action, BadRequestError, UnauthorizedError } from "routing-controllers";
+import { EntityManager } from "typeorm/entity-manager/EntityManager";
 import OrganizationEntity from "~/resources/Organization/Entity";
 import SessionTokenEntity from "~/resources/SessionToken/Entity";
 import UserEntity from "~/resources/User/Entity";
-import { Request } from "express";
-import Jwt from "jsonwebtoken";
-import crypto from "crypto"
-import Bcrypt from "bcrypt"
-import { Action, BadRequestError, UnauthorizedError } from "routing-controllers";
-import { EntityManager } from "typeorm/entity-manager/EntityManager";
 
 export async function resolveUserToken(action: Action): Promise<Jwt.JwtPayload | null> {
     const authorization: string = action.request.headers['authorization'] ?? ''

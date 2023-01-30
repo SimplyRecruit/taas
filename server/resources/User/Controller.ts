@@ -1,22 +1,22 @@
-import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpError, InternalServerError, BodyParam, Req, ForbiddenError, Authorized, NotFoundError, HeaderParam } from 'routing-controllers';
-import Bcrypt from "bcrypt"
-import Jwt from "jsonwebtoken"
+import Bcrypt from "bcrypt";
+import type { Request } from 'express';
+import Jwt from "jsonwebtoken";
+import type Language from 'models/Language';
 import LoginReqBody from 'models/User/LoginReqBody';
-import UserEntity from '~/resources/User/Entity';
 import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody';
-import UserRole from 'models/User/UserRole';
 import User from 'models/User/User';
+import UserRole from 'models/User/UserRole';
+import UserStatus from 'models/User/UserStatus';
+import { Authorized, Body, BodyParam, CurrentUser, Get, HeaderParam, InternalServerError, JsonController, NotFoundError, Post, Req, UnauthorizedError } from 'routing-controllers';
+import { EntityNotFoundError } from 'typeorm';
+import { EmailTemplate } from '~/common/DataClasses';
+import { sendEmail } from '~/common/Util';
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
+import { dataSource } from '~/main';
+import OrganizationEntity from '~/resources/Organization/Entity';
 import SessionTokenEntity from '~/resources/SessionToken/Entity';
 import { createResetPasswordLink, createSessionToken } from '~/resources/User/AuthService';
-import type { Request } from 'express';
-import { dataSource } from '~/main';
-import UserStatus from 'models/User/UserStatus';
-import OrganizationEntity from '~/resources/Organization/Entity';
-import { sendEmail } from '~/common/Util';
-import { EntityNotFoundError } from 'typeorm';
-import type Language from 'models/Language';
-import { EmailTemplate } from '~/common/DataClasses';
+import UserEntity from '~/resources/User/Entity';
 
 @JsonController("/user")
 export default class {

@@ -1,8 +1,8 @@
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm"
 import EntityBaseOnlyDates from "~/EntityBaseOnlyDates"
 import OrganizationEntity from "~/resources/Organization/Entity"
 import CustomerResourceEntity from "~/resources/relations/CustomerResource"
 import UserEntity from "~/resources/User/Entity"
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, ManyToOne, OneToMany } from "typeorm"
 
 @Entity("resource")
 export default class ResourceEntity extends EntityBaseOnlyDates {

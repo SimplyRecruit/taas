@@ -1,4 +1,4 @@
-import { Length, IsDate, IsPositive, Max, IsInt, IsDateString } from "class-validator";
+import { IsDateString, IsInt, IsPositive, Length, Max } from "class-validator";
 
 export default class {
     @Length(1, 10)

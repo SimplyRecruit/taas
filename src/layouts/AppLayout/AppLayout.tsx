@@ -1,15 +1,12 @@
-import { topMenuItems, analyseMenuItems, adminMenuItems } from './menu-items';
-import { HEADER_HEIGHT, SIDER_WIDTH, ICON_TOP_MARGIN_FIX } from '@/constants';
-import { Avatar, Badge, Button, ConfigProvider, Divider, Layout, Menu, Space, Typography } from 'antd';
-import { useRouter } from 'next/router';
-import { FiBell, FiChevronDown, FiHelpCircle } from 'react-icons/fi';
-import { QuestionCircleOutlined, BellOutlined } from '@ant-design/icons';
-import Link from 'next/link';
-import { useState } from 'react';
-import Image from 'next/image';
 import { authRoutes } from '@/auth/utils/checkAuthentication';
-import { Route } from '@/constants';
 import ProfileMenu from '@/components/ProfileMenu';
+import { HEADER_HEIGHT, ICON_TOP_MARGIN_FIX, Route, SIDER_WIDTH } from '@/constants';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Badge, Button, ConfigProvider, Layout, Menu, Space, Typography } from 'antd';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { FiBell } from 'react-icons/fi';
+import { adminMenuItems, analyseMenuItems, topMenuItems } from './menu-items';
 
 interface PlatformLayoutProps {
   children: React.ReactNode;

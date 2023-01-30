@@ -1,6 +1,6 @@
-import { Form, Input, Button, Typography, Space, Col, Row, Checkbox, Card } from 'antd';
+import { Button, Card, Form, Input, Typography } from 'antd';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 
 const LoginPage = () => {

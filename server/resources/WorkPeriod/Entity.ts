@@ -1,4 +1,4 @@
-import { Entity, Column, BaseEntity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import OrganizationEntity from "~/resources/Organization/Entity"
 
 @Entity("work_period")

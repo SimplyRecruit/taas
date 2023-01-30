@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { BaseEntity, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from "typeorm"
 
 export default class extends BaseEntity {
 

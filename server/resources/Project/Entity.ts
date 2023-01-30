@@ -1,6 +1,6 @@
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
 import EntityBaseOnlyDates from "~/EntityBaseOnlyDates"
 import CustomerEntity from "~/resources/Customer/Entity"
-import { Entity, Column, PrimaryColumn, JoinColumn, ManyToOne } from "typeorm"
 
 @Entity("project")
 export default class ProjectEntity extends EntityBaseOnlyDates {

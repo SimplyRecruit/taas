@@ -1,5 +1,5 @@
-import { smtp } from "~/main"
 import { EmailTemplate } from "~/common/DataClasses"
+import { smtp } from "~/main"
 
 export async function sendEmail(to: string, emailTemplate: EmailTemplate.Base) {
     console.log(emailTemplate)

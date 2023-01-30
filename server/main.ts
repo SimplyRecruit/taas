@@ -1,12 +1,12 @@
-import 'reflect-metadata' /* this shim is required */
-import express, { Request, Response } from "express"
-import next from "next"
-import { DataSource } from "typeorm"
+import smtp from '@sendgrid/mail';
+import express, { Request, Response } from "express";
+import next from "next";
+import { join } from "path";
+import 'reflect-metadata'; /* this shim is required */
+import { useExpressServer } from 'routing-controllers';
+import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { useExpressServer } from 'routing-controllers'
-import { join } from "path"
 import { authorizationChecker, currentUserChecker } from '~/resources/User/AuthService';
-import smtp from '@sendgrid/mail'
 
 const dev = process.env.NODE_ENV !== "production"
 const app = next({ dev });
@@ -14,13 +14,13 @@ const handle = app.getRequestHandler();
 const port = process.env.PORT || 3000;
 
 // Resolving environment variables
-import "dotenv/config"
+import "dotenv/config";
 
 // Controllers
-import UserController from '~/resources/User/Controller';
-import ResourceController from '~/resources/Resource/Controller';
-import WorkPeriodController from '~/resources/WorkPeriod/Controller';
 import CustomerController from '~/resources/Customer/Controller';
+import ResourceController from '~/resources/Resource/Controller';
+import UserController from '~/resources/User/Controller';
+import WorkPeriodController from '~/resources/WorkPeriod/Controller';
 
 // Connecting to DB
 const dataSource = new DataSource({
@@ -88,4 +88,5 @@ smtp.setApiKey(process.env.SMTP_KEY!);
     }
 })();
 
-export { dataSource, smtp }
+export { dataSource, smtp };
+
