@@ -8,7 +8,7 @@ import UserEntity from '~/resources/User/Entity';
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity';
 @JsonController("/work-period")
 @Authorized(UserRole.ADMIN)
-export default class {
+export default class WorkPeriodController {
 
     @Get()
     async getAll(@CurrentUser() currentUser: UserEntity, @QueryParams() { order, take, skip }: TableQueryParameters) {

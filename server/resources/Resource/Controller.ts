@@ -10,7 +10,7 @@ import ResourceEntity from '~/resources/Resource/Entity';
 import UserEntity from '~/resources/User/Entity';
 
 @JsonController("/resource")
-export default class {
+export default class ResourceController {
 
     @Get()
     @Authorized(UserRole.ADMIN)

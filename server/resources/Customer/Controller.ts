@@ -11,7 +11,7 @@ import UserEntity from "~/resources/User/Entity"
 
 @JsonController("/customer")
 @Authorized(UserRole.ADMIN)
-export default class {
+export default class CustomerController {
 
     @Get()
     async getAll(@CurrentUser() currentUser: UserEntity) {

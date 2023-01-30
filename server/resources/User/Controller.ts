@@ -19,7 +19,7 @@ import { createResetPasswordLink, createSessionToken } from '~/resources/User/Au
 import UserEntity from '~/resources/User/Entity';
 
 @JsonController("/user")
-export default class {
+export default class UserController {
 
     @Post('/login')
     async login(@Body() { email, password }: LoginReqBody) {
