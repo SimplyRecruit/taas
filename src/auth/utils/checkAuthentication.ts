@@ -1,4 +1,4 @@
-import { Route } from '@/shared/constants';
+import { Route } from '@/constants';
 import { GetServerSideProps } from 'next';
 
 export const authRoutes: string[] = [
