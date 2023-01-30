@@ -1,12 +1,12 @@
 import CustomerContractType from "models/CustomerContractType"
 import EntityBaseOnlyDates from "~/EntityBaseOnlyDates"
-import { OrganizationEntity } from "~/resources/Organization/Entity"
-import { CustomerResourceEntity } from "~/resources/relations/CustomerResource"
+import OrganizationEntity from "~/resources/Organization/Entity"
+import CustomerResourceEntity from "~/resources/relations/CustomerResource"
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm"
 
 
 @Entity("customer")
-export class CustomerEntity extends EntityBaseOnlyDates {
+export default class CustomerEntity extends EntityBaseOnlyDates {
 
     @PrimaryColumn()
     id: string

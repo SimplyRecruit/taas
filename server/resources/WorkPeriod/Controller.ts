@@ -4,8 +4,8 @@ import TableQueryParameters from 'models/TableQueryParameters';
 import UserRole from 'models/User/UserRole';
 import WorkPeriod from 'models/WorkPeriod';
 import { dataSource } from '~/main';
-import { UserEntity } from '~/resources/User/Entity';
-import { WorkPeriodEntity } from '~/resources/WorkPeriod/Entity';
+import UserEntity from '~/resources/User/Entity';
+import WorkPeriodEntity from '~/resources/WorkPeriod/Entity';
 @JsonController("/work-period")
 @Authorized(UserRole.ADMIN)
 export default class {

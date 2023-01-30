@@ -2,14 +2,14 @@ import { Body, Get, Post, JsonController, Authorized, CurrentUser, InternalServe
 import Bcrypt from "bcrypt"
 import { EntityNotFoundError } from 'typeorm';
 import UserRole from 'models/User/UserRole';
-import { UserEntity } from '~/resources/User/Entity';
+import UserEntity from '~/resources/User/Entity';
 import RegisterReqBody from 'models/User/RegisterOrganizationReqBody';
 import Resource from 'models/Resource';
-import { ResourceEntity } from '~/resources/Resource/Entity';
+import ResourceEntity from '~/resources/Resource/Entity';
 import { dataSource } from '~/main';
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
-import { CustomerResourceEntity } from '~/resources/relations/CustomerResource';
-import { CustomerEntity } from '~/resources/Customer/Entity';
+import CustomerResourceEntity from '~/resources/relations/CustomerResource';
+import CustomerEntity from '~/resources/Customer/Entity';
 
 @JsonController("/resource")
 export default class {

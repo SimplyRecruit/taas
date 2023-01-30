@@ -1,12 +1,12 @@
 import { Entity, Column, OneToMany } from "typeorm"
 import EntityBase from "~/EntityBase"
-import { ResourceEntity } from "~/resources/Resource/Entity"
-import { UserEntity } from "~/resources/User/Entity"
-import { CustomerEntity } from "~/resources/Customer/Entity"
-import { WorkPeriodEntity } from "~/resources/WorkPeriod/Entity"
+import ResourceEntity from "~/resources/Resource/Entity"
+import UserEntity from "~/resources/User/Entity"
+import CustomerEntity from "~/resources/Customer/Entity"
+import WorkPeriodEntity from "~/resources/WorkPeriod/Entity"
 
 @Entity("organization")
-export class OrganizationEntity extends EntityBase {
+export default class OrganizationEntity extends EntityBase {
 
     @Column()
     name: string

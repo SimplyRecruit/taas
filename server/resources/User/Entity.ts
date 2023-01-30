@@ -1,14 +1,14 @@
 import UserRole from "models/User/UserRole"
 import UserStatus from "models/User/UserStatus"
 import EntityBase from "~/EntityBase"
-import { OrganizationEntity } from "~/resources/Organization/Entity"
-import { ResourceEntity } from "~/resources/Resource/Entity"
+import OrganizationEntity from "~/resources/Organization/Entity"
+import ResourceEntity from "~/resources/Resource/Entity"
 import { Entity, Column, ManyToOne, OneToOne } from "typeorm"
 
 
 
 @Entity("user")
-export class UserEntity extends EntityBase {
+export default class UserEntity extends EntityBase {
 
     @Column({ nullable: true })
     name: string

@@ -1,8 +1,8 @@
 import { Entity, Column, BaseEntity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm"
-import { OrganizationEntity } from "~/resources/Organization/Entity"
+import OrganizationEntity from "~/resources/Organization/Entity"
 
 @Entity("work_period")
-export class WorkPeriodEntity extends BaseEntity {
+export default class WorkPeriodEntity extends BaseEntity {
 
     @PrimaryColumn({ type: "timestamptz" })
     period: Date

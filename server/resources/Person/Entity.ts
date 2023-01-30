@@ -1,8 +1,8 @@
-import { HatEntity } from "~/resources/Hat/Entity"
+import HatEntity from "~/resources/Hat/Entity"
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinColumn, OneToOne } from "typeorm"
 
 @Entity("person")
-export class PersonEntity extends BaseEntity {
+export default class PersonEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number
 

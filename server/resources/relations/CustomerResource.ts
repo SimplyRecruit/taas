@@ -1,10 +1,10 @@
 import EntityBaseOnlyDates from "~/EntityBaseOnlyDates"
-import { CustomerEntity } from "~/resources/Customer/Entity"
-import { ResourceEntity } from "~/resources/Resource/Entity"
+import CustomerEntity from "~/resources/Customer/Entity"
+import ResourceEntity from "~/resources/Resource/Entity"
 import { Entity, Column, ManyToOne, PrimaryColumn } from "typeorm"
 
 @Entity("customer_resource")
-export class CustomerResourceEntity extends EntityBaseOnlyDates {
+export default class CustomerResourceEntity extends EntityBaseOnlyDates {
 
     @PrimaryColumn({ name: 'customer_id' })
     customerId: string

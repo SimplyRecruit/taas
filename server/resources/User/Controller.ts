@@ -2,17 +2,17 @@ import { Body, Get, Post, JsonController, CurrentUser, UnauthorizedError, HttpEr
 import Bcrypt from "bcrypt"
 import Jwt from "jsonwebtoken"
 import LoginReqBody from 'models/User/LoginReqBody';
-import { UserEntity } from '~/resources/User/Entity';
+import UserEntity from '~/resources/User/Entity';
 import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody';
 import UserRole from 'models/User/UserRole';
 import User from 'models/User/User';
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
-import { SessionTokenEntity } from '~/resources/SessionToken/Entity';
+import SessionTokenEntity from '~/resources/SessionToken/Entity';
 import { createResetPasswordLink, createSessionToken } from '~/resources/User/AuthService';
 import type { Request } from 'express';
 import { dataSource } from '~/main';
 import UserStatus from 'models/User/UserStatus';
-import { OrganizationEntity } from '~/resources/Organization/Entity';
+import OrganizationEntity from '~/resources/Organization/Entity';
 import { sendEmail } from '~/common/Util';
 import { EntityNotFoundError } from 'typeorm';
 import type Language from 'models/Language';
