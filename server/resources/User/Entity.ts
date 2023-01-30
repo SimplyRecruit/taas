@@ -39,7 +39,7 @@ export default class UserEntity extends EntityBase {
     @OneToOne(() => ResourceEntity)
     resource: ResourceEntity
 
-    @ManyToOne(() => OrganizationEntity)
+    @ManyToOne(() => OrganizationEntity, { onDelete: "CASCADE" })
     organization: OrganizationEntity
 
 }

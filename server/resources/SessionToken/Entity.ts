@@ -8,7 +8,7 @@ import { Entity, Column, JoinColumn, ManyToOne, BaseEntity, PrimaryColumn, Prima
 @Entity("session_token")
 export default class SessionTokenEntity extends BaseEntity {
 
-    @ManyToOne(() => UserEntity)
+    @ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
     user: UserEntity
 
     @PrimaryColumn()
