@@ -8,6 +8,6 @@
     "watch": [
         "./server"
     ],
-    "exec": "cross-env TS_NODE_PROJECT=tsconfig.server.json node -r ts-node/register ./server/main.ts",
+    "exec": "cross-env TS_NODE_PROJECT=tsconfig.server.json node --inspect -r ts-node/register ./server/main.ts",
     "ext": "ts"
 }
