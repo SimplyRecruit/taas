@@ -78,5 +78,5 @@ export async function generateApiCalls() {
     Handlebars.registerHelper('stringify', (context) => JSON.stringify(context))
     const template = Handlebars.compile(templateFile)
     const result = template({ controllers: apiMethods })
-    await Fs.writeFile(join(__dirname, "../../src/apis.ts"), result, { encoding: "utf8" })
+    await Fs.writeFile(join(__dirname, "../../src/services/apis.ts"), result, { encoding: "utf8" })
 }
