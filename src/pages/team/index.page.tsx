@@ -35,9 +35,9 @@ export default function Team() {
           <Button
             type="link"
             style={{ marginLeft: 10 }}
-            onClick={async () => {
+            onClick={() => {
               setCurrentRecord(record);
-              setChangeRateModalOpen(true);
+              setChangeRateModalOpen(true)
             }}
           >
             Change
@@ -76,7 +76,7 @@ export default function Team() {
 
   const dummyData = [
     {
-      key: 1,
+      key: 0,
       name: 'John Doe',
       email: 'johndoe@example.com',
       hourlyRate: 50,
@@ -84,7 +84,7 @@ export default function Team() {
       status: "active",
     },
     {
-      key: 2,
+      key: 1,
       name: 'Jane Doe',
       email: 'janedoe@example.com',
       hourlyRate: 60,
@@ -98,20 +98,18 @@ export default function Team() {
   const [filteredData, setFilteredData] = useState(dummyData);
   const [data, setData] = useState(dummyData);
   const [selectedStatus, setSelectedStatus] = useState('all');
-  const [currentRecord, setCurrentRecord] = useState(null);
+  const [currentRecord, setCurrentRecord] = useState(dummyData[0] ? dummyData[0] : null);
 
   const handleRoleChange = (record: any, value: string) => {
     const updatedData = [...data];
-    const index = updatedData.findIndex((d) => d.key === record.key);
-    updatedData[index].role = value;
+    updatedData[record.key].role = value;
     setData(updatedData);
     filterData(selectedStatus, searchText);
   };
 
   const handleHourlyRateChange = (record: any, value: number) => {
     const updatedData = [...data];
-    const index = updatedData.findIndex((d) => d.key === record.key);
-    updatedData[index].hourlyRate = value;
+    updatedData[record.key].hourlyRate = value;
     setData(updatedData);
     filterData(selectedStatus, searchText);
   };
@@ -139,6 +137,8 @@ export default function Team() {
     setFilteredData(filtered);
   };
 
+
+
   return (
     <div style={{ padding: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
@@ -157,7 +157,7 @@ export default function Team() {
             style={{ width: 200 }}
           />
         </Space>
-        <Button type='primary' onClick={() => setModalOpen(true)}>Add Client</Button>
+        <Button type='primary' onClick={() => setModalOpen(true)}>Invite Member</Button>
       </div>
       <Table columns={columns} dataSource={filteredData} pagination={{
         position: ['bottomCenter'],
@@ -167,12 +167,14 @@ export default function Team() {
         showTotal: (total) => `Total ${total} clients`,
         showSizeChanger: false,
       }} />
-      <ChangeRateModal open={changeRateModalOpen}
+      <ChangeRateModal
+        key={currentRecord?.key}
+        open={changeRateModalOpen}
         setOpen={setChangeRateModalOpen}
         record={currentRecord}
         onOk={(record, newRate) => { handleHourlyRateChange(record, newRate) }}></ChangeRateModal>
       <Modal
-        title="Add Client"
+        title="Invite Member"
         open={modalOpen}
         onOk={() => setModalOpen(false)}
         onCancel={() => setModalOpen(false)}
