@@ -1,19 +1,14 @@
+import useApi from '@/services/useApi';
 import { Button, Card, Form, Input, Typography } from 'antd';
+import LoginReqBody from 'models/User/LoginReqBody';
 import Link from 'next/link';
-import { useState } from 'react';
-
 
 const LoginPage = () => {
+    const { data, error, loading, call } = useApi("user", "login")
     const [form] = Form.useForm();
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
-
-    const onFinish = (values: any) => {
+    const onFinish = (values: LoginReqBody) => {
         console.log('Success:', values);
-        setFormData(values);
-        // Perform login logic here
+        call(values)
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -28,6 +23,11 @@ const LoginPage = () => {
                 backgroundPosition: 'center',
                 height: "100vh"
             }}>
+
+            {loading && <h1>Loading...</h1>}
+            {!!error && <h1>{error.message}</h1>}
+            {!!data && <h1>{JSON.stringify(data)}</h1>}
+
             <Card className='elevation' style={{ width: '100%', maxWidth: 300 }}>
                 <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>Log In</Typography.Title>
                 <Form
@@ -35,19 +35,19 @@ const LoginPage = () => {
                     name="basic"
                     layout="vertical"
                     style={{ width: '100%' }}
-                    initialValues={formData}
+                    initialValues={LoginReqBody.create({ email: "", password: "" })}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
                     <Form.Item
                         name="email"
-                        rules={[{ required: true, message: 'Please enter your email!' }]}
+                        rules={[{ validator: LoginReqBody.validator("email") }]}
                     >
                         <Input type="email" placeholder="Enter your email" />
                     </Form.Item>
                     <Form.Item
                         name="password"
-                        rules={[{ required: true, message: 'Please enter your password!' }]}
+                        rules={[{ validator: LoginReqBody.validator("password") }]}
                     >
                         <Input.Password placeholder="Enter your password" />
                     </Form.Item>
