@@ -1,0 +1,44 @@
+import axios from "axios"
+import { ParamMetadataArgs } from "routing-controllers/types/metadata/args/ParamMetadataArgs"
+const token = ""
+const lang = "en"
+const httpInstance = axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+type methodType = 'get' | 'post' | 'patch' | 'put' | 'delete'
+const apiMethods: { [key: string]: { [key: string]: { method: methodType, params: ParamMetadataArgs[] } } } = {};
+const routeParamRegex = /^:(\w+)$/;
+
+function createUrl(params: { [key: string]: string }, route: string) {
+    let url = ""
+    for (const block of route.substring(1).split("/")) {
+        url += "/"
+        const paramRegExpArray = block.match(routeParamRegex)
+        if (paramRegExpArray == null) { url += block; continue }
+        else url += Object.keys(params).find(p => p === paramRegExpArray[1])
+    }
+    return url
+}
+
+export default {
+    {{#each controllers}}
+    {{@key}}: {
+        {{#each this}}
+        async {{@key}}({{#if this.params.hasBody}}
+            body: { {{#each this.params.body}}{{this}}: any,{{/each}} {{#unless this.params.body}}[key: string]: any{{/unless}} },{{/if}}{{#if this.params.hasQueries}}
+            queries: { {{#each this.params.queries}}{{this}}: string,{{/each}} {{#unless this.params.queries}}[key: string]: string{{/unless}} },{{/if}}{{#if this.params.hasParams}}
+            params: { {{#each this.params.params}}{{this}}: string,{{/each}} {{#unless this.params.params}}[key: string]: string{{/unless}} },{{/if}}
+        )
+        {
+            const route = "{{this.route}}"
+            const url = {{#if this.params.hasParams}}createUrl(params, route){{else}}route{{/if}}
+            return await httpInstance.request({
+                method: "{{this.method}}",
+                url,{{#if this.params.hasBody}}
+                data: body,{{/if}}{{#if this.params.hasQueries}}
+                params: queries,{{/if}}
+            })
+        },
+        {{/each}}
+    },
+    {{/each}}
+    
+} 
