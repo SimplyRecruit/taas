@@ -5,46 +5,28 @@ import { FiEdit2, FiSearch } from "react-icons/fi"
 import { SearchOutlined } from "@ant-design/icons"
 
 
-export default function Team() {
-  const roles = ['Admin', 'Manager', 'End-user'];
-  const actionColumnWidth = 60;
+export default function Clients() {
+
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Hourly Rate',
-      dataIndex: 'hourlyRate',
-      key: 'hourlyRate',
-    },
-    {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
-      render: (role: string, record: any) => (
-        <Select
-          value={role}
-          onChange={(value) => handleRoleChange(record, value)}
-        >
-          {roles.map((r) => (
-            <Select.Option value={r} key={r}>
-              {r}
-            </Select.Option>
-          ))}
-        </Select>
+      render: (text: string, record: any) => (
+        <span style={{ textDecoration: record.status === 'inactive' ? 'line-through' : 'none' }}>
+          {text}
+        </span>
       ),
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
     },
     {
       title: '',
       key: 'action',
-      width: actionColumnWidth,
+      width: 100,
       render: () => (
         <span>
           <FiEdit2 type="edit" style={{ cursor: 'pointer' }} />
@@ -53,36 +35,25 @@ export default function Team() {
     },
   ];
 
-  const dummyData = [
+  const data = [
     {
       key: 1,
       name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'Developer',
-      status: "active",
+      address: '1234 Main St.',
+      status: 'active',
     },
     {
       key: 2,
       name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'Designer',
-      status: "inactive",
+      address: '5678 Elm St.',
+      status: 'inactive',
     },
   ];
   const [modalOpen, setModalOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
-  const [filteredData, setFilteredData] = useState(dummyData);
-  const [data, setData] = useState(dummyData);
+  const [filteredData, setFilteredData] = useState(data);
   const [selectedStatus, setSelectedStatus] = useState('all');
-  const handleRoleChange = (record: any, value: string) => {
-    const updatedData = [...data];
-    const index = updatedData.findIndex((d) => d.key === record.key);
-    updatedData[index].role = value;
-    setData(updatedData);
-    filterData(selectedStatus, searchText);
-  };
+
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
     filterData(value, searchText);
