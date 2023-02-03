@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, Input, Modal, Pagination, Select, Space, Table } from 'antd';
 import { FiEdit2, FiSearch } from "react-icons/fi"
 import { SearchOutlined } from "@ant-design/icons"
+import ChangeRateModal from '@/pages/team/components/ChangeRateModal';
 
 
 export default function Team() {
@@ -13,6 +14,11 @@ export default function Team() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      render: (text: string, record: any) => (
+        <span style={{ textDecoration: record.status === 'inactive' ? 'line-through' : 'none' }}>
+          {text}
+        </span>
+      ),
     },
     {
       title: 'Email',
@@ -23,6 +29,21 @@ export default function Team() {
       title: 'Hourly Rate',
       dataIndex: 'hourlyRate',
       key: 'hourlyRate',
+      render: (value: number, record: any) => (
+        <>
+          {value}
+          <Button
+            type="link"
+            style={{ marginLeft: 10 }}
+            onClick={async () => {
+              setCurrentRecord(record);
+              setChangeRateModalOpen(true);
+            }}
+          >
+            Change
+          </Button>
+        </>
+      ),
     },
     {
       title: 'Role',
@@ -72,10 +93,13 @@ export default function Team() {
     },
   ];
   const [modalOpen, setModalOpen] = useState(false);
+  const [changeRateModalOpen, setChangeRateModalOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState(dummyData);
   const [data, setData] = useState(dummyData);
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [currentRecord, setCurrentRecord] = useState(null);
+
   const handleRoleChange = (record: any, value: string) => {
     const updatedData = [...data];
     const index = updatedData.findIndex((d) => d.key === record.key);
@@ -83,6 +107,15 @@ export default function Team() {
     setData(updatedData);
     filterData(selectedStatus, searchText);
   };
+
+  const handleHourlyRateChange = (record: any, value: number) => {
+    const updatedData = [...data];
+    const index = updatedData.findIndex((d) => d.key === record.key);
+    updatedData[index].hourlyRate = value;
+    setData(updatedData);
+    filterData(selectedStatus, searchText);
+  };
+
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
     filterData(value, searchText);
@@ -105,6 +138,7 @@ export default function Team() {
     }
     setFilteredData(filtered);
   };
+
   return (
     <div style={{ padding: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
@@ -133,6 +167,10 @@ export default function Team() {
         showTotal: (total) => `Total ${total} clients`,
         showSizeChanger: false,
       }} />
+      <ChangeRateModal open={changeRateModalOpen}
+        setOpen={setChangeRateModalOpen}
+        record={currentRecord}
+        onOk={(record, newRate) => { handleHourlyRateChange(record, newRate) }}></ChangeRateModal>
       <Modal
         title="Add Client"
         open={modalOpen}
