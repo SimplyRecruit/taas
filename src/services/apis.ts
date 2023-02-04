@@ -1,11 +1,10 @@
-import axios from "axios"
-import { ParamMetadataArgs } from "routing-controllers/types/metadata/args/ParamMetadataArgs"
+import axios, { AxiosResponse } from "axios"
 const token = ""
 const lang = "en"
 const httpInstance = axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
-type methodType = 'get' | 'post' | 'patch' | 'put' | 'delete'
-const apiMethods: { [key: string]: { [key: string]: { method: methodType, params: ParamMetadataArgs[] } } } = {};
 const routeParamRegex = /^:(\w+)$/;
+// Model Imports
+import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createUrl(params: { [key: string]: string }, route: string) {
     let url = ""
@@ -21,7 +20,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
 export default {
     customer: {
         async getAll(
-        )
+        ) : Promise<AxiosResponse>
         {
             const route = "/customer"
             const url = route
@@ -31,9 +30,9 @@ export default {
             })
         },
         async update(
-            body: {  [key: string]: any },
-            params: { id: string,  },
-        )
+            body: Customer,
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/customer/:id"
             const url = createUrl(params, route)
@@ -44,8 +43,8 @@ export default {
             })
         },
         async create(
-            body: {  [key: string]: any },
-        )
+            body: Customer,
+        ) : Promise<AxiosResponse>
         {
             const route = "/customer"
             const url = route
@@ -56,8 +55,8 @@ export default {
             })
         },
         async delete(
-            params: { id: string,  },
-        )
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/customer/:id"
             const url = createUrl(params, route)
@@ -67,8 +66,8 @@ export default {
             })
         },
         async getResourcesOf(
-            params: { id: string,  },
-        )
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/customer/:id/resources"
             const url = createUrl(params, route)
@@ -80,7 +79,7 @@ export default {
     },
     resource: {
         async getAll(
-        )
+        ) : Promise<AxiosResponse>
         {
             const route = "/resource"
             const url = route
@@ -90,9 +89,9 @@ export default {
             })
         },
         async update(
-            body: {  [key: string]: any },
-            params: { id: string,  },
-        )
+            body: Resource,
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
@@ -103,8 +102,8 @@ export default {
             })
         },
         async delete(
-            params: { id: string,  },
-        )
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
@@ -114,7 +113,7 @@ export default {
             })
         },
         async getCustomers(
-        )
+        ) : Promise<AxiosResponse>
         {
             const route = "/resource/customers"
             const url = route
@@ -124,8 +123,8 @@ export default {
             })
         },
         async getCustomersOf(
-            params: { id: string,  },
-        )
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/resource/:id/customers"
             const url = createUrl(params, route)
@@ -135,8 +134,8 @@ export default {
             })
         },
         async assignCustomerToResource(
-            params: { customerId: string,resourceId: string,  },
-        )
+            params: { customerId: string,resourceId: string, },
+        ) : Promise<AxiosResponse>
         {
             const route = "/resource/:resourceId/customers/:customerId"
             const url = createUrl(params, route)
@@ -148,8 +147,8 @@ export default {
     },
     user: {
         async login(
-            body: {  [key: string]: any },
-        )
+            body: LoginReqBody,
+        ) : Promise<AxiosResponse>
         {
             const route = "/user/login"
             const url = route
@@ -160,8 +159,8 @@ export default {
             })
         },
         async registerOrganization(
-            body: {  [key: string]: any },
-        )
+            body: RegisterOrganizationReqBody,
+        ) : Promise<AxiosResponse>
         {
             const route = "/user/register-organization"
             const url = route
@@ -172,7 +171,7 @@ export default {
             })
         },
         async resetPassword(
-        )
+        ) : Promise<AxiosResponse>
         {
             const route = "/user/reset-password"
             const url = route
@@ -182,7 +181,7 @@ export default {
             })
         },
         async forgotPassword(
-        )
+        ) : Promise<AxiosResponse>
         {
             const route = "/user/forgot-password"
             const url = route
@@ -192,7 +191,7 @@ export default {
             })
         },
         async me(
-        )
+        ) : Promise<AxiosResponse>
         {
             const route = "/user/me"
             const url = route
@@ -204,8 +203,8 @@ export default {
     },
     workPeriod: {
         async getAll(
-            queries: {  [key: string]: string },
-        )
+            queries: TableQueryParameters,
+        ) : Promise<AxiosResponse>
         {
             const route = "/work-period"
             const url = route
@@ -216,8 +215,8 @@ export default {
             })
         },
         async create(
-            body: {  [key: string]: any },
-        )
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse>
         {
             const route = "/work-period"
             const url = route
@@ -228,8 +227,8 @@ export default {
             })
         },
         async delete(
-            body: {  [key: string]: any },
-        )
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse>
         {
             const route = "/work-period"
             const url = route
@@ -240,8 +239,8 @@ export default {
             })
         },
         async toggle(
-            body: {  [key: string]: any },
-        )
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse>
         {
             const route = "/work-period"
             const url = route

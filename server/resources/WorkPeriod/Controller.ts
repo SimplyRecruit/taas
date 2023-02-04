@@ -1,8 +1,9 @@
 import TableQueryParameters from 'models/TableQueryParameters';
 import UserRole from 'models/User/UserRole';
 import WorkPeriod from 'models/WorkPeriod';
-import { Authorized, BadRequestError, Body, CurrentUser, Delete, ForbiddenError, Get, HttpError, InternalServerError, JsonController, NotFoundError, Post, Put, QueryParams } from 'routing-controllers';
+import { Authorized, BadRequestError, CurrentUser, Delete, ForbiddenError, Get, HttpError, InternalServerError, JsonController, NotFoundError, Post, Put } from 'routing-controllers';
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm';
+import { Body, QueryParams } from '~/decorators/CustomRequestParams';
 import { dataSource } from '~/main';
 import UserEntity from '~/resources/User/Entity';
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity';
