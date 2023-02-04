@@ -1,6 +1,8 @@
-import { Button, Input, List } from "antd";
-import {PlusCircleOutlined} from "@ant-design/icons"
-import { FiPlusCircle } from "react-icons/fi";
+import { Button, DatePicker, Input, List, Space } from "antd";
+import { PlusCircleOutlined, CalendarOutlined } from "@ant-design/icons"
+import { useState } from 'react';
+import { RxLapTimer } from "react-icons/rx"
+import { TbCurrencyLira } from "react-icons/tb"
 
 
 interface RenderProps {
@@ -8,11 +10,33 @@ interface RenderProps {
 }
 
 export default function TrackerListItem({ item }: RenderProps) {
+    const [datePickerOpen, setDatePickerOpen] = useState(false)
+    const [isBillable, setIsBillable] = useState(false)
     return (
         <>
-            <List.Item>
-                <Input bordered={false} style={{ maxWidth: 250 }} value={item}></Input>
+            <List.Item >
+
+                <Input bordered={true} style={{ minWidth: 100, width: "50%" }} value={item} ></Input>
                 <Button type="text" ><PlusCircleOutlined />Project</Button>
+                <DatePicker style={{ maxWidth: "8ch" }} allowClear={false} format={"HH:mm"} placeholder="Start time" picker="time" suffixIcon={null}></DatePicker>
+                <DatePicker style={{ maxWidth: "8ch" }} allowClear={false} format={"HH:mm"} placeholder="Start time" picker="time" suffixIcon={null}></DatePicker>
+
+                <div style={{ position: "relative", cursor: "pointer" }}>
+                    <CalendarOutlined
+                        style={{ position: "absolute", top: "30%", left: "20%" }}
+                        onClick={() => { setDatePickerOpen(!datePickerOpen) }} />
+                    <DatePicker
+                        style={{ visibility: "hidden", width: 20, backgroundColor: "red" }}
+                        onBlur={() => setDatePickerOpen(false)}
+                        onChange={() => setDatePickerOpen(false)}
+                        open={datePickerOpen}
+                    />
+                </div>
+                <TbCurrencyLira style={{ cursor: "pointer", fontWeight: 800 }} onClick={() => setIsBillable(!isBillable)} color={isBillable ? "#3f3f3f" : "lightgrey"} size={24}></TbCurrencyLira>
+                <DatePicker style={{ maxWidth: "11ch" }} allowClear={false} format={"HH:mm"} placeholder="Total time" picker="time"
+                    suffixIcon={<RxLapTimer size={18}></RxLapTimer>} />
+
+
             </List.Item>
         </>
     )
