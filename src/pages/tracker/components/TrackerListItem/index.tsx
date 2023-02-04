@@ -3,6 +3,7 @@ import { PlusCircleOutlined, CalendarOutlined } from "@ant-design/icons"
 import { useState } from 'react';
 import { RxLapTimer } from "react-icons/rx"
 import { TbCurrencyLira } from "react-icons/tb"
+import { FiCalendar } from "react-icons/fi";
 
 
 interface RenderProps {
@@ -22,8 +23,9 @@ export default function TrackerListItem({ item }: RenderProps) {
                 <DatePicker style={{ maxWidth: "8ch" }} allowClear={false} format={"HH:mm"} placeholder="Start time" picker="time" suffixIcon={null}></DatePicker>
 
                 <div style={{ position: "relative", cursor: "pointer" }}>
-                    <CalendarOutlined
-                        style={{ position: "absolute", top: "30%", left: "20%" }}
+                    <FiCalendar
+                    
+                        style={{ fontSize: "125%", position: "absolute", top: "30%", left: "20%" }}
                         onClick={() => { setDatePickerOpen(!datePickerOpen) }} />
                     <DatePicker
                         style={{ visibility: "hidden", width: 20, backgroundColor: "red" }}
