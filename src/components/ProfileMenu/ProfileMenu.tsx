@@ -43,7 +43,7 @@ export default function ProfileMenu() {
             <Avatar size={'small'} style={{
 
             }}>BE</Avatar>
-            <Typography.Text style={{ margin: 0 }}>{name}</Typography.Text>
+            <Typography.Text >{name}</Typography.Text>
             <FiChevronDown size={16} style={{ marginTop: ICON_TOP_MARGIN_FIX }} />
           </Space>
         </Button>
