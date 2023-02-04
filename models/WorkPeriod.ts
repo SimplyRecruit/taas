@@ -3,7 +3,7 @@ import Model from "models/Model";
 
 const regex = /^(0?[1-9]|1[012])\/(20\d{2})$/
 
-export default class extends Model {
+export default class WorkPeriod extends Model {
     @Matches(regex)
     private period: string
 

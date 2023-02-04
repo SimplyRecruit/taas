@@ -2,7 +2,7 @@ import { IsBoolean, IsDateString, IsEnum, Length } from "class-validator";
 import Model from "models/Model";
 import CustomerContractType from "./CustomerContractType";
 
-export default class extends Model {
+export default class Customer extends Model {
     @Length(1, 10)
     id: string
 

@@ -2,7 +2,7 @@ import { IsInt, IsOptional, IsPositive, Matches, Min } from "class-validator";
 
 const sortByRegex = /^(\~|\-)([a-zA-Z0-9_]*)$/
 
-export default class {
+export default class TableQueryParameters {
     @IsOptional()
     @Matches(sortByRegex, { each: true })
     private sortBy?: string[]
