@@ -104,7 +104,8 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
             </div>
 
           </Layout.Sider>
-          <Layout.Content>{children}</Layout.Content>
+          {/* To put scrollbar inside the content */}
+          <Layout.Content style={{ overflowY: "auto" }}>{children}</Layout.Content>
         </Layout>
       </Layout>
     </ConfigProvider >
