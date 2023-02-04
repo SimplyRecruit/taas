@@ -1,7 +1,8 @@
 import Resource from 'models/Resource';
 import UserRole from 'models/User/UserRole';
-import { Authorized, Body, CurrentUser, Delete, ForbiddenError, Get, InternalServerError, JsonController, NotFoundError, Param, Patch, Post } from 'routing-controllers';
+import { Authorized, CurrentUser, Delete, ForbiddenError, Get, InternalServerError, JsonController, NotFoundError, Param, Patch, Post } from 'routing-controllers';
 import { EntityNotFoundError } from 'typeorm';
+import { Body } from '~/decorators/CustomRequestParams';
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
 import { dataSource } from '~/main';
 import CustomerEntity from '~/resources/Customer/Entity';

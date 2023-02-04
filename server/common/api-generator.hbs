@@ -1,0 +1,43 @@
+import axios, { AxiosResponse } from "axios"
+const token = ""
+const lang = "en"
+const httpInstance = axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+const routeParamRegex = /^:(\w+)$/;
+// Model Imports
+import { {{#each imports}}{{this}}, {{/each}} } from "models"
+
+function createUrl(params: { [key: string]: string }, route: string) {
+    let url = ""
+    for (const block of route.substring(1).split("/")) {
+        url += "/"
+        const paramRegExpArray = block.match(routeParamRegex)
+        if (paramRegExpArray == null) { url += block; continue }
+        else url += Object.keys(params).find(p => p === paramRegExpArray[1])
+    }
+    return url
+}
+
+export default {
+    {{#each controllers}}
+    {{@key}}: {
+        {{#each this}}
+        async {{@key}}({{#if this.params.hasBody}}
+            body: {{#if this.params.body}}{ {{#each this.params.body}}{{stringify this}}: any,{{/each}}{{/if}}{{#unless this.params.body}}{{this.params.bodyClass}}{{/unless}},{{/if}}{{#if this.params.hasQueries}}
+            queries: {{#if this.params.queries}}{ {{#each this.params.queries}}{{this}}: string,{{/each}} }{{/if}}{{#unless this.params.queries}}{{this.params.queriesClass}}{{/unless}},{{/if}}{{#if this.params.hasParams}}
+            params: {{#if this.params.params}}{ {{#each this.params.params}}{{this}}: string,{{/each}} }{{/if}}{{#unless this.params.params}}{{this.params.paramsClass}}{{/unless}},{{/if}}
+        ) : Promise<AxiosResponse>
+        {
+            const route = "{{this.route}}"
+            const url = {{#if this.params.hasParams}}createUrl(params, route){{else}}route{{/if}}
+            return await httpInstance.request({
+                method: "{{this.method}}",
+                url,{{#if this.params.hasBody}}
+                data: body,{{/if}}{{#if this.params.hasQueries}}
+                params: queries,{{/if}}
+            })
+        },
+        {{/each}}
+    },
+    {{/each}}
+    
+} 

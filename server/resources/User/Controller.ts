@@ -7,10 +7,11 @@ import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody
 import User from 'models/User/User';
 import UserRole from 'models/User/UserRole';
 import UserStatus from 'models/User/UserStatus';
-import { Authorized, Body, BodyParam, CurrentUser, Get, HeaderParam, InternalServerError, JsonController, NotFoundError, Post, Req, UnauthorizedError } from 'routing-controllers';
+import { Authorized, BodyParam, CurrentUser, Get, HeaderParam, InternalServerError, JsonController, NotFoundError, Post, Req, UnauthorizedError } from 'routing-controllers';
 import { EntityNotFoundError } from 'typeorm';
 import { EmailTemplate } from '~/common/DataClasses';
 import { sendEmail } from '~/common/Util';
+import { Body } from "~/decorators/CustomRequestParams";
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError';
 import { dataSource } from '~/main';
 import OrganizationEntity from '~/resources/Organization/Entity';

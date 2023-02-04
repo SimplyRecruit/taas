@@ -1,0 +1,255 @@
+import axios, { AxiosResponse } from "axios"
+const token = ""
+const lang = "en"
+const httpInstance = axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+const routeParamRegex = /^:(\w+)$/;
+// Model Imports
+import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, TableQueryParameters, WorkPeriod,  } from "models"
+
+function createUrl(params: { [key: string]: string }, route: string) {
+    let url = ""
+    for (const block of route.substring(1).split("/")) {
+        url += "/"
+        const paramRegExpArray = block.match(routeParamRegex)
+        if (paramRegExpArray == null) { url += block; continue }
+        else url += Object.keys(params).find(p => p === paramRegExpArray[1])
+    }
+    return url
+}
+
+export default {
+    customer: {
+        async getAll(
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/customer"
+            const url = route
+            return await httpInstance.request({
+                method: "get",
+                url,
+            })
+        },
+        async update(
+            body: Customer,
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/customer/:id"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "patch",
+                url,
+                data: body,
+            })
+        },
+        async create(
+            body: Customer,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/customer"
+            const url = route
+            return await httpInstance.request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async delete(
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/customer/:id"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "delete",
+                url,
+            })
+        },
+        async getResourcesOf(
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/customer/:id/resources"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "get",
+                url,
+            })
+        },
+    },
+    resource: {
+        async getAll(
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/resource"
+            const url = route
+            return await httpInstance.request({
+                method: "get",
+                url,
+            })
+        },
+        async update(
+            body: Resource,
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/resource/:id"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "patch",
+                url,
+                data: body,
+            })
+        },
+        async delete(
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/resource/:id"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "delete",
+                url,
+            })
+        },
+        async getCustomers(
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/resource/customers"
+            const url = route
+            return await httpInstance.request({
+                method: "get",
+                url,
+            })
+        },
+        async getCustomersOf(
+            params: { id: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/resource/:id/customers"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "get",
+                url,
+            })
+        },
+        async assignCustomerToResource(
+            params: { customerId: string,resourceId: string, },
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/resource/:resourceId/customers/:customerId"
+            const url = createUrl(params, route)
+            return await httpInstance.request({
+                method: "post",
+                url,
+            })
+        },
+    },
+    user: {
+        async login(
+            body: LoginReqBody,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/user/login"
+            const url = route
+            return await httpInstance.request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async registerOrganization(
+            body: RegisterOrganizationReqBody,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/user/register-organization"
+            const url = route
+            return await httpInstance.request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async resetPassword(
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/user/reset-password"
+            const url = route
+            return await httpInstance.request({
+                method: "post",
+                url,
+            })
+        },
+        async forgotPassword(
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/user/forgot-password"
+            const url = route
+            return await httpInstance.request({
+                method: "post",
+                url,
+            })
+        },
+        async me(
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/user/me"
+            const url = route
+            return await httpInstance.request({
+                method: "get",
+                url,
+            })
+        },
+    },
+    workPeriod: {
+        async getAll(
+            queries: TableQueryParameters,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/work-period"
+            const url = route
+            return await httpInstance.request({
+                method: "get",
+                url,
+                params: queries,
+            })
+        },
+        async create(
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/work-period"
+            const url = route
+            return await httpInstance.request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async delete(
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/work-period"
+            const url = route
+            return await httpInstance.request({
+                method: "delete",
+                url,
+                data: body,
+            })
+        },
+        async toggle(
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/work-period"
+            const url = route
+            return await httpInstance.request({
+                method: "put",
+                url,
+                data: body,
+            })
+        },
+    },
+    
+} 

@@ -3,10 +3,11 @@ import express, { Request, Response } from "express";
 import next from "next";
 import { join } from "path";
 import 'reflect-metadata'; /* this shim is required */
-import { useExpressServer } from 'routing-controllers';
+import { getMetadataArgsStorage, useExpressServer } from 'routing-controllers';
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { authorizationChecker, currentUserChecker } from '~/resources/User/AuthService';
+import { generateApiCalls } from '~/common/Util';
 
 const dev = process.env.NODE_ENV !== "production"
 const app = next({ dev });
@@ -82,6 +83,7 @@ smtp.setApiKey(process.env.SMTP_KEY!);
             console.log(`> Ready on localhost:${port} - env ${process.env.NODE_ENV ?? "development"}`);
         });
 
+        if (dev) await generateApiCalls()
     } catch (e) {
         console.error(e);
         process.exit(1);

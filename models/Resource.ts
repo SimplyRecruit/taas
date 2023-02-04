@@ -1,6 +1,7 @@
 import { IsDateString, IsInt, IsPositive, Length, Max } from "class-validator";
+import Model from "models/Model";
 
-export default class {
+export default class Resource extends Model {
     @Length(1, 10)
     id: string
 
