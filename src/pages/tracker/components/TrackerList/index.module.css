@@ -1,6 +1,6 @@
 .wrapper :global .ant-list-header {
     background-color: #e6e6e6;
-    border-radius: 6px 6px 0 0;
+    border-radius: 8px 8px 0 0;
     height: 36px;
     display: flex;
     align-items: center
@@ -10,3 +10,4 @@
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     transition: box-shadow .2s ease-in-out;
 }
+

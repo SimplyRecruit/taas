@@ -12,9 +12,8 @@ export default function TrackerList({ data }: RenderProps) {
         <>
             <List
                 className={styles.wrapper}
-                style={{ marginBottom: 24 }}
+                style={{ marginBottom: 24, borderRadius: "8px 8px 2px 2px", borderBottom: "4px solid #c0caea" }}
                 size="large"
-                footer={<div> </div>}
                 bordered
                 header={<Typography.Text type="secondary" >Today</Typography.Text>}
                 dataSource={data}
