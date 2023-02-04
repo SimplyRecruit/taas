@@ -20,14 +20,15 @@ const generateMenuItems = (items: MenuItem[]) =>
     label: <Link href={path}>{label}</Link>,
   }));
 
+const iconSize = 16
 const topItems = [
   {
-    icon: <FiClock />,
+    icon: <FiClock size={iconSize} />,
     label: 'Time Track',
     path: Route.TimeTrack,
   },
   {
-    icon: <FiCalendar />,
+    icon: <FiCalendar size={iconSize} />,
     label: 'Periods',
     path: Route.Periods,
   },
@@ -35,34 +36,34 @@ const topItems = [
 
 const analyseItems = [
   {
-    icon: <IoGridOutline />,
+    icon: <IoGridOutline size={iconSize} />,
     label: 'Dashboard',
     path: Route.DashBoard,
   },
   {
-    icon: <FiBarChart2 />,
+    icon: <FiBarChart2 size={iconSize} />,
     label: 'Reports',
     path: Route.Reports,
   },
 ];
 const adminItems = [
   {
-    icon: <FiFileText />,
+    icon: <FiFileText size={iconSize} />,
     label: 'Projects',
     path: Route.Projects,
   },
   {
-    icon: <FiUsers />,
+    icon: <FiUsers size={iconSize} />,
     label: 'Team',
     path: Route.Team,
   },
   {
-    icon: <FaRegHandshake />,
+    icon: <FaRegHandshake size={iconSize} />,
     label: 'Clients',
     path: Route.Clients,
   },
   {
-    icon: <FiSettings />,
+    icon: <FiSettings size={iconSize} />,
     label: 'Settings',
     path: Route.OrganizationSettings,
   },

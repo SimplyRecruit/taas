@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  overflow-y: hidden;
 }
 
 .center-column {
@@ -11,4 +12,8 @@ body {
 
 .elevation {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.ant-menu-title-content{
+  margin-left: 8px !important;
 }

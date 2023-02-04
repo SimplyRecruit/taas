@@ -1,11 +1,11 @@
 import { authRoutes } from '@/auth/utils/checkAuthentication';
 import ProfileMenu from '@/components/ProfileMenu';
 import { HEADER_HEIGHT, ICON_TOP_MARGIN_FIX, Route, SIDER_WIDTH } from '@/constants';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Badge, Button, ConfigProvider, Layout, Menu, Space, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { FiBell } from 'react-icons/fi';
+import { FiBell, } from 'react-icons/fi';
 import { adminMenuItems, analyseMenuItems, topMenuItems } from './menu-items';
 
 interface PlatformLayoutProps {
@@ -14,7 +14,7 @@ interface PlatformLayoutProps {
 
 export default function PlatformLayout({ children }: PlatformLayoutProps) {
   const router = useRouter();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   if (authRoutes.includes(router.pathname as Route)) {
     return <div>{children}</div>;
   }
@@ -30,7 +30,7 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
       }}
     >
       <Layout>
-        <Layout.Header style={{ backgroundColor: "#F9FAFD", height: HEADER_HEIGHT, borderBottom: '1px solid #ddd' }}>
+        <Layout.Header style={{ backgroundColor: "#F9FAFD", height: HEADER_HEIGHT, borderBottom: '1px solid #ddd', padding: "0 2rem 0 2rem" }}>
           <div
             style={{
               display: 'flex',
@@ -40,6 +40,7 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
 
             }}
           >
+
             <Typography.Title level={5} style={{ margin: 0 }}>
               Test
             </Typography.Title>
@@ -78,33 +79,30 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
             theme="light"
             trigger={null}
             width={SIDER_WIDTH}
-            onMouseEnter={() => setSidebarCollapsed(false)}
-            onMouseLeave={() => setSidebarCollapsed(true)}
           >
 
-            <div>
+            <div style={{ height: '100%' }}>
               <Menu
-                style={{ height: '100%' }}
                 items={topMenuItems}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
-                style={{ height: '100%' }}
-                items={[{ label: "‏ ‏ Analyse", key: "analyse", children: analyseMenuItems, type: "group" }]}
+                items={[{ label: "‏ ‏ ‏ Analyse", key: "analyse", children: analyseMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
                 style={{ height: '100%' }}
-                items={[{ label: "‏ ‏ Manage", key: "admin", children: adminMenuItems, type: "group" }]}
+                items={[{ label: "‏ ‏ ‏ Manage", key: "admin", children: adminMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
             </div>
 
           </Layout.Sider>
-          <Layout.Content>{children}</Layout.Content>
+          {/* To put scrollbar inside the content */}
+          <Layout.Content style={{ overflowY: "auto" }}>{children}</Layout.Content>
         </Layout>
       </Layout>
     </ConfigProvider >
