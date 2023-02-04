@@ -1,4 +1,5 @@
-import TrackerList from "@/pages/tracker/components/TrackerList/TrackerList";
+import TrackerGroup from "@/pages/tracker/components/TrackerGroup";
+import TrackerList from "@/pages/tracker/components/TrackerList"
 import { Card, List, Typography } from "antd";
 import styles from "antd/lib/list"
 
@@ -12,18 +13,9 @@ export default function Tracker() {
   ];
   return (
     <>
-      <div style={{ padding: 10 }}>
-
-        <TrackerList data={data} />
-        <List
-
-          size="large"
-          footer={<div>Footer</div>}
-          bordered
-          header={<Typography style={{ backgroundColor: "grey" }}>Today</Typography>}
-          dataSource={data}
-          renderItem={(item) => <List.Item>{item}</List.Item>}
-        />
+      <div style={{ padding: 24 }}>
+        <TrackerGroup data={data} />
+        <TrackerGroup data={data} />
       </div>
     </>
   )
