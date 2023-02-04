@@ -81,22 +81,20 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
             width={SIDER_WIDTH}
           >
 
-            <div>
+            <div style={{ height: '100%' }}>
               <Menu
-                style={{ height: '100%' }}
                 items={topMenuItems}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
-                style={{ height: '100%' }}
-                items={[{ label: "‏ ‏ Analyse", key: "analyse", children: analyseMenuItems, type: "group" }]}
+                items={[{ label: "‏ ‏ ‏ Analyse", key: "analyse", children: analyseMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
                 style={{ height: '100%' }}
-                items={[{ label: "‏ ‏ Manage", key: "admin", children: adminMenuItems, type: "group" }]}
+                items={[{ label: "‏ ‏ ‏ Manage", key: "admin", children: adminMenuItems, type: "group" }]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
