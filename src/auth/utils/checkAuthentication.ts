@@ -1,12 +1,10 @@
-import { Route } from '@/constants';
-import { GetServerSideProps } from 'next';
+import { Route } from '@/constants'
+import { GetServerSideProps } from 'next'
 
-export const authRoutes: string[] = [
-  Route.Login,
-];
+export const authRoutes: string[] = [Route.Login]
 
-const checkAuthentication: GetServerSideProps = async (context) => {
-  const resolvedPath = context.resolvedUrl.split('?')[0];
+const checkAuthentication: GetServerSideProps = async context => {
+  const resolvedPath = context.resolvedUrl.split('?')[0]
   try {
     // check auth
     if (authRoutes.includes(resolvedPath)) {
@@ -15,13 +13,13 @@ const checkAuthentication: GetServerSideProps = async (context) => {
           destination: Route.TimeTrack,
           permanent: false,
         },
-      };
+      }
     }
     return {
       props: {
         authenticated: true,
       },
-    };
+    }
   } catch {
     if (!authRoutes.includes(resolvedPath)) {
       return {
@@ -29,14 +27,14 @@ const checkAuthentication: GetServerSideProps = async (context) => {
           destination: Route.Login,
           permanent: false,
         },
-      };
+      }
     }
     return {
       props: {
         authenticated: false,
       },
-    };
+    }
   }
-};
+}
 
-export default checkAuthentication;
+export default checkAuthentication

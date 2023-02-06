@@ -1,26 +1,26 @@
-import { IsBoolean, IsDateString, IsEnum, Length } from "class-validator";
-import Model from "models/Model";
-import CustomerContractType from "./CustomerContractType";
+import { IsBoolean, IsDateString, IsEnum, Length } from 'class-validator'
+import Model from 'models/Model'
+import CustomerContractType from './CustomerContractType'
 
 export default class Customer extends Model {
-    @Length(1, 10)
-    id: string
+  @Length(1, 10)
+  id: string
 
-    @Length(1, 255)
-    name: string
+  @Length(1, 255)
+  name: string
 
-    @IsDateString()
-    startDate: Date
+  @IsDateString()
+  startDate: Date
 
-    @IsDateString()
-    contractDate: Date
+  @IsDateString()
+  contractDate: Date
 
-    @IsEnum(CustomerContractType)
-    contractType: CustomerContractType
+  @IsEnum(CustomerContractType)
+  contractType: CustomerContractType
 
-    @Length(1, 255)
-    partnerName: string
+  @Length(1, 255)
+  partnerName: string
 
-    @IsBoolean()
-    active: boolean
+  @IsBoolean()
+  active: boolean
 }

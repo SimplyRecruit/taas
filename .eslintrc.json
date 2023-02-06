@@ -12,5 +12,8 @@
   ],
   "ignorePatterns": [
     "src/services/apis.ts"
-  ]
+  ],
+  "rules": {
+    "@typescript-eslint/no-namespace": "off"
+  }
 }

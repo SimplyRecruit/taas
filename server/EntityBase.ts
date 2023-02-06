@@ -1,17 +1,21 @@
-import { BaseEntity, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import {
+  BaseEntity,
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
-export default class extends BaseEntity {
+export default class EntityBase extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
-    @PrimaryGeneratedColumn("uuid")
-    id: string
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date
 
-    @CreateDateColumn({ type: "timestamptz" })
-    createdAt: Date
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date
 
-    @UpdateDateColumn({ type: "timestamptz" })
-    updatedAt: Date
-
-    @DeleteDateColumn({ type: "timestamptz" })
-    deletedAt: Date
-
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date
 }

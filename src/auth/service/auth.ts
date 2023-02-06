@@ -1,15 +1,7 @@
-
-export async function signIn(
-
-) {
-
+export async function signIn() {
+  return null
 }
 
-
-
-export async function confirmSignUp(
-
-) {
-
-
+export async function confirmSignUp() {
+  return null
 }
