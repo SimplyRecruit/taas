@@ -1,3 +1,2 @@
-export * from './routes';
-export * from './style';
-
+export * from './routes'
+export * from './style'

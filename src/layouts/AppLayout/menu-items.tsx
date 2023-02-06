@@ -1,24 +1,28 @@
-import { Route } from '@/constants/routes';
-import Link from 'next/link';
-import { FaRegHandshake } from "react-icons/fa";
+import { Route } from '@/constants/routes'
+import Link from 'next/link'
+import { FaRegHandshake } from 'react-icons/fa'
 import {
-  FiBarChart2, FiCalendar, FiClock,
-  FiFileText, FiSettings, FiUsers
-} from 'react-icons/fi';
-import { IoGridOutline } from "react-icons/io5";
+  FiBarChart2,
+  FiCalendar,
+  FiClock,
+  FiFileText,
+  FiSettings,
+  FiUsers,
+} from 'react-icons/fi'
+import { IoGridOutline } from 'react-icons/io5'
 
 type MenuItem = {
-  icon: JSX.Element;
-  label: string;
-  path: string;
-};
+  icon: JSX.Element
+  label: string
+  path: string
+}
 
 const generateMenuItems = (items: MenuItem[]) =>
   items.map(({ label, icon, path }) => ({
     key: path.split('/')[1],
     icon: <Link href={path}>{icon}</Link>,
     label: <Link href={path}>{label}</Link>,
-  }));
+  }))
 
 const iconSize = 16
 const topItems = [
@@ -32,7 +36,7 @@ const topItems = [
     label: 'Periods',
     path: Route.Periods,
   },
-];
+]
 
 const analyseItems = [
   {
@@ -45,7 +49,7 @@ const analyseItems = [
     label: 'Reports',
     path: Route.Reports,
   },
-];
+]
 const adminItems = [
   {
     icon: <FiFileText size={iconSize} />,
@@ -67,7 +71,7 @@ const adminItems = [
     label: 'Settings',
     path: Route.OrganizationSettings,
   },
-];
-export const topMenuItems = generateMenuItems(topItems);
-export const analyseMenuItems = generateMenuItems(analyseItems);
-export const adminMenuItems = generateMenuItems(adminItems);
+]
+export const topMenuItems = generateMenuItems(topItems)
+export const analyseMenuItems = generateMenuItems(analyseItems)
+export const adminMenuItems = generateMenuItems(adminItems)

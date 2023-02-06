@@ -1,22 +1,35 @@
-import { authRoutes } from '@/auth/utils/checkAuthentication';
-import ProfileMenu from '@/components/ProfileMenu';
-import { HEADER_HEIGHT, ICON_TOP_MARGIN_FIX, Route, SIDER_WIDTH } from '@/constants';
-import { QuestionCircleOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Badge, Button, ConfigProvider, Layout, Menu, Space, Typography } from 'antd';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { FiBell, } from 'react-icons/fi';
-import { adminMenuItems, analyseMenuItems, topMenuItems } from './menu-items';
+import { authRoutes } from '@/auth/utils/checkAuthentication'
+import ProfileMenu from '@/components/ProfileMenu'
+import {
+  HEADER_HEIGHT,
+  ICON_TOP_MARGIN_FIX,
+  Route,
+  SIDER_WIDTH,
+} from '@/constants'
+import { QuestionCircleOutlined } from '@ant-design/icons'
+import {
+  Badge,
+  Button,
+  ConfigProvider,
+  Layout,
+  Menu,
+  Space,
+  Typography,
+} from 'antd'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { FiBell } from 'react-icons/fi'
+import { adminMenuItems, analyseMenuItems, topMenuItems } from './menu-items'
 
 interface PlatformLayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export default function PlatformLayout({ children }: PlatformLayoutProps) {
-  const router = useRouter();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const router = useRouter()
+  const [sidebarCollapsed] = useState(false)
   if (authRoutes.includes(router.pathname as Route)) {
-    return <div>{children}</div>;
+    return <div>{children}</div>
   }
 
   return (
@@ -25,26 +38,31 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
         token: {
           controlHeight: 40,
           colorBgBase: '#F9FAFD',
-          colorBgLayout: "#F9FAFD",
+          colorBgLayout: '#F9FAFD',
         },
       }}
     >
       <Layout>
-        <Layout.Header style={{ backgroundColor: "#F9FAFD", height: HEADER_HEIGHT, borderBottom: '1px solid #ddd', padding: "0 2rem 0 2rem" }}>
+        <Layout.Header
+          style={{
+            backgroundColor: '#F9FAFD',
+            height: HEADER_HEIGHT,
+            borderBottom: '1px solid #ddd',
+            padding: '0 2rem 0 2rem',
+          }}
+        >
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               height: '100%',
-
             }}
           >
-
             <Typography.Title level={5} style={{ margin: 0 }}>
               Test
             </Typography.Title>
-            <Space size="large" align="center" >
+            <Space size="large" align="center">
               <Button
                 icon={<QuestionCircleOutlined />}
                 target="_blank"
@@ -57,7 +75,7 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
                   color="red"
                   count={9}
                   style={{
-                    cursor: "pointer",
+                    cursor: 'pointer',
                   }}
                   size="small"
                   offset={[1, -1]}
@@ -68,19 +86,17 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
               <ProfileMenu />
             </Space>
           </div>
-
         </Layout.Header>
 
         <Layout style={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
           <Layout.Sider
             collapsible
             collapsed={sidebarCollapsed}
-            style={{ backgroundColor: '#F9FAFD', }}
+            style={{ backgroundColor: '#F9FAFD' }}
             theme="light"
             trigger={null}
             width={SIDER_WIDTH}
           >
-
             <div style={{ height: '100%' }}>
               <Menu
                 items={topMenuItems}
@@ -88,23 +104,38 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
-                items={[{ label: "‏ ‏ ‏ Analyse", key: "analyse", children: analyseMenuItems, type: "group" }]}
+                items={[
+                  {
+                    label: '‏ ‏ ‏ Analyse',
+                    key: 'analyse',
+                    children: analyseMenuItems,
+                    type: 'group',
+                  },
+                ]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
               <Menu
                 style={{ height: '100%' }}
-                items={[{ label: "‏ ‏ ‏ Manage", key: "admin", children: adminMenuItems, type: "group" }]}
+                items={[
+                  {
+                    label: '‏ ‏ ‏ Manage',
+                    key: 'admin',
+                    children: adminMenuItems,
+                    type: 'group',
+                  },
+                ]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
             </div>
-
           </Layout.Sider>
           {/* To put scrollbar inside the content */}
-          <Layout.Content style={{ overflowY: "auto" }}>{children}</Layout.Content>
+          <Layout.Content style={{ overflowY: 'auto' }}>
+            {children}
+          </Layout.Content>
         </Layout>
       </Layout>
-    </ConfigProvider >
-  );
+    </ConfigProvider>
+  )
 }

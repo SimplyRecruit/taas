@@ -1,7 +1,7 @@
-export default function () {
+export default function IndexPage() {
   return (
     <>
-      <div style={{ height: "100%" }}></div>
+      <div style={{ height: '100%' }}></div>
     </>
   )
 }

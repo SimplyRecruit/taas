@@ -1,8 +1,8 @@
-import { createParamDecorator } from 'routing-controllers';
-import { currentOrganizationChecker } from '~/resources/User/AuthService';
+import { createParamDecorator } from 'routing-controllers'
+import { currentOrganizationChecker } from '~/resources/User/AuthService'
 
-export default function () {
-    return createParamDecorator({
-        value: currentOrganizationChecker,
-    });
+export default function CurrentOrganization() {
+  return createParamDecorator({
+    value: currentOrganizationChecker,
+  })
 }
