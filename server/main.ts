@@ -13,9 +13,10 @@ import {
 import { generateApiCalls } from '~/common/Util'
 
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000
+const hostname = process.env.HOSTNAME ?? 'localhost'
+const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
-const port = process.env.PORT || 3000
 
 // Resolving environment variables
 import 'dotenv/config'
