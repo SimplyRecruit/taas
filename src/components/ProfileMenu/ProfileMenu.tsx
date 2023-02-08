@@ -3,12 +3,24 @@ import cookieKeys from '@/constants/cookie-keys'
 import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
 import { User } from 'models'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { FiChevronDown, FiLogOut, FiSettings } from 'react-icons/fi'
 import Cookies from 'universal-cookie'
 
 export default function ProfileMenu() {
+  const [name, setName] = useState('')
+  const [ppSrc, setPpSrc] = useState<string>()
   const router = useRouter()
-  const name = (new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User).name
+
+  useEffect(() => {
+    const currentUserName = (
+      new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
+    ).name
+    setName(currentUserName)
+    setPpSrc(
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserName)}`
+    )
+  }, [])
 
   const items: MenuProps['items'] = [
     {
@@ -41,7 +53,7 @@ export default function ProfileMenu() {
       >
         <Button type="text" style={{ paddingTop: 0, paddingBottom: 0 }}>
           <Space size="small" align="center">
-            <Avatar size={'small'} style={{}}>
+            <Avatar size={'small'} style={{}} src={ppSrc}>
               BE
             </Avatar>
             <Typography.Text>{name}</Typography.Text>
