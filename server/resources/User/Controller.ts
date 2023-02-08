@@ -4,7 +4,7 @@ import Jwt from 'jsonwebtoken'
 import type Language from 'models/Language'
 import LoginReqBody from 'models/User/LoginReqBody'
 import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody'
-import User from 'models/User/User'
+import UserJwtPayload from 'models/User/User'
 import UserRole from 'models/User/UserRole'
 import UserStatus from 'models/User/UserStatus'
 import {
@@ -147,7 +147,7 @@ export default class UserController {
   }
 
   @Get('/me')
-  async me(@CurrentUser() user: User) {
+  async me(@CurrentUser() user: UserJwtPayload) {
     return user
   }
 }
