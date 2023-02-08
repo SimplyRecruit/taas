@@ -4,15 +4,16 @@ import axios from 'axios'
 import { User } from 'models'
 import { RequestCookies } from 'next/dist/server/web/spec-extension/cookies'
 import fetchAdapter from '@haverstack/axios-fetch-adapter'
+import { NextRequest } from 'next/server'
 
 export const authRoutes: string[] = [Route.Login]
 
-export default async function checkAuthentication(
+export async function checkAuthentication(
   path: string,
-  cookies: RequestCookies
+  request: NextRequest
 ): Promise<'login' | 'app' | null> {
   try {
-    const { token } = UserCookie.getUser(cookies)
+    const { token } = UserCookie.getUser(request)
     if (!token) throw new Error()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { data: user }: { data: User } = await axios.get(
@@ -22,11 +23,15 @@ export default async function checkAuthentication(
         adapter: fetchAdapter,
       }
     )
-    UserCookie.setUser(user, cookies)
+    UserCookie.setUser(user, request)
     if (authRoutes.includes(path)) return 'app'
   } catch (error) {
     console.log(error)
     if (!authRoutes.includes(path)) return 'login'
   }
   return null
+}
+
+export function logout(request: NextRequest) {
+  UserCookie.logout(request)
 }

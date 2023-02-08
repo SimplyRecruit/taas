@@ -1,4 +1,4 @@
-import { ICON_TOP_MARGIN_FIX } from '@/constants'
+import { ICON_TOP_MARGIN_FIX, Route } from '@/constants'
 import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
 import { useRouter } from 'next/router'
 import { FiChevronDown, FiLogOut, FiSettings } from 'react-icons/fi'
@@ -14,7 +14,7 @@ export default function ProfileMenu() {
       icon: <FiSettings />,
       label: 'Settings',
       onClick: () => {
-        router.push('/settings')
+        router.push(Route.ProfileSettings)
       },
     },
     {
@@ -22,7 +22,8 @@ export default function ProfileMenu() {
       icon: <FiLogOut />,
       label: 'Sign Out',
       onClick: () => {
-        router.push('/logout')
+        console.log('deneme')
+        router.push(Route.Logout)
       },
     },
   ]
