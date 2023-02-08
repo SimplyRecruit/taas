@@ -1,4 +1,4 @@
-import { authRoutes } from '@/auth/utils/checkAuthentication'
+import { authRoutes } from '@/auth/utils/AuthUtil'
 import ProfileMenu from '@/components/ProfileMenu'
 import {
   HEADER_HEIGHT,

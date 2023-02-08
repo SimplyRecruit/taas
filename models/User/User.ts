@@ -1,9 +1,10 @@
 import Model from 'models/Model'
-import UserRole from './UserRole'
+import UserRole from 'models/User/UserRole'
 
-export default class User extends Model {
+export default class UserJwtPayload extends Model {
+  name: string
   id: string
   role: UserRole
-  iat: number
-  exp: number
+  email: string
+  organization: { id: string; name: string }
 }

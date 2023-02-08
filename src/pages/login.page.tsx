@@ -1,14 +1,26 @@
+import { Route } from '@/constants'
+import cookieKeys from '@/constants/cookie-keys'
 import useApi from '@/services/useApi'
 import { Button, Card, Form, Input, Typography } from 'antd'
 import LoginReqBody from 'models/User/LoginReqBody'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Cookies from 'universal-cookie'
 
-const LoginPage = () => {
+export default function LoginPage() {
+  const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'login')
   const [form] = Form.useForm()
-  const onFinish = (values: LoginReqBody) => {
+
+  const onFinish = async (values: LoginReqBody) => {
     console.log('Success:', values)
-    call(values)
+    try {
+      const token: string = await call(values)
+      new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token)
+      await router.replace(Route.DashBoard)
+    } catch (e) {
+      /* Invalid Credentials */
+    }
   }
 
   const onFinishFailed = (errorInfo: unknown) => {
@@ -26,13 +38,15 @@ const LoginPage = () => {
         height: '100vh',
       }}
     >
-      {loading && <h1>Loading...</h1>}
-      {!!error && <h1>{error.message}</h1>}
-      {!!data && <h1>{JSON.stringify(data)}</h1>}
-
       <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
         <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>
-          Log In
+          {error ? (
+            <span style={{ color: 'red' }}>Invalid Credentials</span>
+          ) : data ? (
+            <span style={{ color: 'green' }}>Redirecting...</span>
+          ) : (
+            'Log In'
+          )}
         </Typography.Title>
         <Form
           form={form}
@@ -56,7 +70,7 @@ const LoginPage = () => {
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
           <Form.Item>
-            <Button block htmlType="submit">
+            <Button loading={loading} block htmlType="submit">
               Submit
             </Button>
           </Form.Item>
@@ -70,5 +84,3 @@ const LoginPage = () => {
     </div>
   )
 }
-
-export default LoginPage

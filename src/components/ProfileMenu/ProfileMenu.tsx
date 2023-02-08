@@ -1,12 +1,24 @@
-import { ICON_TOP_MARGIN_FIX } from '@/constants'
+import { ICON_TOP_MARGIN_FIX, Route } from '@/constants'
+import cookieKeys from '@/constants/cookie-keys'
 import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
+import { User } from 'models'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { FiChevronDown, FiLogOut, FiSettings } from 'react-icons/fi'
+import Cookies from 'universal-cookie'
 
 export default function ProfileMenu() {
+  const [user, setUser] = useState<User>()
+  const [ppSrc, setPpSrc] = useState<string>()
   const router = useRouter()
 
-  const name = 'John Doe'
+  useEffect(() => {
+    const currentUser = new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
+    setUser(currentUser)
+    setPpSrc(
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}`
+    )
+  }, [])
 
   const items: MenuProps['items'] = [
     {
@@ -14,7 +26,7 @@ export default function ProfileMenu() {
       icon: <FiSettings />,
       label: 'Settings',
       onClick: () => {
-        router.push('/settings')
+        router.push(Route.ProfileSettings)
       },
     },
     {
@@ -22,7 +34,8 @@ export default function ProfileMenu() {
       icon: <FiLogOut />,
       label: 'Sign Out',
       onClick: () => {
-        router.push('/logout')
+        console.log('deneme')
+        router.push(Route.Logout)
       },
     },
   ]
@@ -38,10 +51,25 @@ export default function ProfileMenu() {
       >
         <Button type="text" style={{ paddingTop: 0, paddingBottom: 0 }}>
           <Space size="small" align="center">
-            <Avatar size={'small'} style={{}}>
+            <Avatar size={'small'} style={{}} src={ppSrc}>
               BE
             </Avatar>
-            <Typography.Text>{name}</Typography.Text>
+            <div>
+              <div>
+                <Typography.Text>{user?.name}</Typography.Text>
+              </div>
+              <div>
+                <Typography.Text
+                  style={{
+                    fontSize: 12,
+                    color: 'darkgrey',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {user?.role}
+                </Typography.Text>
+              </div>
+            </div>
             <FiChevronDown
               size={16}
               style={{ marginTop: ICON_TOP_MARGIN_FIX }}

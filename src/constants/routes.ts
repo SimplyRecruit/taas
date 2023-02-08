@@ -1,4 +1,5 @@
 enum Route {
+  Index = '/',
   Login = '/login',
   Logout = '/logout',
   TimeTrack = '/tracker',

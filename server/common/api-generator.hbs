@@ -1,10 +1,15 @@
 import axios, { AxiosResponse } from "axios"
-const token = ""
+import Cookies from "universal-cookie";
+import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
-const httpInstance = axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
 import { {{#each imports}}{{this}}, {{/each}} } from "models"
+
+function createAxiosInstance() {
+    const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
+    return axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+}
 
 function createUrl(params: { [key: string]: string }, route: string) {
     let url = ""
@@ -29,7 +34,7 @@ export default {
         {
             const route = "{{this.route}}"
             const url = {{#if this.params.hasParams}}createUrl(params, route){{else}}route{{/if}}
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "{{this.method}}",
                 url,{{#if this.params.hasBody}}
                 data: body,{{/if}}{{#if this.params.hasQueries}}

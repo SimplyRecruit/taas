@@ -1,10 +1,15 @@
 import axios, { AxiosResponse } from "axios"
-const token = ""
+import Cookies from "universal-cookie";
+import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
-const httpInstance = axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
 import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, TableQueryParameters, WorkPeriod,  } from "models"
+
+function createAxiosInstance() {
+    const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
+    return axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+}
 
 function createUrl(params: { [key: string]: string }, route: string) {
     let url = ""
@@ -24,7 +29,7 @@ export default {
         {
             const route = "/customer"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
@@ -36,7 +41,7 @@ export default {
         {
             const route = "/customer/:id"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "patch",
                 url,
                 data: body,
@@ -48,7 +53,7 @@ export default {
         {
             const route = "/customer"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
                 data: body,
@@ -60,7 +65,7 @@ export default {
         {
             const route = "/customer/:id"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "delete",
                 url,
             })
@@ -71,7 +76,7 @@ export default {
         {
             const route = "/customer/:id/resources"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
@@ -83,7 +88,7 @@ export default {
         {
             const route = "/resource"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
@@ -95,7 +100,7 @@ export default {
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "patch",
                 url,
                 data: body,
@@ -107,7 +112,7 @@ export default {
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "delete",
                 url,
             })
@@ -117,7 +122,7 @@ export default {
         {
             const route = "/resource/customers"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
@@ -128,7 +133,7 @@ export default {
         {
             const route = "/resource/:id/customers"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
@@ -139,7 +144,7 @@ export default {
         {
             const route = "/resource/:resourceId/customers/:customerId"
             const url = createUrl(params, route)
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
             })
@@ -152,7 +157,7 @@ export default {
         {
             const route = "/user/login"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
                 data: body,
@@ -164,7 +169,7 @@ export default {
         {
             const route = "/user/register-organization"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
                 data: body,
@@ -175,7 +180,7 @@ export default {
         {
             const route = "/user/reset-password"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
             })
@@ -185,7 +190,7 @@ export default {
         {
             const route = "/user/forgot-password"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
             })
@@ -195,7 +200,7 @@ export default {
         {
             const route = "/user/me"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
@@ -208,7 +213,7 @@ export default {
         {
             const route = "/work-period"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "get",
                 url,
                 params: queries,
@@ -220,7 +225,7 @@ export default {
         {
             const route = "/work-period"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "post",
                 url,
                 data: body,
@@ -232,7 +237,7 @@ export default {
         {
             const route = "/work-period"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "delete",
                 url,
                 data: body,
@@ -244,7 +249,7 @@ export default {
         {
             const route = "/work-period"
             const url = route
-            return await httpInstance.request({
+            return await createAxiosInstance().request({
                 method: "put",
                 url,
                 data: body,

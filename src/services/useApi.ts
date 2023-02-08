@@ -23,9 +23,11 @@ export default function useApi<
       )(...args)
       setData(data)
       setError(null)
+      return data
     } catch (e: any) {
       setData(null)
       setError(e)
+      throw e
     } finally {
       setLoading(false)
     }
