@@ -38,13 +38,15 @@ export default function LoginPage() {
         height: '100vh',
       }}
     >
-      {loading && <h1>Loading...</h1>}
-      {!!error && <h1>{error.message}</h1>}
-      {!!data && <h1>{JSON.stringify(data)}</h1>}
-
       <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
         <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>
-          Log In
+          {error ? (
+            <span style={{ color: 'red' }}>Invalid Credentials</span>
+          ) : data ? (
+            <span style={{ color: 'green' }}>Redirecting...</span>
+          ) : (
+            'Log In'
+          )}
         </Typography.Title>
         <Form
           form={form}
@@ -68,7 +70,7 @@ export default function LoginPage() {
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
           <Form.Item>
-            <Button block htmlType="submit">
+            <Button loading={loading} block htmlType="submit">
               Submit
             </Button>
           </Form.Item>
