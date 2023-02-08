@@ -1,12 +1,14 @@
 import { ICON_TOP_MARGIN_FIX, Route } from '@/constants'
+import cookieKeys from '@/constants/cookie-keys'
 import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
+import { User } from 'models'
 import { useRouter } from 'next/router'
 import { FiChevronDown, FiLogOut, FiSettings } from 'react-icons/fi'
+import Cookies from 'universal-cookie'
 
 export default function ProfileMenu() {
   const router = useRouter()
-
-  const name = 'John Doe'
+  const name = (new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User).name
 
   const items: MenuProps['items'] = [
     {
