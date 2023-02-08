@@ -1,10 +1,10 @@
 import Bcrypt from 'bcrypt'
 import type { Request } from 'express'
 import Jwt from 'jsonwebtoken'
+import { User } from 'models'
 import type Language from 'models/Language'
 import LoginReqBody from 'models/User/LoginReqBody'
 import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody'
-import UserJwtPayload from 'models/User/User'
 import UserRole from 'models/User/UserRole'
 import UserStatus from 'models/User/UserStatus'
 import {
@@ -147,7 +147,13 @@ export default class UserController {
   }
 
   @Get('/me')
-  async me(@CurrentUser() user: UserJwtPayload) {
-    return user
+  async me(@CurrentUser() user: UserEntity) {
+    return User.create({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      organization: { id: user.organization.id, name: user.organization.name },
+    })
   }
 }

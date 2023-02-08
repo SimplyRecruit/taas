@@ -1,10 +1,11 @@
-import UserCookie from '@/auth/utils/UserCookie'
 import { Route } from '@/constants'
+import cookieKeys from '@/constants/cookie-keys'
 import useApi from '@/services/useApi'
 import { Button, Card, Form, Input, Typography } from 'antd'
 import LoginReqBody from 'models/User/LoginReqBody'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Cookies from 'universal-cookie'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -15,10 +16,10 @@ export default function LoginPage() {
     console.log('Success:', values)
     try {
       const token: string = await call(values)
-      UserCookie.setUserToken(token)
+      new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token)
       await router.replace(Route.DashBoard)
-    } catch {
-      /* empty */
+    } catch (e) {
+      /* Invalid Credentials */
     }
   }
 

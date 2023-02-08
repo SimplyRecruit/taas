@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from "axios"
-import UserCookie from "@/auth/utils/UserCookie"
+import Cookies from "universal-cookie";
+import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
 import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createAxiosInstance() {
-    const { token } = UserCookie.getUser()
+    const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
     return axios.create({ baseURL: "http://localhost:3000/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
 }
 

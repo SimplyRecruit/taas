@@ -1,3 +1,4 @@
+export { default as User } from 'models/User/User'
 export { default as LoginReqBody } from 'models/User/LoginReqBody'
 export { default as RegisterOrganizationReqBody } from 'models/User/RegisterOrganizationReqBody'
 export { default as UserJwtPayload } from 'models/User/UserJwtPayload'
