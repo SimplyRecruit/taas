@@ -8,17 +8,15 @@ import { FiChevronDown, FiLogOut, FiSettings } from 'react-icons/fi'
 import Cookies from 'universal-cookie'
 
 export default function ProfileMenu() {
-  const [name, setName] = useState('')
+  const [user, setUser] = useState<User>()
   const [ppSrc, setPpSrc] = useState<string>()
   const router = useRouter()
 
   useEffect(() => {
-    const currentUserName = (
-      new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
-    ).name
-    setName(currentUserName)
+    const currentUser = new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
+    setUser(currentUser)
     setPpSrc(
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserName)}`
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}`
     )
   }, [])
 
@@ -56,7 +54,22 @@ export default function ProfileMenu() {
             <Avatar size={'small'} style={{}} src={ppSrc}>
               BE
             </Avatar>
-            <Typography.Text>{name}</Typography.Text>
+            <div>
+              <div>
+                <Typography.Text>{user?.name}</Typography.Text>
+              </div>
+              <div>
+                <Typography.Text
+                  style={{
+                    fontSize: 12,
+                    color: 'darkgrey',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {user?.role}
+                </Typography.Text>
+              </div>
+            </div>
             <FiChevronDown
               size={16}
               style={{ marginTop: ICON_TOP_MARGIN_FIX }}
