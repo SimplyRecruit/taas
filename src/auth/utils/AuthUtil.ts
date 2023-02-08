@@ -2,7 +2,6 @@ import UserCookie from '@/auth/utils/UserCookie'
 import { Route } from '@/constants'
 import axios from 'axios'
 import { User } from 'models'
-import { RequestCookies } from 'next/dist/server/web/spec-extension/cookies'
 import fetchAdapter from '@haverstack/axios-fetch-adapter'
 import { NextRequest } from 'next/server'
 
