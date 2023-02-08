@@ -1,7 +1,7 @@
 import UserCookie from '@/auth/utils/UserCookie'
 import { Route } from '@/constants'
 import axios from 'axios'
-import { User } from 'models'
+import { UserJwtPayload } from 'models'
 import fetchAdapter from '@haverstack/axios-fetch-adapter'
 import { NextRequest } from 'next/server'
 
@@ -15,7 +15,7 @@ export async function checkAuthentication(
     const { token } = UserCookie.getUser(request)
     if (!token) throw new Error()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { data: user }: { data: User } = await axios.get(
+    const { data: user }: { data: UserJwtPayload } = await axios.get(
       'http://localhost:3000/api/user/me',
       {
         headers: { authorization: `Bearer ${token}` },

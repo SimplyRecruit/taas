@@ -1,10 +1,10 @@
 import { COOKIE_BASE } from '@/constants/globals'
-import { User } from 'models'
+import { UserJwtPayload } from 'models'
 import { NextRequest } from 'next/server'
 import Cookies from 'universal-cookie'
 
 const UserCookie = {
-  setUser(user: User, request?: NextRequest) {
+  setUser(user: UserJwtPayload, request?: NextRequest) {
     const cookiesLib = new Cookies()
     if (!request) {
       cookiesLib.set(COOKIE_BASE + 'userPayload', JSON.stringify(user))
@@ -21,7 +21,7 @@ const UserCookie = {
     }
   },
   getUser(request?: NextRequest): {
-    user: User | undefined
+    user: UserJwtPayload | undefined
     token: string | undefined
   } {
     if (!request) {
@@ -33,12 +33,12 @@ const UserCookie = {
         doNotParse: true,
       })
       if (!userString) return { token, user: undefined }
-      else return { token, user: JSON.parse(userString) as User }
+      else return { token, user: JSON.parse(userString) as UserJwtPayload }
     } else {
       const token = request.cookies.get(COOKIE_BASE + 'userToken')?.value
       const userString = request.cookies.get(COOKIE_BASE + 'userPayload')
       if (!userString) return { token, user: undefined }
-      const user: User = User.create(JSON.parse(userString.value))
+      const user: UserJwtPayload = UserJwtPayload.create(JSON.parse(userString.value))
       return { token, user }
     }
   },
