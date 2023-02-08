@@ -1,14 +1,25 @@
+import UserCookie from '@/auth/utils/UserCookie'
+import { Route } from '@/constants'
 import useApi from '@/services/useApi'
 import { Button, Card, Form, Input, Typography } from 'antd'
 import LoginReqBody from 'models/User/LoginReqBody'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-const LoginPage = () => {
+export default function LoginPage() {
+  const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'login')
   const [form] = Form.useForm()
-  const onFinish = (values: LoginReqBody) => {
+
+  const onFinish = async (values: LoginReqBody) => {
     console.log('Success:', values)
-    call(values)
+    try {
+      const token: string = await call(values)
+      UserCookie.setUserToken(token)
+      await router.replace(Route.DashBoard)
+    } catch {
+      /* empty */
+    }
   }
 
   const onFinishFailed = (errorInfo: unknown) => {
@@ -70,5 +81,3 @@ const LoginPage = () => {
     </div>
   )
 }
-
-export default LoginPage
