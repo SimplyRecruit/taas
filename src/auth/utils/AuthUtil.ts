@@ -10,13 +10,18 @@ export async function checkAuthentication(
   try {
     if (!token) throw new Error('no token')
     const user = (await (
-      await fetch(new URL('http://localhost:3000/api/user/me').href, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await fetch(
+        new URL(
+          (process.env.BASE_URL ?? 'http://localhost:3000') + '/api/user/me'
+        ).href,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
     ).json()) as User
     if (authRoutes.includes(path)) return { routeToRedirect: 'app', user }
     return { routeToRedirect: null, user }
