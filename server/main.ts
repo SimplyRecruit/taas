@@ -20,6 +20,7 @@ const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000
 const hostname = process.env.HOST ?? 'localhost'
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
+console.log('ENV VAR TEST:', hostname, port)
 
 // Controllers
 import CustomerController from '~/resources/Customer/Controller'
