@@ -12,14 +12,14 @@ import {
 } from '~/resources/User/AuthService'
 import { generateApiCalls } from '~/common/Util'
 
-const dev = process.env.NODE_ENV !== 'production'
-const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000
-const hostname = process.env.HOSTNAME ?? 'localhost'
-const app = next({ dev, hostname, port })
-const handle = app.getRequestHandler()
-
 // Resolving environment variables
 import 'dotenv/config'
+
+const dev = process.env.NODE_ENV !== 'production'
+const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3000
+const hostname = process.env.HOSTNAMEE ?? 'localhost'
+const app = next({ dev, hostname, port })
+const handle = app.getRequestHandler()
 
 // Controllers
 import CustomerController from '~/resources/Customer/Controller'
