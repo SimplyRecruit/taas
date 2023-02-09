@@ -8,7 +8,7 @@ import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, TableQue
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
-    return axios.create({ baseURL: (process.env.BASE_URL ?? 'http://localhost:3000') + "/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
+    return axios.create({ baseURL: (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000') + "/api", headers: { "Authorization": `Bearer ${token}`, "Accept-Language": lang } })
 }
 
 function createUrl(params: { [key: string]: string }, route: string) {
