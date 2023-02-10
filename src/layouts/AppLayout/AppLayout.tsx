@@ -21,17 +21,21 @@ import { useState } from 'react'
 import { FiBell } from 'react-icons/fi'
 import { adminMenuItems, analyseMenuItems, topMenuItems } from './menu-items'
 
-interface PlatformLayoutProps {
+interface AppLayoutProps {
   children: React.ReactNode
 }
 
-export default function PlatformLayout({ children }: PlatformLayoutProps) {
+export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter()
   const [sidebarCollapsed] = useState(false)
-  if (authRoutes.includes(router.pathname as Route)) {
+  if (
+    authRoutes.includes(router.pathname as Route) ||
+    router.pathname === '/_error'
+  ) {
     return <div>{children}</div>
   }
 
+  console.log(router.pathname)
   return (
     <ConfigProvider
       theme={{

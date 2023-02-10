@@ -12,7 +12,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <link href="/logo192.png" rel="apple-touch-icon" />
       </Head>
       <AppLayout>
-        {' '}
         <Component {...pageProps} />
       </AppLayout>
     </>
