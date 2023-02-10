@@ -4,6 +4,7 @@ import { FiEdit2 } from 'react-icons/fi'
 import { SearchOutlined } from '@ant-design/icons'
 import ChangeRateModal from '@/pages/team/components/ChangeRateModal'
 import { dummyData } from '@/pages/projects/data'
+import ActionMenu from '@/components/ActionMenu'
 
 export default function ProjectsPage() {
   const roles = ['Admin', 'Manager', 'End-user']
@@ -38,11 +39,7 @@ export default function ProjectsPage() {
       title: '',
       key: 'action',
       width: actionColumnWidth,
-      render: () => (
-        <span>
-          <FiEdit2 type="edit" style={{ cursor: 'pointer' }} />
-        </span>
-      ),
+      render: () => <ActionMenu />,
     },
   ]
 
