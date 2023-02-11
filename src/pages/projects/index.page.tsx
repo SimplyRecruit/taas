@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Button, Input, Modal, Select, Space, Table } from 'antd'
+import moment from 'dayjs'
 import { SearchOutlined } from '@ant-design/icons'
 import { dummyData } from '@/pages/projects/data'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
@@ -33,8 +34,8 @@ export default function ProjectsPage() {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (a: Date) => {
-        return <div>{a.toDateString()}</div>
+      render: (a: moment.Dayjs) => {
+        return <div>{a.format('DD/MM/YYYY').toString()}</div>
       },
     },
     {
