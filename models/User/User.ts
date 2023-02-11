@@ -1,6 +1,5 @@
+import { UserRole } from 'models'
 import Model from 'models/Model'
-import UserRole from 'models/User/UserRole'
-
 export default class User extends Model {
   name: string
   id: string

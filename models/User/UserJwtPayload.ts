@@ -1,6 +1,5 @@
+import { UserRole, UserStatus } from 'models'
 import Model from 'models/Model'
-import UserStatus from 'models/User/UserStatus'
-import UserRole from './UserRole'
 
 export default class UserJwtPayload extends Model {
   id: string

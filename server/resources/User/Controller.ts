@@ -2,12 +2,15 @@ import Bcrypt from 'bcrypt'
 import { randomUUID } from 'crypto'
 import type { Request } from 'express'
 import Jwt from 'jsonwebtoken'
-import { InviteMemberReqBody, User } from 'models'
-import type Language from 'models/Language'
-import LoginReqBody from 'models/User/LoginReqBody'
-import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody'
-import UserRole from 'models/User/UserRole'
-import UserStatus from 'models/User/UserStatus'
+import {
+  InviteMemberReqBody,
+  type Language,
+  LoginReqBody,
+  RegisterOrganizationReqBody,
+  User,
+  UserRole,
+  UserStatus,
+} from 'models'
 import {
   Authorized,
   BodyParam,

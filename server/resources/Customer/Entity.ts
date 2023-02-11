@@ -1,4 +1,4 @@
-import CustomerContractType from 'models/CustomerContractType'
+import { CustomerContractType } from 'models'
 import {
   Column,
   Entity,

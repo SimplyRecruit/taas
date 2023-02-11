@@ -1,7 +1,7 @@
 import { DatePicker, Dropdown, Modal, Select, Space } from 'antd'
 import { Input } from 'antd'
 import dayjs from 'dayjs'
-import Project from 'models/Project'
+import { Project } from 'models'
 import { useState } from 'react'
 
 interface RenderProps {
