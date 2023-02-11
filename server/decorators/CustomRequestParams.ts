@@ -13,14 +13,14 @@ type Class = Function
 export function Body(options?: BodyOptions | undefined): Class {
   return function (target: any, key: string, index: number) {
     const type = Reflect.getOwnMetadata('design:paramtypes', target, key)[index]
-    RCBody({ ...options, type })(target, key)
+    RCBody({ ...options, type })(target, key, index)
   }
 }
 
 export function QueryParams(options?: ParamOptions | undefined): Class {
   return function (target: any, key: string, index: number) {
     const type = Reflect.getOwnMetadata('design:paramtypes', target, key)[index]
-    RCQueryParams({ ...options, type })(target, key)
+    RCQueryParams({ ...options, type })(target, key, index)
   }
 }
 
@@ -31,6 +31,6 @@ export function BodyParam(
   throw new Error('BodyParam Not Implemented')
   return function (target: any, key: string, index: number) {
     const type = Reflect.getOwnMetadata('design:paramtypes', target, key)[index]
-    RCBodyParam(name, { ...options, type })(target, key)
+    RCBodyParam(name, { ...options, type })(target, key, index)
   }
 }

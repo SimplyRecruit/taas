@@ -2,6 +2,7 @@ import Bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import { Request } from 'express'
 import Jwt from 'jsonwebtoken'
+import { UserJwtPayload } from 'models'
 import UserStatus from 'models/User/UserStatus'
 import { Action, BadRequestError, UnauthorizedError } from 'routing-controllers'
 import { EntityManager } from 'typeorm/entity-manager/EntityManager'
@@ -11,7 +12,7 @@ import UserEntity from '~/resources/User/Entity'
 
 export async function resolveUserToken(
   action: Action
-): Promise<Jwt.JwtPayload | null> {
+): Promise<UserJwtPayload | null> {
   const authorization: string = action.request.headers['authorization'] ?? ''
   const token = authorization.startsWith('Bearer ')
     ? authorization.substring(7, authorization.length)
@@ -21,7 +22,7 @@ export async function resolveUserToken(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const payload = Jwt.verify(token, process.env['JWT_SECRET']!)
     if (typeof payload === 'string') throw new BadRequestError()
-    else return payload
+    else return payload as UserJwtPayload
   } catch (error) {
     throw new UnauthorizedError()
   }
@@ -46,6 +47,7 @@ export async function authorizationChecker(
 ): Promise<boolean> {
   const payload = await resolveUserToken(action)
   if (payload == null) return false
+  if (!payload.active || payload.status !== UserStatus.CONFIRMED) return false
   if (!roles.length) return true
   else if (roles.some(role => role === payload.role)) return true
   else return false
@@ -74,15 +76,9 @@ export function createResetPasswordLink(
   )
 }
 
-export async function createSessionToken(
-  user: UserEntity,
-  sudo: boolean,
-  em?: EntityManager
-) {
+export async function createSessionToken(user: UserEntity, em?: EntityManager) {
   const token = crypto.randomBytes(64).toString('hex')
   const tokenHash = Bcrypt.hashSync(token, 8)
-  if (!sudo && user.status != UserStatus.CONFIRMED)
-    throw new UnauthorizedError()
   const expiration = new Date(Date.now() + 3 * 60 * 60 * 1000) // 3 hours
   em
     ? await em.save(SessionTokenEntity, { tokenHash, user, expiration })

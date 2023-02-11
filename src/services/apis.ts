@@ -4,7 +4,7 @@ import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
-import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, TableQueryParameters, WorkPeriod,  } from "models"
+import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, InviteMemberReqBody, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
@@ -168,6 +168,18 @@ export default {
         ) : Promise<AxiosResponse>
         {
             const route = "/user/register-organization"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async inviteMember(
+            body: InviteMemberReqBody,
+        ) : Promise<AxiosResponse>
+        {
+            const route = "/user/invite-member"
             const url = route
             return await createAxiosInstance().request({
                 method: "post",
