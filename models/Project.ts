@@ -1,6 +1,6 @@
 import { IsBoolean, IsDateString, Length } from 'class-validator'
 import Model from 'models/Model'
-
+import moment from 'dayjs'
 export default class Project extends Model {
   @Length(1, 10)
   id: string
@@ -12,7 +12,7 @@ export default class Project extends Model {
   client: string
 
   @IsDateString()
-  startDate: Date
+  startDate: moment.Dayjs
 
   @IsBoolean()
   active: boolean
