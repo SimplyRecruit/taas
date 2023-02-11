@@ -1,4 +1,5 @@
 import Bcrypt from 'bcrypt'
+import { randomUUID } from 'crypto'
 import type { Request } from 'express'
 import Jwt from 'jsonwebtoken'
 import { InviteMemberReqBody, User } from 'models'
@@ -77,6 +78,12 @@ export default class UserController {
           role: UserRole.ADMIN,
           organization,
         })
+        await em.save(ResourceEntity, {
+          id: randomUUID(),
+          hourlyRate: 0,
+          startDate: new Date(),
+          user,
+        })
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {
@@ -112,7 +119,7 @@ export default class UserController {
           organization: currentUser.organization,
         })
         await em.save(ResourceEntity, {
-          id: '123',
+          id: randomUUID(),
           hourlyRate,
           user,
           startDate: new Date(),
