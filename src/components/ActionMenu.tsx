@@ -1,29 +1,10 @@
-import { FiLink, FiEdit3, FiMoreVertical } from 'react-icons/fi'
-import { BiArchiveIn } from 'react-icons/bi'
+import { FiMoreVertical } from 'react-icons/fi'
 import { MenuProps, Dropdown, Button } from 'antd'
 
-export default function ActionMenu() {
-  const items: MenuProps['items'] = [
-    {
-      key: 'edit',
-      icon: <FiEdit3 />,
-      label: 'Edit',
-    },
-
-    {
-      key: 'share',
-      icon: <FiLink />,
-      label: 'Share',
-    },
-    {
-      key: 'archive',
-      icon: <BiArchiveIn />,
-      label: 'Archive',
-      onClick: () => {
-        console.log('event')
-      },
-    },
-  ]
+interface RenderProps {
+  items: MenuProps['items']
+}
+export default function ActionMenu({ items }: RenderProps) {
   return (
     <Dropdown
       getPopupContainer={() =>
