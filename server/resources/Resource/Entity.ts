@@ -15,9 +15,6 @@ export default class ResourceEntity extends EntityBaseOnlyDates {
   @PrimaryColumn()
   id: string
 
-  @Column()
-  name: string
-
   @Column({ type: 'timestamptz' })
   startDate: Date
 
