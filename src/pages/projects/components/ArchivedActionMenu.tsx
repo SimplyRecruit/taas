@@ -4,8 +4,8 @@ import { MenuProps } from 'antd'
 import ActionMenu from '@/components/ActionMenu'
 
 interface RenderProps {
-  onRestore: () => void
   onEdit: () => void
+  onRestore: () => void
   onDelete: () => void
 }
 export default function ArchivedActionMenu({
@@ -21,9 +21,9 @@ export default function ArchivedActionMenu({
       onClick: onEdit,
     },
     {
-      key: 'archive',
+      key: 'restore',
       icon: <BiArchiveOut />,
-      label: 'Archive',
+      label: 'Restore',
       onClick: onRestore,
     },
     {
@@ -31,6 +31,7 @@ export default function ArchivedActionMenu({
       icon: <FiTrash2 />,
       label: 'Delete',
       onClick: onDelete,
+      danger: true,
     },
   ]
   return <ActionMenu items={items} />
