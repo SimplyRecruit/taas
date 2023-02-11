@@ -1,7 +1,7 @@
 import Bcrypt from 'bcrypt'
 import type { Request } from 'express'
 import Jwt from 'jsonwebtoken'
-import { User } from 'models'
+import { InviteMemberReqBody, User } from 'models'
 import type Language from 'models/Language'
 import LoginReqBody from 'models/User/LoginReqBody'
 import RegisterOrganizationReqBody from 'models/User/RegisterOrganizationReqBody'
@@ -27,6 +27,7 @@ import { Body } from '~/decorators/CustomRequestParams'
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError'
 import { dataSource } from '~/main'
 import OrganizationEntity from '~/resources/Organization/Entity'
+import ResourceEntity from '~/resources/Resource/Entity'
 import SessionTokenEntity from '~/resources/SessionToken/Entity'
 import {
   createResetPasswordLink,
@@ -43,7 +44,12 @@ export default class UserController {
     const isPasswordCorrect = Bcrypt.compareSync(password, user.passwordHash)
     if (!isPasswordCorrect) throw new UnauthorizedError()
     const token = Jwt.sign(
-      { id: user.id, role: user.role },
+      {
+        id: user.id,
+        role: user.role,
+        status: user.status,
+        active: user.isEnabled,
+      },
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       process.env['JWT_SECRET']!,
       {
@@ -71,7 +77,7 @@ export default class UserController {
           role: UserRole.ADMIN,
           organization,
         })
-        const token = await createSessionToken(user, true, em)
+        const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {
           name,
@@ -83,13 +89,50 @@ export default class UserController {
         console.log(error)
         if (error.code == 23505)
           throw new AlreadyExistsError('User already exists')
-        if (error instanceof UnauthorizedError) throw error
-        if (error instanceof EntityNotFoundError)
-          throw new NotFoundError('No user with given email')
         throw new InternalServerError('Internal Server Error')
       }
     })
     return 'Registration Succesful'
+  }
+
+  @Post('/invite-member')
+  @Authorized(UserRole.ADMIN)
+  async inviteMember(
+    @Body() { email, hourlyRate, name, role }: InviteMemberReqBody,
+    @CurrentUser() currentUser: UserEntity,
+    @Req() req: Request,
+    @HeaderParam('Accept-Language') language: Language
+  ) {
+    await dataSource.transaction(async em => {
+      try {
+        const user = await em.save(UserEntity, {
+          email,
+          name,
+          role,
+          organization: currentUser.organization,
+        })
+        await em.save(ResourceEntity, {
+          id: '123',
+          hourlyRate,
+          user,
+          startDate: new Date(),
+        })
+        const token = await createSessionToken(user, em)
+        const link = createResetPasswordLink(req, token, email)
+        const emailTemplate = new EmailTemplate.ResetPassword(language, {
+          name,
+          link,
+        })
+        await sendEmail(email, emailTemplate)
+        return 'Invitation Sent'
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        console.log(error)
+        if (error.code == 23505)
+          throw new AlreadyExistsError('User already exists')
+        throw new InternalServerError('Internal Server Error')
+      }
+    })
   }
 
   @Post('/reset-password')
@@ -115,7 +158,12 @@ export default class UserController {
         await em.save(user)
         await em.remove(sessionToken)
       } catch (error) {
-        if (error instanceof UnauthorizedError) throw error
+        if (
+          error instanceof UnauthorizedError ||
+          error instanceof EntityNotFoundError
+        ) {
+          throw new UnauthorizedError()
+        }
         throw new InternalServerError('Internal Server Error')
       }
     })
@@ -130,7 +178,8 @@ export default class UserController {
   ) {
     try {
       const user = await UserEntity.findOneByOrFail({ email })
-      const token = await createSessionToken(user, false)
+      if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
+      const token = await createSessionToken(user)
       const link = createResetPasswordLink(req, token, email)
       const emailTemplate = new EmailTemplate.ResetPassword(language, {
         name: user.name,
