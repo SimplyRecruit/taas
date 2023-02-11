@@ -8,7 +8,16 @@
     "build": "next build && tsc --project tsconfig.server.json && cp tsconfig.json ./dist/tsconfig.prod.json",
     "start": "cross-env NODE_ENV=production TS_NODE_PROJECT=dist/tsconfig.prod.json node -r tsconfig-paths/register ./dist/server/main.js",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint"
+    ],
+    "*.tsx": [
+      "eslint"
+    ]
   },
   "dependencies": {
     "@next/font": "13.1.1",
@@ -54,6 +63,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "handlebars": "^4.7.7",
     "husky": "^8.0.0",
+    "lint-staged": "^13.1.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.3",
     "ts-node": "^10.9.1",
