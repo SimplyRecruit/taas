@@ -141,6 +141,7 @@ export default function ProjectsPage() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         columns={columns}
         dataSource={filteredData}
         pagination={{
