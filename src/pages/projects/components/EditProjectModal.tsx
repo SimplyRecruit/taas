@@ -33,7 +33,7 @@ export default function EditProjectModal({
           active: project.active,
         })
       : onAdd({
-          id: '12',
+          id: Math.random().toString(),
           name,
           client,
           startDate,

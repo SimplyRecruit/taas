@@ -159,8 +159,10 @@ export default function ProjectsPage() {
         open={modalOpen}
         project={currentRecord}
         onCancel={() => setModalOpen(false)}
-        onAdd={() => {
-          return null
+        onAdd={e => {
+          setData([...data, e])
+          setFilteredData([e, ...filteredData])
+          setModalOpen(false)
         }}
         onUpdate={() => {
           return null
