@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import CustomerEntity from '~/resources/Customer/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
 import UserEntity from '~/resources/User/Entity'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 
