@@ -13,9 +13,6 @@ export default class OrganizationEntity extends EntityBase {
   @OneToMany(() => UserEntity, user => user.organization)
   users: UserEntity[]
 
-  @OneToMany(() => ResourceEntity, resource => resource.organization)
-  resources: ResourceEntity[]
-
   @OneToMany(() => CustomerEntity, customer => customer.organization)
   customers: CustomerEntity[]
 

@@ -28,7 +28,7 @@ export default class ResourceController {
   @Authorized(UserRole.ADMIN)
   async getAll(@CurrentUser() currentUser: UserEntity) {
     return await ResourceEntity.findBy({
-      organization: { id: currentUser.organization.id },
+      user: { organization: { id: currentUser.organization.id } },
     })
   }
 
@@ -43,9 +43,9 @@ export default class ResourceController {
       try {
         const resource = await em.findOneOrFail(ResourceEntity, {
           where: { id: resourceId },
-          relations: { organization: true },
+          relations: { user: true },
         })
-        if (resource.organization.id !== currentUser.organization.id)
+        if (resource.user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
         await em.update(ResourceEntity, resourceId, body)
       } catch (error) {
@@ -84,9 +84,9 @@ export default class ResourceController {
       try {
         const resource = await em.findOneOrFail(ResourceEntity, {
           where: { id: resourceId },
-          relations: { organization: true, user: true },
+          relations: { user: true },
         })
-        if (resource.organization.id !== currentUser.organization.id)
+        if (resource.user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
         await em.remove(resource.user)
         await em.remove(resource)
@@ -151,9 +151,9 @@ export default class ResourceController {
         if (existing != null) throw new AlreadyExistsError()
         const resource = await em.findOneOrFail(ResourceEntity, {
           where: { id: resourceId },
-          relations: { organization: true },
+          relations: { user: true },
         })
-        if (resource.organization.id !== currentUser.organization.id)
+        if (resource.user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
         const customer = await em.findOneOrFail(CustomerEntity, {
           where: { id: customerId },
