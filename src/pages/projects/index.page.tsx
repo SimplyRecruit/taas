@@ -4,20 +4,20 @@ import { SearchOutlined } from '@ant-design/icons'
 import { dummyData } from '@/pages/projects/data'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
+import EditProjectModal from '@/pages/projects/components/EditProjectModal'
+import Project from 'models/Project'
 
 export default function ProjectsPage() {
-  const roles = ['Admin', 'Manager', 'End-user']
   const actionColumnWidth = 60
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string, record: any) => (
+      render: (text: string, record: Project) => (
         <span
           style={{
-            textDecoration:
-              record.status === 'inactive' ? 'line-through' : 'none',
+            textDecoration: !record.active ? 'line-through' : 'none',
           }}
         >
           {text}
@@ -33,16 +33,38 @@ export default function ProjectsPage() {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
+      render: (a: Date) => {
+        return <div>{a.toDateString()}</div>
+      },
     },
     {
       title: '',
       key: 'action',
       width: actionColumnWidth,
-      render: (record: any) =>
-        record.status === 'active' ? (
-          <ActiveActionMenu />
+      render: (record: Project) =>
+        record.active ? (
+          <ActiveActionMenu
+            onEdit={() => {
+              setCurrentRecord(record)
+              setModalOpen(true)
+            }}
+            onArchive={() => {
+              return null
+            }}
+          />
         ) : (
-          <ArchivedActionMenu />
+          <ArchivedActionMenu
+            onEdit={() => {
+              setCurrentRecord(record)
+              setModalOpen(true)
+            }}
+            onRestore={() => {
+              return null
+            }}
+            onDelete={() => {
+              return null
+            }}
+          />
         ),
     },
   ]
@@ -69,7 +91,7 @@ export default function ProjectsPage() {
   const filterData = (status: string, search: string) => {
     let filtered = data
     if (status !== 'all') {
-      filtered = filtered.filter(item => item.status === status)
+      filtered = filtered.filter(item => item.active === (status == 'active'))
     }
     if (search) {
       filtered = filtered.filter(item =>
@@ -108,7 +130,13 @@ export default function ProjectsPage() {
             style={{ width: 200 }}
           />
         </Space>
-        <Button type="primary" onClick={() => setModalOpen(true)}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setCurrentRecord(null)
+            setModalOpen(true)
+          }}
+        >
           Add Project
         </Button>
       </div>
@@ -124,14 +152,18 @@ export default function ProjectsPage() {
           showSizeChanger: false,
         }}
       />
-      <Modal
-        title="Add Project"
+      <EditProjectModal
+        key={currentRecord?.id}
         open={modalOpen}
-        onOk={() => setModalOpen(false)}
+        project={currentRecord}
         onCancel={() => setModalOpen(false)}
-      >
-        {/* Add form inputs to capture new client data */}
-      </Modal>
+        onAdd={() => {
+          return null
+        }}
+        onUpdate={() => {
+          return null
+        }}
+      />
     </div>
   )
 }

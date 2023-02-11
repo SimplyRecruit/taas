@@ -1,18 +1,18 @@
-export const dummyData = [
+import Project from 'models/Project'
+
+export const dummyData: Project[] = [
   {
-    key: 0,
+    id: '0',
     name: 'Kurulum',
     client: 'A101',
-    startDate: '22.05.2000',
-    role: 'Developer',
-    status: 'active',
+    startDate: new Date('2023/10/10'),
+    active: true,
   },
   {
-    key: 1,
+    id: '1',
     name: 'Bakım',
     client: 'BİM',
-    startDate: '22.05.2000',
-    role: 'Designer',
-    status: 'inactive',
+    startDate: new Date(),
+    active: false,
   },
 ]
