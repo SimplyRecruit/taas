@@ -50,7 +50,8 @@ export default function ProjectsPage() {
               setModalOpen(true)
             }}
             onArchive={() => {
-              return null
+              record.active = false
+              setData([...data])
             }}
           />
         ) : (
@@ -60,7 +61,8 @@ export default function ProjectsPage() {
               setModalOpen(true)
             }}
             onRestore={() => {
-              return null
+              record.active = true
+              setData([...data])
             }}
             onDelete={() => {
               return null

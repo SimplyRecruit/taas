@@ -195,7 +195,7 @@ export default function Team() {
         onOk={(record, newRate) => {
           handleHourlyRateChange(record, newRate)
         }}
-      ></ChangeRateModal>
+      />
       <Modal
         title="Invite Member"
         open={modalOpen}
