@@ -5,4 +5,5 @@ enum UserRole {
   END_USER = 'END_USER',
 }
 
+export const SUPER_USER_ROLES = [UserRole.SU]
 export default UserRole
