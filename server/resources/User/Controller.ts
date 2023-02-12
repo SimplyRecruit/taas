@@ -131,15 +131,14 @@ export default class UserController {
           link,
         })
         await sendEmail(email, emailTemplate)
-        return 'Invitation Sent'
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        console.log(error)
         if (error.code == 23505)
           throw new AlreadyExistsError('User already exists')
         throw new InternalServerError('Internal Server Error')
       }
     })
+    return 'Invitation Sent'
   }
 
   @Post('/reset-password')
