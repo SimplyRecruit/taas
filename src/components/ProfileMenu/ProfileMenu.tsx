@@ -14,6 +14,7 @@ export default function ProfileMenu() {
 
   useEffect(() => {
     const currentUser = new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
+    if (!currentUser) return
     setUser(currentUser)
     setPpSrc(
       `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}`
