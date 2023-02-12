@@ -3,9 +3,11 @@ import { Button, Input, Modal, Select, Space, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
 import { SearchOutlined } from '@ant-design/icons'
 import ChangeRateModal from '@/pages/team/components/ChangeRateModal'
+import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
+import UserRoleSelector from '@/pages/team/components/UserRoleSelector'
+import { UserRole } from 'models'
 
 export default function Team() {
-  const roles = ['Admin', 'Manager', 'End-user']
   const actionColumnWidth = 60
   const columns = [
     {
@@ -53,16 +55,10 @@ export default function Team() {
       dataIndex: 'role',
       key: 'role',
       render: (role: string, record: any) => (
-        <Select
-          value={role}
+        <UserRoleSelector
+          role={role as UserRole}
           onChange={value => handleRoleChange(record, value)}
-        >
-          {roles.map(r => (
-            <Select.Option value={r} key={r}>
-              {r}
-            </Select.Option>
-          ))}
-        </Select>
+        />
       ),
     },
     {
@@ -83,7 +79,7 @@ export default function Team() {
       name: 'John Doe',
       email: 'johndoe@example.com',
       hourlyRate: 50,
-      role: 'Developer',
+      role: 'ADMIN',
       status: 'active',
     },
     {
@@ -91,11 +87,11 @@ export default function Team() {
       name: 'Jane Doe',
       email: 'janedoe@example.com',
       hourlyRate: 60,
-      role: 'Designer',
+      role: 'ADMIN',
       status: 'inactive',
     },
   ]
-  const [modalOpen, setModalOpen] = useState(false)
+  const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [changeRateModalOpen, setChangeRateModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState(dummyData)
@@ -171,7 +167,7 @@ export default function Team() {
             style={{ width: 200 }}
           />
         </Space>
-        <Button type="primary" onClick={() => setModalOpen(true)}>
+        <Button type="primary" onClick={() => setInviteMemberModalOpen(true)}>
           Invite Member
         </Button>
       </div>
@@ -196,14 +192,13 @@ export default function Team() {
           handleHourlyRateChange(record, newRate)
         }}
       />
-      <Modal
-        title="Invite Member"
-        open={modalOpen}
-        onOk={() => setModalOpen(false)}
-        onCancel={() => setModalOpen(false)}
-      >
-        {/* Add form inputs to capture new client data */}
-      </Modal>
+      <InviteMemberModal
+        open={inviteMemberModalOpen}
+        onCancel={() => setInviteMemberModalOpen(false)}
+        onAdd={() => {
+          return null
+        }}
+      />
     </div>
   )
 }

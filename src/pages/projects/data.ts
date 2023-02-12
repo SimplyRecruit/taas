@@ -1,5 +1,5 @@
-import Project from 'models/Project'
 import moment from 'dayjs'
+import { Project } from 'models'
 export const dummyData: Project[] = [
   {
     id: '0',

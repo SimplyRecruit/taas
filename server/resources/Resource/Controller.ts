@@ -1,5 +1,4 @@
-import Resource from 'models/Resource'
-import UserRole from 'models/User/UserRole'
+import { Resource, UserRole } from 'models'
 import {
   Authorized,
   CurrentUser,

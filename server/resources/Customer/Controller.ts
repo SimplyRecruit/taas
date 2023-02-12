@@ -1,5 +1,4 @@
-import Customer from 'models/Customer'
-import UserRole from 'models/User/UserRole'
+import { Customer, UserRole } from 'models'
 import {
   Authorized,
   CurrentUser,

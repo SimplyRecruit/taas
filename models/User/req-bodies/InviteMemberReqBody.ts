@@ -8,8 +8,8 @@ import {
   MinLength,
   NotEquals,
 } from 'class-validator'
+import { UserRole } from 'models'
 import Model from 'models/Model'
-import UserRole from 'models/User/UserRole'
 
 export default class InviteMemberReqBody extends Model {
   @MinLength(2)

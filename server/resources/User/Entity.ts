@@ -1,5 +1,4 @@
-import UserRole from 'models/User/UserRole'
-import UserStatus from 'models/User/UserStatus'
+import { UserRole, UserStatus } from 'models'
 import { Column, Entity, ManyToOne, OneToOne } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'

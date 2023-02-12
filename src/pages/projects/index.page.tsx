@@ -6,7 +6,7 @@ import { dummyData } from '@/pages/projects/data'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
-import Project from 'models/Project'
+import { Project } from 'models'
 
 export default function ProjectsPage() {
   const actionColumnWidth = 60

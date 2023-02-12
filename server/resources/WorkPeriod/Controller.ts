@@ -1,6 +1,4 @@
-import TableQueryParameters from 'models/TableQueryParameters'
-import UserRole from 'models/User/UserRole'
-import WorkPeriod from 'models/WorkPeriod'
+import { TableQueryParameters, UserRole, WorkPeriod } from 'models'
 import {
   Authorized,
   BadRequestError,

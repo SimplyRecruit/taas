@@ -1,4 +1,5 @@
-import Language from 'models/Language'
+import { Language } from 'models'
+
 export namespace EmailTemplate {
   export class Base {
     constructor(
