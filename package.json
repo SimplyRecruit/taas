@@ -10,7 +10,8 @@
     "lint": "next lint",
     "prepare": "husky install",
     "pre-commit": "lint-staged",
-    "generate-locale-schemas": "node ./generate-locale-schemas.js"
+    "generate-locale-schemas": "node -e \"require('./generate-locale-schemas.js').generateSchemas()\"",
+    "create-locale-namespace": "node -e \"require('./generate-locale-schemas.js').createNamespace()\""
   },
   "lint-staged": {
     "*.ts": [
