@@ -90,6 +90,86 @@ export default function Team() {
       role: 'ADMIN',
       status: 'inactive',
     },
+    {
+      key: 2,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      hourlyRate: 50,
+      role: 'ADMIN',
+      status: 'active',
+    },
+    {
+      key: 3,
+      name: 'Jane Doe',
+      email: 'janedoe@example.com',
+      hourlyRate: 60,
+      role: 'ADMIN',
+      status: 'inactive',
+    },
+    {
+      key: 4,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      hourlyRate: 50,
+      role: 'ADMIN',
+      status: 'active',
+    },
+    {
+      key: 5,
+      name: 'Jane Doe',
+      email: 'janedoe@example.com',
+      hourlyRate: 60,
+      role: 'ADMIN',
+      status: 'inactive',
+    },
+    {
+      key: 6,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      hourlyRate: 50,
+      role: 'ADMIN',
+      status: 'active',
+    },
+    {
+      key: 7,
+      name: 'Jane Doe',
+      email: 'janedoe@example.com',
+      hourlyRate: 60,
+      role: 'ADMIN',
+      status: 'inactive',
+    },
+    {
+      key: 8,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      hourlyRate: 50,
+      role: 'ADMIN',
+      status: 'active',
+    },
+    {
+      key: 9,
+      name: 'Jane Doe',
+      email: 'janedoe@example.com',
+      hourlyRate: 60,
+      role: 'ADMIN',
+      status: 'inactive',
+    },
+    {
+      key: 10,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      hourlyRate: 50,
+      role: 'ADMIN',
+      status: 'active',
+    },
+    {
+      key: 11,
+      name: 'Jane Doe',
+      email: 'janedoe@example.com',
+      hourlyRate: 60,
+      role: 'ADMIN',
+      status: 'inactive',
+    },
   ]
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [changeRateModalOpen, setChangeRateModalOpen] = useState(false)
@@ -180,7 +260,7 @@ export default function Team() {
           showQuickJumper: false,
           showLessItems: true,
           showTotal: total => `Total ${total} clients`,
-          showSizeChanger: false,
+          showSizeChanger: true,
         }}
       />
       <ChangeRateModal
@@ -197,6 +277,7 @@ export default function Team() {
         onCancel={() => setInviteMemberModalOpen(false)}
         onAdd={newMember => {
           setData([newMember, ...data])
+          setFilteredData([newMember, ...filteredData])
           setInviteMemberModalOpen(false)
         }}
       />
