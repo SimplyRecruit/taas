@@ -36,7 +36,7 @@ const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
       open={open}
       onClose={onCancel}
       closable={false}
-      style={{ borderRadius: '16px  0 0 16px' }}
+      style={{ borderRadius: '16px' }}
       extra={
         <Button
           onClick={onCancel}
