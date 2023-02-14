@@ -29,7 +29,7 @@ export default class Model {
     return async (_: RuleObject, value: any) => {
       const bodyToValidate = this.createPartially({ [field]: value })
       const errors = await validate(bodyToValidate, {
-        skipMissingProperties: true,
+        skipUndefinedProperties: true,
       })
       if (errors?.length > 0) {
         console.log(errors)
