@@ -2,9 +2,9 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
-  IsPositive,
   Max,
   MaxLength,
+  Min,
   MinLength,
   NotEquals,
 } from 'class-validator'
@@ -19,9 +19,9 @@ export default class InviteMemberReqBody extends Model {
   @IsEmail()
   email: string
 
-  @IsPositive()
-  @Max(32767)
   @IsInt()
+  @Min(0)
+  @Max(32767)
   hourlyRate: number
 
   @IsEnum(UserRole)

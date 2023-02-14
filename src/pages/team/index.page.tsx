@@ -56,7 +56,7 @@ export default function Team() {
       key: 'role',
       render: (role: string, record: any) => (
         <UserRoleSelector
-          role={role as UserRole}
+          value={role as UserRole}
           onChange={value => handleRoleChange(record, value)}
         />
       ),
@@ -195,8 +195,9 @@ export default function Team() {
       <InviteMemberModal
         open={inviteMemberModalOpen}
         onCancel={() => setInviteMemberModalOpen(false)}
-        onAdd={() => {
-          return null
+        onAdd={newMember => {
+          setData([newMember, ...data])
+          setInviteMemberModalOpen(false)
         }}
       />
     </div>
