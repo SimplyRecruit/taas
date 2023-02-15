@@ -1,4 +1,5 @@
 import { Resource, UserRole } from 'models'
+import moment from 'dayjs'
 import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
@@ -37,7 +38,7 @@ export default class ResourceController {
         active: e.active,
         hourlyRate: e.hourlyRate,
         role: e.user.role,
-        startDate: e.startDate,
+        startDate: moment(e.startDate),
         email: e.user.email,
         name: e.user.name,
       })

@@ -9,6 +9,7 @@ import {
   NotEquals,
 } from 'class-validator'
 import { UserRole } from 'models'
+import moment from 'dayjs'
 import Model from 'models/Model'
 
 export default class ResourceBase extends Model {
@@ -17,7 +18,7 @@ export default class ResourceBase extends Model {
   name: string
 
   @IsDateString()
-  startDate: Date
+  startDate: moment.Dayjs
 
   @IsInt()
   @Min(0)
