@@ -130,6 +130,8 @@ export default function Team() {
       setData([...data])
       filterData(selectedStatus, searchText)
     }
+    setCurrentRecord(null)
+    setInviteMemberModalOpen(false)
   }
 
   const filterData = (status: string, search: string) => {
