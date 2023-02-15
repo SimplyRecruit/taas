@@ -15,12 +15,20 @@ export default function LoginPage() {
   const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'login')
   const [form] = Form.useForm()
+  const changeLocale = (locale: string) => {
+    new Cookies().set('NEXT_LOCALE', locale, { path: '/' })
+    router.push(
+      { pathname: router.pathname, query: router.query },
+      router.asPath,
+      { locale }
+    )
+  }
 
   const onFinish = async (values: LoginReqBody) => {
     console.log('Success:', values)
     try {
       const token: string = await call(values)
-      new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token)
+      new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token, { path: '/' })
       await router.replace(Route.DashBoard)
     } catch (e) {
       /* Invalid Credentials */
@@ -42,6 +50,20 @@ export default function LoginPage() {
         height: '100vh',
       }}
     >
+      <button
+        onClick={() => {
+          changeLocale('tr')
+        }}
+      >
+        tr
+      </button>
+      <button
+        onClick={() => {
+          changeLocale('en')
+        }}
+      >
+        en
+      </button>
       <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
         <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>
           {error ? (

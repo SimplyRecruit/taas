@@ -1,3 +1,5 @@
+import type { GetStaticProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import TrackerGroup from '@/pages/tracker/components/TrackerGroup'
 
 export default function Tracker() {
@@ -16,4 +18,13 @@ export default function Tracker() {
       </div>
     </>
   )
+}
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  locale ??= 'en'
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, [])),
+    },
+  }
 }

@@ -1,3 +1,5 @@
+import type { GetStaticProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useState } from 'react'
 import { Button, Input, Modal, Select, Space, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
@@ -201,4 +203,13 @@ export default function Team() {
       />
     </div>
   )
+}
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  locale ??= 'en'
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, [])),
+    },
+  }
 }
