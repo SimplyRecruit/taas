@@ -1,4 +1,5 @@
 import { Resource, UserRole } from 'models'
+import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
   CurrentUser,
@@ -26,9 +27,21 @@ export default class ResourceController {
   @Get()
   @Authorized(UserRole.ADMIN)
   async getAll(@CurrentUser() currentUser: UserEntity) {
-    return await ResourceEntity.findBy({
-      user: { organization: { id: currentUser.organization.id } },
+    const entityObjects = await ResourceEntity.find({
+      where: { user: { organization: { id: currentUser.organization.id } } },
+      relations: { user: true },
     })
+    return entityObjects.map(e =>
+      Resource.create({
+        id: e.id,
+        active: e.active,
+        hourlyRate: e.hourlyRate,
+        role: e.user.role,
+        startDate: e.startDate,
+        email: e.user.email,
+        name: e.user.name,
+      })
+    )
   }
 
   @Patch('/:id')
@@ -36,7 +49,8 @@ export default class ResourceController {
   async update(
     @CurrentUser() currentUser: UserEntity,
     @Param('id') resourceId: string,
-    @Body({ validate: { skipMissingProperties: true } }) body: Resource
+    @Body({ patch: true })
+    body: ResourceUpdateBody
   ) {
     await dataSource.transaction(async em => {
       try {

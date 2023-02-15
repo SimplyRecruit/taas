@@ -1,5 +1,5 @@
 import {
-  IsEmail,
+  IsDateString,
   IsEnum,
   IsInt,
   Max,
@@ -11,13 +11,13 @@ import {
 import { UserRole } from 'models'
 import Model from 'models/Model'
 
-export default class InviteMemberReqBody extends Model {
+export default class ResourceBase extends Model {
   @MinLength(2)
   @MaxLength(100)
   name: string
 
-  @IsEmail()
-  email: string
+  @IsDateString()
+  startDate: Date
 
   @IsInt()
   @Min(0)
