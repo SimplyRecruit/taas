@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Input, Modal, Select, Space, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
 import { SearchOutlined } from '@ant-design/icons'
 import ChangeRateModal from '@/pages/team/components/ChangeRateModal'
 import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
 import UserRoleSelector from '@/pages/team/components/UserRoleSelector'
-import { UserRole } from 'models'
+import { Resource, UserRole } from 'models'
+import useApi from '@/services/useApi'
 
 export default function Team() {
   const actionColumnWidth = 60
@@ -73,119 +74,34 @@ export default function Team() {
     },
   ]
 
-  const dummyData = [
-    {
-      key: 0,
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'ADMIN',
-      status: 'active',
-    },
-    {
-      key: 1,
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'ADMIN',
-      status: 'inactive',
-    },
-    {
-      key: 2,
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'ADMIN',
-      status: 'active',
-    },
-    {
-      key: 3,
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'ADMIN',
-      status: 'inactive',
-    },
-    {
-      key: 4,
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'ADMIN',
-      status: 'active',
-    },
-    {
-      key: 5,
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'ADMIN',
-      status: 'inactive',
-    },
-    {
-      key: 6,
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'ADMIN',
-      status: 'active',
-    },
-    {
-      key: 7,
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'ADMIN',
-      status: 'inactive',
-    },
-    {
-      key: 8,
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'ADMIN',
-      status: 'active',
-    },
-    {
-      key: 9,
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'ADMIN',
-      status: 'inactive',
-    },
-    {
-      key: 10,
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      hourlyRate: 50,
-      role: 'ADMIN',
-      status: 'active',
-    },
-    {
-      key: 11,
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      hourlyRate: 60,
-      role: 'ADMIN',
-      status: 'inactive',
-    },
-  ]
+  const { data: resources, loading, error, call } = useApi('resource', 'getAll')
+
+  useEffect(() => {
+    call()
+  }, [])
+
+  useEffect(() => {
+    setData(resources)
+    filterData(selectedStatus, searchText)
+  }, [resources])
+
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [changeRateModalOpen, setChangeRateModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState(dummyData)
-  const [data, setData] = useState(dummyData)
+  const [filteredData, setFilteredData] = useState<Resource[]>([])
+  const [data, setData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [currentRecord, setCurrentRecord] = useState(
-    dummyData[0] ? dummyData[0] : null
+  const [currentRecord, setCurrentRecord] = useState<Resource>(
+    Resource.createPartially({})
   )
 
-  const handleRoleChange = (record: any, value: string) => {
-    const updatedData = [...data]
-    updatedData[record.key].role = value
-    setData(updatedData)
-    filterData(selectedStatus, searchText)
+  const handleRoleChange = (record: Resource, value: string) => {
+    const index = data.findIndex(x => x.id === record.id)
+    if (index != -1) {
+      data[index].role = value as UserRole
+      setData([...data])
+      filterData(selectedStatus, searchText)
+    }
   }
 
   const handleHourlyRateChange = (record: any, value: number) => {
@@ -208,7 +124,7 @@ export default function Team() {
   const filterData = (status: string, search: string) => {
     let filtered = data
     if (status !== 'all') {
-      filtered = filtered.filter(item => item.status === status)
+      filtered = filtered.filter(item => item.active === (status === 'active'))
     }
     if (search) {
       filtered = filtered.filter(item =>
@@ -252,6 +168,8 @@ export default function Team() {
         </Button>
       </div>
       <Table
+        rowKey="id"
+        loading={loading}
         columns={columns}
         dataSource={filteredData}
         pagination={{
@@ -264,7 +182,7 @@ export default function Team() {
         }}
       />
       <ChangeRateModal
-        key={currentRecord?.key}
+        key={currentRecord?.id}
         open={changeRateModalOpen}
         setOpen={setChangeRateModalOpen}
         record={currentRecord}
