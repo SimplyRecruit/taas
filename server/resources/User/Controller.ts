@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto'
 import type { Request } from 'express'
 import Jwt from 'jsonwebtoken'
 import {
-  InviteMemberReqBody,
+  ResourceCreateBody,
   type Language,
   LoginReqBody,
   RegisterOrganizationReqBody,
@@ -108,7 +108,7 @@ export default class UserController {
   @Post('/invite-member')
   @Authorized(UserRole.ADMIN)
   async inviteMember(
-    @Body() { email, hourlyRate, name, role }: InviteMemberReqBody,
+    @Body() { email, hourlyRate, name, role }: ResourceCreateBody,
     @CurrentUser() currentUser: UserEntity,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
