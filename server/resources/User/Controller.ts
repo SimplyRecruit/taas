@@ -117,11 +117,12 @@ export default class UserController {
   @Post('/invite-member')
   @Authorized(UserRole.ADMIN)
   async inviteMember(
-    @Body() { email, hourlyRate, name, role }: ResourceCreateBody,
+    @Body() { email, hourlyRate, name, role, startDate }: ResourceCreateBody,
     @CurrentUser() currentUser: UserEntity,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
   ) {
+    let id
     await dataSource.transaction(async em => {
       try {
         const user = await em.save(UserEntity, {
@@ -130,11 +131,12 @@ export default class UserController {
           role,
           organization: currentUser.organization,
         })
+        id = user.id
         await em.save(ResourceEntity, {
           id: randomUUID(),
           hourlyRate,
           user,
-          startDate: new Date(),
+          startDate: startDate,
         })
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email)
@@ -150,7 +152,7 @@ export default class UserController {
         throw new InternalServerError('Internal Server Error')
       }
     })
-    return 'Invitation Sent'
+    return id
   }
 
   @Post('/reset-password')
