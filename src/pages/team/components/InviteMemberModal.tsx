@@ -1,32 +1,48 @@
 import UserRoleSelector from '@/pages/team/components/UserRoleSelector'
+import { InputNumber, Input, Form, Row, Col, Drawer, Button, Space } from 'antd'
 import {
-  Modal,
-  InputNumber,
-  Input,
-  Form,
-  Row,
-  Col,
-  Drawer,
-  Button,
-  Space,
-} from 'antd'
-import { InviteMemberReqBody, UserRole } from 'models'
+  ResourceCreateBody,
+  Resource,
+  UserRole,
+  ResourceUpdateBody,
+} from 'models'
 import { CloseOutlined } from '@ant-design/icons'
+import useApi from '@/services/useApi'
+
 interface RenderProps {
   open: boolean
-  onAdd: (newMember: InviteMemberReqBody) => void
+  onAdd: (newMember: Resource) => void
   onCancel: () => void
+  value?: Resource
 }
-const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
+const InviteMemberModal = ({ open, onAdd, onCancel, value }: RenderProps) => {
   const [form] = Form.useForm()
+  const {
+    data: dataCreate,
+    loading: loadingCreate,
+    error: errorCreate,
+    call: callCreate,
+  } = useApi('user', 'inviteMember')
+  const {
+    data: dataUpdate,
+    loading: loadingUpdate,
+    error: errorUpdate,
+    call: callUpdate,
+  } = useApi('resource', 'update')
 
-  const onFinish = (newMember: InviteMemberReqBody) => {
-    // try API catch
-    onAdd(newMember)
-
-    form.resetFields()
+  const onFinish = async (member: Resource) => {
+    try {
+      if (value) {
+        callUpdate(member as ResourceUpdateBody, { id: member.id })
+      } else {
+        const id: string = await callCreate(member as ResourceCreateBody)
+        onAdd({ ...member, id })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
-
+  const loading = () => loadingCreate || loadingUpdate
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
   }
@@ -53,12 +69,17 @@ const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
         layout="vertical"
         validateTrigger="onBlur"
         style={{ width: '100%' }}
-        initialValues={InviteMemberReqBody.create({
-          name: '',
-          email: '',
-          hourlyRate: 0,
-          role: UserRole.ADMIN,
-        })}
+        initialValues={
+          value ??
+          Resource.createPartially({
+            active: true,
+            startDate: new Date(),
+            name: '',
+            email: '',
+            hourlyRate: 0,
+            role: UserRole.ADMIN,
+          })
+        }
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
@@ -67,7 +88,7 @@ const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
           label="Name"
           rules={[
             {
-              validator: InviteMemberReqBody.validator('name'),
+              validator: ResourceCreateBody.validator('name'),
               message: 'Please enter a value',
             },
           ]}
@@ -79,7 +100,7 @@ const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
           label="E-mail"
           rules={[
             {
-              validator: InviteMemberReqBody.validator('email'),
+              validator: ResourceCreateBody.validator('email'),
               message: 'Please enter a valid e-mail address',
             },
           ]}
@@ -95,7 +116,7 @@ const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
                 {
                   required: true,
                   message: 'Please enter a value',
-                  validator: InviteMemberReqBody.validator('hourlyRate'),
+                  validator: ResourceCreateBody.validator('hourlyRate'),
                 },
               ]}
             >
@@ -113,10 +134,10 @@ const InviteMemberModal = ({ open, onAdd, onCancel }: RenderProps) => {
           </Col>
         </Row>
         <Space>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading()}>
             Save
           </Button>
-          <Button>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Space>
       </Form>
     </Drawer>
