@@ -1,5 +1,17 @@
 import UserRoleSelector from '@/pages/team/components/UserRoleSelector'
-import { InputNumber, Input, Form, Row, Col, Drawer, Button, Space } from 'antd'
+import moment from 'dayjs'
+import {
+  InputNumber,
+  Input,
+  Form,
+  Row,
+  Col,
+  Drawer,
+  Button,
+  Space,
+  DatePicker,
+  Switch,
+} from 'antd'
 import {
   ResourceCreateBody,
   Resource,
@@ -12,31 +24,37 @@ import useApi from '@/services/useApi'
 interface RenderProps {
   open: boolean
   onAdd: (newMember: Resource) => void
+  onUpdate: (updatedMember: Resource) => void
   onCancel: () => void
   value?: Resource
 }
-const InviteMemberModal = ({ open, onAdd, onCancel, value }: RenderProps) => {
+const InviteMemberModal = ({
+  open,
+  onAdd,
+  onUpdate,
+  onCancel,
+  value,
+}: RenderProps) => {
   const [form] = Form.useForm()
-  const {
-    data: dataCreate,
-    loading: loadingCreate,
-    error: errorCreate,
-    call: callCreate,
-  } = useApi('user', 'inviteMember')
-  const {
-    data: dataUpdate,
-    loading: loadingUpdate,
-    error: errorUpdate,
-    call: callUpdate,
-  } = useApi('resource', 'update')
+  const { loading: loadingCreate, call: callCreate } = useApi(
+    'user',
+    'inviteMember'
+  )
+  const { loading: loadingUpdate, call: callUpdate } = useApi(
+    'resource',
+    'update'
+  )
 
   const onFinish = async (member: Resource) => {
     try {
       if (value) {
-        callUpdate(member as ResourceUpdateBody, { id: member.id })
+        const { email, ...updatedMember } = member
+        callUpdate(updatedMember as ResourceUpdateBody, { id: value.id })
+        onUpdate({ ...member, id: value.id })
       } else {
         const id: string = await callCreate(member as ResourceCreateBody)
-        onAdd({ ...member, id })
+        onAdd({ ...member, id, active: true })
+        form.resetFields()
       }
     } catch (error) {
       console.log(error)
@@ -72,12 +90,11 @@ const InviteMemberModal = ({ open, onAdd, onCancel, value }: RenderProps) => {
         initialValues={
           value ??
           Resource.createPartially({
-            active: true,
-            startDate: new Date(),
+            startDate: moment(new Date()),
             name: '',
             email: '',
             hourlyRate: 0,
-            role: UserRole.ADMIN,
+            role: UserRole.END_USER,
           })
         }
         onFinish={onFinish}
@@ -105,13 +122,19 @@ const InviteMemberModal = ({ open, onAdd, onCancel, value }: RenderProps) => {
             },
           ]}
         >
-          <Input />
+          <Input disabled={!!value} />
         </Form.Item>
         <Row>
           <Col span={12}>
+            <Form.Item name="role" label="Role">
+              <UserRoleSelector />
+            </Form.Item>
+          </Col>
+          <Col span={2} />
+          <Col span={10}>
             <Form.Item
               name="hourlyRate"
-              label="Hourly Rate"
+              label="Hourly rate"
               rules={[
                 {
                   required: true,
@@ -127,10 +150,29 @@ const InviteMemberModal = ({ open, onAdd, onCancel, value }: RenderProps) => {
               />
             </Form.Item>
           </Col>
+        </Row>
+        <Row>
           <Col span={12}>
-            <Form.Item name="role" label="Role">
-              <UserRoleSelector />
+            <Form.Item
+              name="startDate"
+              label="Start date"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a start date',
+                },
+              ]}
+            >
+              <DatePicker style={{ width: '100%' }} />
             </Form.Item>
+          </Col>
+          <Col span={2} />
+          <Col>
+            {value && (
+              <Form.Item valuePropName="checked" name="active" label="Active">
+                <Switch />
+              </Form.Item>
+            )}
           </Col>
         </Row>
         <Space>

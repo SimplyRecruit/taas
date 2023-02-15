@@ -91,12 +91,14 @@ export default function Team() {
   const [filteredData, setFilteredData] = useState<Resource[]>([])
   const [data, setData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [currentRecord, setCurrentRecord] = useState<Resource>(
-    Resource.createPartially({})
-  )
+  const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
+
+  const find = (record: Resource): number => {
+    return data.findIndex(x => x.id === record.id)
+  }
 
   const handleRoleChange = (record: Resource, value: string) => {
-    const index = data.findIndex(x => x.id === record.id)
+    const index = find(record)
     if (index != -1) {
       data[index].role = value as UserRole
       setData([...data])
@@ -119,6 +121,15 @@ export default function Team() {
   const handleSearch = (value: string) => {
     setSearchText(value)
     filterData(selectedStatus, value)
+  }
+
+  const onUpdate = (record: Resource) => {
+    const index = find(record)
+    if (index != 1) {
+      data[index] = record
+      setData([...data])
+      filterData(selectedStatus, searchText)
+    }
   }
 
   const filterData = (status: string, search: string) => {
@@ -193,6 +204,7 @@ export default function Team() {
       <InviteMemberModal
         open={inviteMemberModalOpen}
         onCancel={() => setInviteMemberModalOpen(false)}
+        onUpdate={onUpdate}
         onAdd={newMember => {
           setData([newMember, ...data])
           setFilteredData([newMember, ...filteredData])
