@@ -43,7 +43,16 @@ import UserEntity from '~/resources/User/Entity'
 export default class UserController {
   @Post('/login')
   async login(@Body() { email, password }: LoginReqBody) {
-    const user = await UserEntity.findOneBy({ email })
+    const user = await UserEntity.findOne({
+      where: { email },
+      select: {
+        id: true,
+        role: true,
+        status: true,
+        isEnabled: true,
+        passwordHash: true,
+      },
+    })
     if (user == null) throw new UnauthorizedError()
     const isPasswordCorrect = Bcrypt.compareSync(password, user.passwordHash)
     if (!isPasswordCorrect) throw new UnauthorizedError()
