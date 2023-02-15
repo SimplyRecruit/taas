@@ -133,6 +133,11 @@ export default function Team() {
     setCurrentRecord(null)
     setInviteMemberModalOpen(false)
   }
+  const onAdd = (record: Resource) => {
+    setData([record, ...data])
+    setFilteredData([record, ...filteredData])
+    setInviteMemberModalOpen(false)
+  }
 
   const filterData = (status: string, search: string) => {
     let filtered = data
@@ -207,11 +212,7 @@ export default function Team() {
         open={inviteMemberModalOpen}
         onCancel={() => setInviteMemberModalOpen(false)}
         onUpdate={onUpdate}
-        onAdd={newMember => {
-          setData([newMember, ...data])
-          setFilteredData([newMember, ...filteredData])
-          setInviteMemberModalOpen(false)
-        }}
+        onAdd={onAdd}
       />
     </div>
   )
