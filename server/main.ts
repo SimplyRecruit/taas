@@ -37,7 +37,7 @@ const dataSource = new DataSource({
     join(__dirname, './resources/relations/**/*.{ts,js}'),
   ],
   logging: false,
-  synchronize: true,
+  synchronize: dev && true,
   namingStrategy: new SnakeNamingStrategy(),
 })
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Input, Modal, Select, Space, Table } from 'antd'
+import { Button, Input, Select, Space, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
 import { SearchOutlined } from '@ant-design/icons'
 import ChangeRateModal from '@/pages/team/components/ChangeRateModal'
@@ -15,11 +15,10 @@ export default function Team() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string, record: any) => (
+      render: (text: string, record: Resource) => (
         <span
           style={{
-            textDecoration:
-              record.status === 'inactive' ? 'line-through' : 'none',
+            textDecoration: !record.active ? 'line-through' : 'none',
           }}
         >
           {text}
@@ -35,7 +34,7 @@ export default function Team() {
       title: 'Hourly Rate',
       dataIndex: 'hourlyRate',
       key: 'hourlyRate',
-      render: (value: number, record: any) => (
+      render: (value: number, record: Resource) => (
         <>
           {value}
           <Button
@@ -55,7 +54,7 @@ export default function Team() {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
-      render: (role: string, record: any) => (
+      render: (role: string, record: Resource) => (
         <UserRoleSelector
           value={role as UserRole}
           onChange={value => handleRoleChange(record, value)}
@@ -66,10 +65,15 @@ export default function Team() {
       title: '',
       key: 'action',
       width: actionColumnWidth,
-      render: () => (
-        <span>
-          <FiEdit2 type="edit" style={{ cursor: 'pointer' }} />
-        </span>
+      render: (record: Resource) => (
+        <FiEdit2
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            console.log(record)
+            setCurrentRecord(record)
+            setInviteMemberModalOpen(true)
+          }}
+        />
       ),
     },
   ]
@@ -91,12 +95,14 @@ export default function Team() {
   const [filteredData, setFilteredData] = useState<Resource[]>([])
   const [data, setData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [currentRecord, setCurrentRecord] = useState<Resource>(
-    Resource.createPartially({})
-  )
+  const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
+
+  const find = (record: Resource): number => {
+    return data.findIndex(x => x.id === record.id)
+  }
 
   const handleRoleChange = (record: Resource, value: string) => {
-    const index = data.findIndex(x => x.id === record.id)
+    const index = find(record)
     if (index != -1) {
       data[index].role = value as UserRole
       setData([...data])
@@ -104,11 +110,14 @@ export default function Team() {
     }
   }
 
-  const handleHourlyRateChange = (record: any, value: number) => {
-    const updatedData = [...data]
-    updatedData[record.key].hourlyRate = value
-    setData(updatedData)
-    filterData(selectedStatus, searchText)
+  const handleHourlyRateChange = (record: Resource, value: number) => {
+    const index = find(record)
+    if (index != -1) {
+      const updatedData = [...data]
+      updatedData[index].hourlyRate = value
+      setData(updatedData)
+      filterData(selectedStatus, searchText)
+    }
   }
 
   const handleStatusChange = (value: string) => {
@@ -119,6 +128,22 @@ export default function Team() {
   const handleSearch = (value: string) => {
     setSearchText(value)
     filterData(selectedStatus, value)
+  }
+
+  const onUpdate = (record: Resource) => {
+    const index = find(record)
+    if (index != 1) {
+      data[index] = record
+      setData([...data])
+      filterData(selectedStatus, searchText)
+    }
+    setCurrentRecord(null)
+    setInviteMemberModalOpen(false)
+  }
+  const onAdd = (record: Resource) => {
+    setData([record, ...data])
+    setFilteredData([record, ...filteredData])
+    setInviteMemberModalOpen(false)
   }
 
   const filterData = (status: string, search: string) => {
@@ -163,7 +188,13 @@ export default function Team() {
             style={{ width: 200 }}
           />
         </Space>
-        <Button type="primary" onClick={() => setInviteMemberModalOpen(true)}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setCurrentRecord(null)
+            setInviteMemberModalOpen(true)
+          }}
+        >
           Invite Member
         </Button>
       </div>
@@ -182,7 +213,7 @@ export default function Team() {
         }}
       />
       <ChangeRateModal
-        key={currentRecord?.id}
+        key={`change-rate-modal${currentRecord?.id}`}
         open={changeRateModalOpen}
         setOpen={setChangeRateModalOpen}
         record={currentRecord}
@@ -191,13 +222,14 @@ export default function Team() {
         }}
       />
       <InviteMemberModal
+        key={`invite-member-modal${currentRecord?.id}`}
+        value={currentRecord}
         open={inviteMemberModalOpen}
-        onCancel={() => setInviteMemberModalOpen(false)}
-        onAdd={newMember => {
-          setData([newMember, ...data])
-          setFilteredData([newMember, ...filteredData])
+        onCancel={() => {
           setInviteMemberModalOpen(false)
         }}
+        onUpdate={onUpdate}
+        onAdd={onAdd}
       />
     </div>
   )

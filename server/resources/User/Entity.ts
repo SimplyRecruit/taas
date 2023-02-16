@@ -12,7 +12,7 @@ export default class UserEntity extends EntityBase {
   @Column({ unique: true })
   email: string
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   passwordHash: string
 
   @Column({

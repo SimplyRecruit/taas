@@ -1,4 +1,5 @@
 import { Resource, UserRole } from 'models'
+import moment from 'dayjs'
 import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
@@ -21,6 +22,7 @@ import CustomerEntity from '~/resources/Customer/Entity'
 import CustomerResourceEntity from '~/resources/relations/CustomerResource'
 import ResourceEntity from '~/resources/Resource/Entity'
 import UserEntity from '~/resources/User/Entity'
+import { mergeDeep } from '~/common/Util'
 
 @JsonController('/resource')
 export default class ResourceController {
@@ -56,12 +58,21 @@ export default class ResourceController {
       try {
         const resource = await em.findOneOrFail(ResourceEntity, {
           where: { id: resourceId },
-          relations: { user: true },
+          relations: { user: { organization: true } },
         })
         if (resource.user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.update(ResourceEntity, resourceId, body)
+        const merged = mergeDeep(resource, {
+          active: body.active,
+          hourlyRate: body.hourlyRate,
+          startDate: body.startDate,
+          user: { name: body.name, isEnabled: body.active, role: body.role },
+        })
+        await em.save(ResourceEntity, {
+          ...merged,
+        })
       } catch (error) {
+        console.log(error)
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
         else throw new InternalServerError('Internal Server Error')
