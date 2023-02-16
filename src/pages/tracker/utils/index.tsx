@@ -1,3 +1,3 @@
-export default function TrackerGroupDateTimeParser(dateTime: string) {
+export function TrackerGroupDateTimeParser(dateTime: string) {
   return null
 }
