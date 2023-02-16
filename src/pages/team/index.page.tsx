@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Button, Input, Select, Space, Table } from 'antd'
+import { Button, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
-import { SearchOutlined } from '@ant-design/icons'
 import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
 import { Resource, UserRole } from 'models'
 import useApi from '@/services/useApi'
 import { dateToMoment } from '@/util'
-import Filter from '@/pages/team/components/Filter'
+import TeamFilter from '@/pages/team/components/TeamFilter'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
 export default function Team() {
-  const actionColumnWidth = 60
   const columns = [
     {
       title: 'Name',
@@ -49,7 +48,7 @@ export default function Team() {
     {
       title: '',
       key: 'action',
-      width: actionColumnWidth,
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Resource) => (
         <FiEdit2
           style={{ cursor: 'pointer' }}
@@ -154,7 +153,7 @@ export default function Team() {
           marginBottom: 20,
         }}
       >
-        <Filter
+        <TeamFilter
           onStatusChange={handleStatusChange}
           onSearch={handleSearch}
           searchText={searchText}

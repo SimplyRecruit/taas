@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { Button, Input, Modal, Select, Space, Table } from 'antd'
+import { Button, Table } from 'antd'
 import moment from 'dayjs'
-import { SearchOutlined } from '@ant-design/icons'
 import { dummyData } from '@/pages/projects/data'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Project } from 'models'
+import Filter from '@/components/Filter'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
 export default function ProjectsPage() {
-  const actionColumnWidth = 60
   const columns = [
     {
       title: 'Name',
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
     {
       title: '',
       key: 'action',
-      width: actionColumnWidth,
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Project) =>
         record.active ? (
           <ActiveActionMenu
@@ -114,25 +114,12 @@ export default function ProjectsPage() {
           marginBottom: 20,
         }}
       >
-        <Space size="small">
-          <Select
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={handleStatusChange}
-          >
-            <Select.Option value="all">All</Select.Option>
-            <Select.Option value="active">Active</Select.Option>
-            <Select.Option value="inactive">Inactive</Select.Option>
-          </Select>
-          <Input
-            prefix={<SearchOutlined />}
-            allowClear
-            placeholder="Search Name"
-            value={searchText}
-            onChange={e => handleSearch(e.target.value)}
-            style={{ width: 200 }}
-          />
-        </Space>
+        <Filter
+          onSearch={handleSearch}
+          onStatusChange={handleStatusChange}
+          searchText={searchText}
+          searchPlaceholder="Search by name"
+        />
         <Button
           type="primary"
           onClick={() => {
