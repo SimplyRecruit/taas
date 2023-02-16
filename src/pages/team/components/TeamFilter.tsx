@@ -1,5 +1,3 @@
-import { Input, Select, Space } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
 import Filter from '@/components/Filter'
 
 interface RenderProps {
