@@ -20,6 +20,8 @@ import {
 } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import useApi from '@/services/useApi'
+import { dateToMoment } from '@/util'
+import { DEFAULT_DATE_FORMAT } from '@/constants'
 
 interface RenderProps {
   open: boolean
@@ -171,10 +173,13 @@ const InviteMemberModal = ({
                   message: 'Please select a start date',
                 },
               ]}
-              getValueFromEvent={date => moment(date).format('YYYY-MM-DD')}
+              getValueFromEvent={date => dateToMoment(date)}
               getValueProps={i => ({ value: moment(i) })}
             >
-              <DatePicker style={{ width: '100%' }} />
+              <DatePicker
+                format={DEFAULT_DATE_FORMAT}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Col>
           <Col span={2} />
