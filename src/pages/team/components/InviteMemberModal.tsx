@@ -26,7 +26,7 @@ interface RenderProps {
   onAdd: (newMember: Resource) => void
   onUpdate: (updatedMember: Resource) => void
   onCancel: () => void
-  value?: Resource
+  value: Resource | null
 }
 const InviteMemberModal = ({
   open,
@@ -44,12 +44,13 @@ const InviteMemberModal = ({
     'resource',
     'update'
   )
+  const loading = () => loadingCreate || loadingUpdate
 
   const onFinish = async (member: Resource) => {
     try {
       if (value) {
         const { email, ...updatedMember } = member
-        callUpdate(updatedMember as ResourceUpdateBody, { id: value.id })
+        await callUpdate(updatedMember as ResourceUpdateBody, { id: value.id })
         onUpdate({ ...member, id: value.id })
       } else {
         const id: string = await callCreate(member as ResourceCreateBody)
@@ -60,20 +61,25 @@ const InviteMemberModal = ({
       console.log(error)
     }
   }
-  const loading = () => loadingCreate || loadingUpdate
+
   const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo)
+  }
+
+  const onClose = () => {
+    onCancel()
+    form.resetFields()
   }
   return (
     <Drawer
       title="Invite Member"
       open={open}
-      onClose={onCancel}
+      onClose={onClose}
       closable={false}
       style={{ borderRadius: '16px' }}
       extra={
         <Button
-          onClick={onCancel}
+          onClick={onClose}
           size="small"
           type="text"
           icon={<CloseOutlined />}
@@ -88,14 +94,17 @@ const InviteMemberModal = ({
         validateTrigger="onBlur"
         style={{ width: '100%' }}
         initialValues={
-          value ??
-          Resource.createPartially({
-            startDate: moment(new Date()),
-            name: '',
-            email: '',
-            hourlyRate: 0,
-            role: UserRole.END_USER,
-          })
+          value
+            ? Resource.create({
+                ...value,
+              })
+            : Resource.createPartially({
+                startDate: new Date(),
+                name: '',
+                email: '',
+                hourlyRate: 0,
+                role: UserRole.END_USER,
+              })
         }
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
@@ -162,13 +171,15 @@ const InviteMemberModal = ({
                   message: 'Please select a start date',
                 },
               ]}
+              getValueFromEvent={date => moment(date).format('YYYY-MM-DD')}
+              getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
           </Col>
           <Col span={2} />
           <Col>
-            {value && (
+            {!!value && (
               <Form.Item valuePropName="checked" name="active" label="Active">
                 <Switch />
               </Form.Item>
@@ -179,7 +190,7 @@ const InviteMemberModal = ({
           <Button type="primary" htmlType="submit" loading={loading()}>
             Save
           </Button>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={onClose}>Cancel</Button>
         </Space>
       </Form>
     </Drawer>

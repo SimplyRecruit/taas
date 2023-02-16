@@ -24,7 +24,7 @@ export default class ResourceEntity extends EntityBaseOnlyDates {
   @Column({ default: true })
   active: boolean
 
-  @OneToOne(() => UserEntity, { onDelete: 'CASCADE' })
+  @OneToOne(() => UserEntity, { onDelete: 'CASCADE', cascade: true })
   @JoinColumn()
   user: UserEntity
 
