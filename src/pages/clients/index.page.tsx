@@ -10,6 +10,20 @@ import { dateToMoment } from '@/util'
 export default function Clients() {
   const columns = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text: string, record: Client) => (
+        <span
+          style={{
+            textDecoration: !record.active ? 'line-through' : 'none',
+          }}
+        >
+          {text}
+        </span>
+      ),
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
@@ -47,12 +61,23 @@ export default function Clients() {
       render: (value: Date) => <span>{dateToMoment(value)}</span>,
     },
     {
+      title: 'Access',
+      dataIndex: 'access',
+      key: 'access',
+      render: () => <span>Public</span>,
+    },
+    {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: () => (
         <span>
-          <FiEdit2 type="edit" style={{ cursor: 'pointer' }} />
+          <FiEdit2
+            onClick={() => {
+              setModalOpen(true)
+            }}
+            style={{ cursor: 'pointer' }}
+          />
         </span>
       ),
     },
@@ -71,7 +96,7 @@ export default function Clients() {
     {
       id: '2',
       name: 'test proj',
-      active: false,
+      active: true,
       contractType: ClientContractType.ON_DEMAND,
       startDate: new Date(),
       contractDate: new Date(),
@@ -129,6 +154,7 @@ export default function Clients() {
         </Button>
       </div>
       <Table
+        rowKey="id"
         columns={columns}
         dataSource={filteredData}
         pagination={{

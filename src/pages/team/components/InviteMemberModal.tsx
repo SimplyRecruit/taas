@@ -177,6 +177,7 @@ const InviteMemberModal = ({
               getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker
+                allowClear={false}
                 format={DEFAULT_DATE_FORMAT}
                 style={{ width: '100%' }}
               />
