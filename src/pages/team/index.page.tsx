@@ -6,6 +6,7 @@ import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
 import { Resource, UserRole } from 'models'
 import useApi from '@/services/useApi'
 import { dateToMoment } from '@/util'
+import Filter from '@/pages/team/components/Filter'
 
 export default function Team() {
   const actionColumnWidth = 60
@@ -153,25 +154,11 @@ export default function Team() {
           marginBottom: 20,
         }}
       >
-        <Space size="small">
-          <Select
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={handleStatusChange}
-          >
-            <Select.Option value="all">All</Select.Option>
-            <Select.Option value="active">Active</Select.Option>
-            <Select.Option value="inactive">Inactive</Select.Option>
-          </Select>
-          <Input
-            prefix={<SearchOutlined />}
-            allowClear
-            placeholder="Search Name"
-            value={searchText}
-            onChange={e => handleSearch(e.target.value)}
-            style={{ width: 200 }}
-          />
-        </Space>
+        <Filter
+          onStatusChange={handleStatusChange}
+          onSearch={handleSearch}
+          searchText={searchText}
+        />
         <Button
           type="primary"
           onClick={() => {
