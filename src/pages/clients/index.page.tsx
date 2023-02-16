@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Button, Modal, Table } from 'antd'
+import { Button, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
-
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
+import { Client, ClientContractType } from 'models'
+import { dateToMoment } from '@/util'
 
 export default function Clients() {
   const columns = [
@@ -11,12 +12,10 @@ export default function Clients() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      render: (text: string, record: any) => (
+      render: (text: string, record: Client) => (
         <span
           style={{
-            textDecoration:
-              record.status === 'inactive' ? 'line-through' : 'none',
+            textDecoration: !record.active ? 'line-through' : 'none',
           }}
         >
           {text}
@@ -24,9 +23,27 @@ export default function Clients() {
       ),
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: 'Partner name',
+      dataIndex: 'partnerName',
+      key: 'partnerName',
+    },
+    {
+      title: 'Start date',
+      dataIndex: 'startDate',
+      key: 'startDate',
+      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+    },
+
+    {
+      title: 'Contract type',
+      dataIndex: 'contractType',
+      key: 'contractType',
+    },
+    {
+      title: 'Contract date',
+      dataIndex: 'contractDate',
+      key: 'contractDate',
+      render: (value: Date) => <span>{dateToMoment(value)}</span>,
     },
     {
       title: '',
@@ -40,18 +57,24 @@ export default function Clients() {
     },
   ]
 
-  const data = [
+  const data: Client[] = [
     {
-      key: 1,
-      name: 'John Doe',
-      address: '1234 Main St.',
-      status: 'active',
+      id: '1',
+      name: 'deneme proj',
+      active: true,
+      startDate: new Date(),
+      contractType: ClientContractType.MAINTENANCE,
+      contractDate: new Date(),
+      partnerName: 'bilemedim',
     },
     {
-      key: 2,
-      name: 'Jane Doe',
-      address: '5678 Elm St.',
-      status: 'inactive',
+      id: '2',
+      name: 'test proj',
+      active: false,
+      contractType: ClientContractType.ON_DEMAND,
+      startDate: new Date(),
+      contractDate: new Date(),
+      partnerName: 'bilemedim',
     },
   ]
   const [modalOpen, setModalOpen] = useState(false)
@@ -76,7 +99,7 @@ export default function Clients() {
   const filterData = (status: string, search: string) => {
     let filtered = data
     if (status !== 'all') {
-      filtered = filtered.filter(item => item.status === status)
+      filtered = filtered.filter(item => item.active === (status == 'active'))
     }
     if (search) {
       filtered = filtered.filter(item =>
@@ -116,14 +139,6 @@ export default function Clients() {
           showSizeChanger: false,
         }}
       />
-      <Modal
-        title="Add Client"
-        open={modalOpen}
-        onOk={() => setModalOpen(false)}
-        onCancel={() => setModalOpen(false)}
-      >
-        {/* Add form inputs to capture new client data */}
-      </Modal>
     </div>
   )
 }
