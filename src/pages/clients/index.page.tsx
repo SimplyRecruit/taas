@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { Button, Input, Modal, Select, Space, Table } from 'antd'
+import { useEffect, useState } from 'react'
+import { Button, Modal, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
-import { SearchOutlined } from '@ant-design/icons'
+
+import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 
 export default function Clients() {
   const columns = [
@@ -55,7 +56,7 @@ export default function Clients() {
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState(data)
-  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('active')
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
@@ -66,6 +67,10 @@ export default function Clients() {
     setSearchText(value)
     filterData(selectedStatus, value)
   }
+
+  useEffect(() => {
+    filterData(selectedStatus, searchText)
+  }, [])
 
   const filterData = (status: string, search: string) => {
     let filtered = data
@@ -89,25 +94,11 @@ export default function Clients() {
           marginBottom: 20,
         }}
       >
-        <Space size="small">
-          <Select
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={handleStatusChange}
-          >
-            <Select.Option value="all">All</Select.Option>
-            <Select.Option value="active">Active</Select.Option>
-            <Select.Option value="inactive">Inactive</Select.Option>
-          </Select>
-          <Input
-            prefix={<SearchOutlined />}
-            allowClear
-            placeholder="Search Name"
-            value={searchText}
-            onChange={e => handleSearch(e.target.value)}
-            style={{ width: 200 }}
-          />
-        </Space>
+        <ClientsFilter
+          onStatusChange={handleStatusChange}
+          onSearch={handleSearch}
+          searchText={searchText}
+        />
         <Button type="primary" onClick={() => setModalOpen(true)}>
           Add Client
         </Button>

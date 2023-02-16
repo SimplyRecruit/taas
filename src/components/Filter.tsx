@@ -1,23 +1,37 @@
 import { Input, Select, Space } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
+interface StatusItem {
+  value: string
+  text: string
+}
+
 interface RenderProps {
   onStatusChange: (value: string) => void
+  items?: StatusItem[]
+  defaultStatus?: string
   onSearch: (value: string) => void
   searchText: string
+  searchPlaceholder: string
 }
-const Filter = ({ onStatusChange, onSearch, searchText }: RenderProps) => {
-  const items = [
+const Filter = ({
+  onStatusChange,
+  defaultStatus = 'all',
+  items = [
     { value: 'all', text: 'Show all' },
     { value: 'active', text: 'Show active' },
     { value: 'inactive', text: 'Show inactive' },
-  ]
+  ],
+  onSearch,
+  searchText,
+  searchPlaceholder,
+}: RenderProps) => {
   return (
     <Space size="small">
       <Select
-        defaultValue="all"
-        style={{ width: '17ch' }}
+        defaultValue={defaultStatus}
         onChange={onStatusChange}
+        style={{ minWidth: '17ch' }}
       >
         {items.map(({ value, text }) => (
           <Select.Option value={value} key={value}>
@@ -28,7 +42,7 @@ const Filter = ({ onStatusChange, onSearch, searchText }: RenderProps) => {
       <Input
         prefix={<SearchOutlined />}
         allowClear
-        placeholder="Search by name"
+        placeholder={searchPlaceholder}
         value={searchText}
         onChange={e => onSearch(e.target.value)}
         style={{ width: 200 }}
