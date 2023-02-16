@@ -7,9 +7,9 @@ import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Project } from 'models'
 import Filter from '@/components/Filter'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
 export default function ProjectsPage() {
-  const actionColumnWidth = 60
   const columns = [
     {
       title: 'Name',
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
     {
       title: '',
       key: 'action',
-      width: actionColumnWidth,
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Project) =>
         record.active ? (
           <ActiveActionMenu

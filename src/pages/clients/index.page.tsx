@@ -3,6 +3,7 @@ import { Button, Modal, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
 
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
 export default function Clients() {
   const columns = [
@@ -30,7 +31,7 @@ export default function Clients() {
     {
       title: '',
       key: 'action',
-      width: 100,
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: () => (
         <span>
           <FiEdit2 type="edit" style={{ cursor: 'pointer' }} />

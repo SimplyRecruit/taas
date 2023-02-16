@@ -6,9 +6,9 @@ import { Resource, UserRole } from 'models'
 import useApi from '@/services/useApi'
 import { dateToMoment } from '@/util'
 import TeamFilter from '@/pages/team/components/TeamFilter'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
 export default function Team() {
-  const actionColumnWidth = 60
   const columns = [
     {
       title: 'Name',
@@ -48,7 +48,7 @@ export default function Team() {
     {
       title: '',
       key: 'action',
-      width: actionColumnWidth,
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Resource) => (
         <FiEdit2
           style={{ cursor: 'pointer' }}
