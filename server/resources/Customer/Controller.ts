@@ -1,4 +1,4 @@
-import { Customer, UserRole } from 'models'
+import { Client, UserRole } from 'models'
 import {
   Authorized,
   CurrentUser,
@@ -34,7 +34,7 @@ export default class CustomerController {
   async update(
     @CurrentUser() currentUser: UserEntity,
     @Param('id') customerId: string,
-    @Body({ validate: { skipMissingProperties: true } }) body: Customer
+    @Body({ validate: { skipMissingProperties: true } }) body: Client
   ) {
     await dataSource.transaction(async em => {
       try {
@@ -57,7 +57,7 @@ export default class CustomerController {
   @Post()
   async create(
     @CurrentUser() currentUser: UserEntity,
-    @Body() customer: Customer
+    @Body() customer: Client
   ) {
     await dataSource.transaction(async em => {
       try {

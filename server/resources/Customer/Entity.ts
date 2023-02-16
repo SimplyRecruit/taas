@@ -1,4 +1,4 @@
-import { CustomerContractType } from 'models'
+import { ClientContractType } from 'models'
 import {
   Column,
   Entity,
@@ -27,9 +27,9 @@ export default class CustomerEntity extends EntityBaseOnlyDates {
 
   @Column({
     type: 'enum',
-    enum: CustomerContractType,
+    enum: ClientContractType,
   })
-  contractType: CustomerContractType
+  contractType: ClientContractType
 
   @Column()
   partnerName: string

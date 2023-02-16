@@ -74,7 +74,7 @@ const InviteMemberModal = ({
   }
   return (
     <Drawer
-      title="Invite Member"
+      title={value ? 'Edit Member' : 'Invite Member'}
       open={open}
       onClose={onClose}
       closable={false}
@@ -177,6 +177,7 @@ const InviteMemberModal = ({
               getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker
+                allowClear={false}
                 format={DEFAULT_DATE_FORMAT}
                 style={{ width: '100%' }}
               />
