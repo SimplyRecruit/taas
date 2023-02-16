@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react'
 import { Button, Input, Select, Space, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
 import { SearchOutlined } from '@ant-design/icons'
-import ChangeRateModal from '@/pages/team/components/ChangeRateModal'
 import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
-import UserRoleSelector from '@/pages/team/components/UserRoleSelector'
 import { Resource, UserRole } from 'models'
 import useApi from '@/services/useApi'
+import { dateToMoment } from '@/util'
 
 export default function Team() {
   const actionColumnWidth = 60
@@ -31,35 +30,20 @@ export default function Team() {
       key: 'email',
     },
     {
-      title: 'Hourly Rate',
-      dataIndex: 'hourlyRate',
-      key: 'hourlyRate',
-      render: (value: number, record: Resource) => (
-        <>
-          {value}
-          <Button
-            type="link"
-            style={{ marginLeft: 10 }}
-            onClick={() => {
-              setCurrentRecord(record)
-              setChangeRateModalOpen(true)
-            }}
-          >
-            Change
-          </Button>
-        </>
-      ),
-    },
-    {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
-      render: (role: string, record: Resource) => (
-        <UserRoleSelector
-          value={role as UserRole}
-          onChange={value => handleRoleChange(record, value)}
-        />
-      ),
+    },
+    {
+      title: 'Hourly rate',
+      dataIndex: 'hourlyRate',
+      key: 'hourlyRate',
+    },
+    {
+      title: 'Start date',
+      dataIndex: 'startDate',
+      key: 'startDate',
+      render: (value: Date) => <span>{dateToMoment(value)}</span>,
     },
     {
       title: '',
@@ -210,15 +194,6 @@ export default function Team() {
           showLessItems: true,
           showTotal: total => `Total ${total} clients`,
           showSizeChanger: true,
-        }}
-      />
-      <ChangeRateModal
-        key={`change-rate-modal${currentRecord?.id}`}
-        open={changeRateModalOpen}
-        setOpen={setChangeRateModalOpen}
-        record={currentRecord}
-        onOk={(record, newRate) => {
-          handleHourlyRateChange(record, newRate)
         }}
       />
       <InviteMemberModal
