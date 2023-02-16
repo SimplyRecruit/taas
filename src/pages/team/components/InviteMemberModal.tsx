@@ -74,7 +74,7 @@ const InviteMemberModal = ({
   }
   return (
     <Drawer
-      title="Invite Member"
+      title={value ? 'Edit Member' : 'Invite Member'}
       open={open}
       onClose={onClose}
       closable={false}
