@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button, Table } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
+import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientContractType } from 'models'
 import { dateToMoment } from '@/util'
@@ -138,6 +139,13 @@ export default function Clients() {
           showTotal: total => `Total ${total} clients`,
           showSizeChanger: false,
         }}
+      />
+      <EditClientDrawer
+        open={modalOpen}
+        value={null}
+        onCancel={() => setModalOpen(false)}
+        onAdd={value => console.log(value)}
+        onUpdate={value => console.log(value)}
       />
     </div>
   )
