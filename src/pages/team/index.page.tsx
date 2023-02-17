@@ -74,7 +74,6 @@ export default function Team() {
   }, [resources])
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
-  const [changeRateModalOpen, setChangeRateModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Resource[]>([])
   const [data, setData] = useState<Resource[]>([])
@@ -83,25 +82,6 @@ export default function Team() {
 
   const find = (record: Resource): number => {
     return data.findIndex(x => x.id === record.id)
-  }
-
-  const handleRoleChange = (record: Resource, value: string) => {
-    const index = find(record)
-    if (index != -1) {
-      data[index].role = value as UserRole
-      setData([...data])
-      filterData(selectedStatus, searchText)
-    }
-  }
-
-  const handleHourlyRateChange = (record: Resource, value: number) => {
-    const index = find(record)
-    if (index != -1) {
-      const updatedData = [...data]
-      updatedData[index].hourlyRate = value
-      setData(updatedData)
-      filterData(selectedStatus, searchText)
-    }
   }
 
   const handleStatusChange = (value: string) => {
