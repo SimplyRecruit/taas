@@ -51,6 +51,7 @@ const EditClientDrawer = ({
       open={open}
       onClose={onClose}
       closable={false}
+      mask={false}
       footer={
         <Space>
           <Button type="primary" htmlType="submit">
