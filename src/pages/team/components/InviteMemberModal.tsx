@@ -78,6 +78,15 @@ const InviteMemberModal = ({
       open={open}
       onClose={onClose}
       closable={false}
+      mask={false}
+      footer={
+        <Space>
+          <Button type="primary" htmlType="submit" loading={loading()}>
+            Save
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </Space>
+      }
       style={{ borderRadius: '16px' }}
       extra={
         <Button
@@ -135,33 +144,9 @@ const InviteMemberModal = ({
         >
           <Input disabled={!!value} />
         </Form.Item>
-        <Row>
-          <Col span={12}>
-            <Form.Item name="role" label="Role">
-              <UserRoleSelector />
-            </Form.Item>
-          </Col>
-          <Col span={2} />
-          <Col span={10}>
-            <Form.Item
-              name="hourlyRate"
-              label="Hourly rate"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please enter a value',
-                  validator: ResourceCreateBody.validator('hourlyRate'),
-                },
-              ]}
-            >
-              <InputNumber
-                style={{ width: '16ch' }}
-                type="number"
-                placeholder="Enter rate"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item name="role" label="Role">
+          <UserRoleSelector />
+        </Form.Item>
         <Row>
           <Col span={12}>
             <Form.Item
@@ -182,9 +167,23 @@ const InviteMemberModal = ({
                 style={{ width: '100%' }}
               />
             </Form.Item>
-          </Col>
-          <Col span={2} />
-          <Col>
+            <Form.Item
+              name="hourlyRate"
+              label="Hourly rate"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter a value',
+                  validator: ResourceCreateBody.validator('hourlyRate'),
+                },
+              ]}
+            >
+              <InputNumber
+                style={{ width: '16ch' }}
+                type="number"
+                placeholder="Enter rate"
+              />
+            </Form.Item>
             {!!value && (
               <Form.Item valuePropName="checked" name="active" label="Active">
                 <Switch />
@@ -192,12 +191,6 @@ const InviteMemberModal = ({
             )}
           </Col>
         </Row>
-        <Space>
-          <Button type="primary" htmlType="submit" loading={loading()}>
-            Save
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
-        </Space>
       </Form>
     </Drawer>
   )
