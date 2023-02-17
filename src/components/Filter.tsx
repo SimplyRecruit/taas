@@ -1,4 +1,4 @@
-import { Input, Select, Space } from 'antd'
+import { Input, Radio, Select, Space, Typography } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
 interface StatusItem {
@@ -18,9 +18,9 @@ const Filter = ({
   onStatusChange,
   defaultStatus = 'all',
   items = [
-    { value: 'all', text: 'Show all' },
-    { value: 'active', text: 'Show active' },
-    { value: 'inactive', text: 'Show inactive' },
+    { value: 'all', text: 'All' },
+    { value: 'active', text: 'Active' },
+    { value: 'inactive', text: 'Inactive' },
   ],
   onSearch,
   searchText,
@@ -28,17 +28,20 @@ const Filter = ({
 }: RenderProps) => {
   return (
     <Space size="small">
-      <Select
+      <Typography.Text>Show</Typography.Text>
+      <Radio.Group
+        optionType="button"
+        buttonStyle="solid"
         defaultValue={defaultStatus}
-        onChange={onStatusChange}
+        onChange={e => onStatusChange(e.target.value)}
         style={{ minWidth: '17ch' }}
       >
         {items.map(({ value, text }) => (
-          <Select.Option value={value} key={value}>
+          <Radio value={value} key={value}>
             {text}
-          </Select.Option>
+          </Radio>
         ))}
-      </Select>
+      </Radio.Group>
       <Input
         prefix={<SearchOutlined />}
         allowClear
