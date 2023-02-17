@@ -70,10 +70,12 @@ export default function Clients() {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: () => (
+      render: (record: Client) => (
         <span>
           <FiEdit2
             onClick={() => {
+              setCurrentRecord(record)
+              setSelectedRowKey(record.id)
               setModalOpen(true)
             }}
             style={{ cursor: 'pointer' }}
@@ -107,6 +109,8 @@ export default function Clients() {
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState(data)
   const [selectedStatus, setSelectedStatus] = useState('active')
+  const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
+  const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
@@ -154,7 +158,13 @@ export default function Clients() {
         </Button>
       </div>
       <Table
-        rowKey="id"
+        rowClassName={record => {
+          if (selectedRowKey == record.id) {
+            return 'ant-table-row-selected'
+          }
+          return ''
+        }}
+        rowKey={record => record.id}
         columns={columns}
         dataSource={filteredData}
         pagination={{
@@ -168,8 +178,11 @@ export default function Clients() {
       />
       <EditClientDrawer
         open={modalOpen}
-        value={null}
-        onCancel={() => setModalOpen(false)}
+        value={currentRecord}
+        onCancel={() => {
+          setModalOpen(false)
+          setSelectedRowKey(null)
+        }}
         onAdd={value => console.log(value)}
         onUpdate={value => console.log(value)}
       />
