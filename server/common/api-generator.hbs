@@ -17,7 +17,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
         url += "/"
         const paramRegExpArray = block.match(routeParamRegex)
         if (paramRegExpArray == null) { url += block; continue }
-        else url += Object.keys(params).find(p => p === paramRegExpArray[1])
+        else url += params[`${Object.keys(params).find(p => p === paramRegExpArray[1])}`]
     }
     return url
 }

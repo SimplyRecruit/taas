@@ -14,6 +14,11 @@ body {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-.ant-menu-title-content{
+.ant-menu-title-content {
   margin-left: 8px !important;
+}
+
+.ant-drawer-content-wrapper {
+  border-radius: 16px;
+  margin: 16px;
 }

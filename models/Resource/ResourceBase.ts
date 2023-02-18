@@ -1,27 +1,27 @@
 import {
-  IsEmail,
+  IsDateString,
   IsEnum,
   IsInt,
-  IsPositive,
   Max,
   MaxLength,
+  Min,
   MinLength,
   NotEquals,
 } from 'class-validator'
 import { UserRole } from 'models'
 import Model from 'models/Model'
 
-export default class InviteMemberReqBody extends Model {
+export default class ResourceBase extends Model {
   @MinLength(2)
   @MaxLength(100)
   name: string
 
-  @IsEmail()
-  email: string
+  @IsDateString()
+  startDate: Date
 
-  @IsPositive()
-  @Max(32767)
   @IsInt()
+  @Min(0)
+  @Max(32767)
   hourlyRate: number
 
   @IsEnum(UserRole)

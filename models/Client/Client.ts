@@ -1,8 +1,8 @@
 import { IsBoolean, IsDateString, IsEnum, Length } from 'class-validator'
 import Model from 'models/Model'
-import CustomerContractType from './CustomerContractType'
+import ClientContractType from './enums/ClientContractType'
 
-export default class Customer extends Model {
+export default class Client extends Model {
   @Length(1, 10)
   id: string
 
@@ -15,8 +15,8 @@ export default class Customer extends Model {
   @IsDateString()
   contractDate: Date
 
-  @IsEnum(CustomerContractType)
-  contractType: CustomerContractType
+  @IsEnum(ClientContractType)
+  contractType: ClientContractType
 
   @Length(1, 255)
   partnerName: string

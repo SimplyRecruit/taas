@@ -124,6 +124,41 @@ export async function generateApiCalls() {
   })
 }
 
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+export function mergeDeep<T extends object>(
+  target: Partial<T>,
+  ...sources: T[]
+): Partial<T> {
+  if (!sources.length) return target
+  const source = sources.shift()
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} })
+        mergeDeep(target[key] as T, source[key] as T)
+      } else {
+        Object.assign(target, { [key]: source[key] })
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources)
+}
+
+/**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+function isObject(item: any): boolean {
+  return item && typeof item === 'object' && !Array.isArray(item)
+}
+
 function firstCharToLower(string: string) {
   return string.charAt(0).toLowerCase() + string.slice(1)
 }

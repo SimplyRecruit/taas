@@ -4,7 +4,7 @@ import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
-import { Customer, Resource, LoginReqBody, RegisterOrganizationReqBody, InviteMemberReqBody, TableQueryParameters, WorkPeriod,  } from "models"
+import { Client, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
@@ -17,7 +17,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
         url += "/"
         const paramRegExpArray = block.match(routeParamRegex)
         if (paramRegExpArray == null) { url += block; continue }
-        else url += Object.keys(params).find(p => p === paramRegExpArray[1])
+        else url += params[`${Object.keys(params).find(p => p === paramRegExpArray[1])}`]
     }
     return url
 }
@@ -35,7 +35,7 @@ export default {
             })
         },
         async update(
-            body: Customer,
+            body: Client,
             params: { id: string, },
         ) : Promise<AxiosResponse>
         {
@@ -48,7 +48,7 @@ export default {
             })
         },
         async create(
-            body: Customer,
+            body: Client,
         ) : Promise<AxiosResponse>
         {
             const route = "/customer"
@@ -94,7 +94,7 @@ export default {
             })
         },
         async update(
-            body: Resource,
+            body: ResourceUpdateBody,
             params: { id: string, },
         ) : Promise<AxiosResponse>
         {
@@ -176,7 +176,7 @@ export default {
             })
         },
         async inviteMember(
-            body: InviteMemberReqBody,
+            body: ResourceCreateBody,
         ) : Promise<AxiosResponse>
         {
             const route = "/user/invite-member"
