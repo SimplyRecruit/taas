@@ -53,8 +53,8 @@ export default function Team() {
         <FiEdit2
           style={{ cursor: 'pointer' }}
           onClick={() => {
-            console.log(record)
             setCurrentRecord(record)
+            setSelectedRowKey(record.id)
             setInviteMemberModalOpen(true)
           }}
         />
@@ -79,6 +79,7 @@ export default function Team() {
   const [data, setData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
+  const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
   const find = (record: Resource): number => {
     return data.findIndex(x => x.id === record.id)
@@ -149,7 +150,13 @@ export default function Team() {
         </Button>
       </div>
       <Table
-        rowKey="id"
+        rowKey={record => record.id}
+        rowClassName={record => {
+          if (selectedRowKey == record.id) {
+            return 'ant-table-row-selected'
+          }
+          return ''
+        }}
         loading={loading}
         columns={columns}
         dataSource={filteredData}
@@ -168,6 +175,7 @@ export default function Team() {
         open={inviteMemberModalOpen}
         onCancel={() => {
           setInviteMemberModalOpen(false)
+          setSelectedRowKey(null)
         }}
         onUpdate={onUpdate}
         onAdd={onAdd}
