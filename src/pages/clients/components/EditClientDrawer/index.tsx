@@ -91,7 +91,7 @@ const EditClientDrawer = ({
         >
           <Form.Item
             required
-            name="ID"
+            name="id"
             label="ID"
             rules={[
               {
@@ -156,11 +156,15 @@ const EditClientDrawer = ({
                 name="contractType"
                 label="Contract type"
               >
-                <Select
-                  options={Object.keys(ClientContractType).map(e => {
-                    return { value: e, key: e }
-                  })}
-                />
+                <Radio.Group>
+                  <Space size="middle" direction="vertical">
+                    {Object.keys(ClientContractType).map(e => (
+                      <Radio value={e} key={e}>
+                        {e}
+                      </Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
               </Form.Item>
               <Form.Item
                 name="contractDate"
