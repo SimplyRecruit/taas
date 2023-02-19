@@ -170,7 +170,13 @@ export default function Clients() {
           onSearch={handleSearch}
           searchText={searchText}
         />
-        <Button type="primary" onClick={() => setModalOpen(true)}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setCurrentRecord(null)
+            setModalOpen(true)
+          }}
+        >
           Add Client
         </Button>
       </div>
@@ -195,6 +201,7 @@ export default function Clients() {
         }}
       />
       <EditClientDrawer
+        key={currentRecord?.id}
         open={modalOpen}
         value={currentRecord}
         onCancel={() => {
