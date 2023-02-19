@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Table, Tag, Typography } from 'antd'
+import { Button, Table, Tag } from 'antd'
 import { FiEdit } from 'react-icons/fi'
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'

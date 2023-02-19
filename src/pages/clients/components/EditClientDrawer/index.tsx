@@ -25,6 +25,7 @@ import {
 } from '@ant-design/icons'
 import { dateToMoment } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
+import styles from './index.module.css'
 
 interface RenderProps {
   open: boolean
@@ -237,6 +238,7 @@ const EditClientDrawer = ({
   ]
   return (
     <Drawer
+      className={styles.wrapper}
       title={value ? 'Edit Client' : 'Add Client'}
       open={open}
       width={600}
@@ -251,7 +253,7 @@ const EditClientDrawer = ({
           <Button onClick={onClose}>Cancel</Button>
         </Space>
       }
-      style={{ borderRadius: '16px' }}
+      style={{ borderRadius: '16px', position: 'relative' }}
       extra={
         <Button
           onClick={onClose}
@@ -262,6 +264,7 @@ const EditClientDrawer = ({
       }
     >
       <Tabs
+        tabBarStyle={{ position: 'sticky', top: 0, zIndex: 10 }}
         type="card"
         defaultActiveKey="1"
         items={items}
