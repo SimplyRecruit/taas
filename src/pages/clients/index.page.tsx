@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Button, Table } from 'antd'
-import { FiEdit2 } from 'react-icons/fi'
+import { Button, Table, Tag, Typography } from 'antd'
+import { FiEdit } from 'react-icons/fi'
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientContractType } from 'models'
 import { dateToMoment } from '@/util'
+import { FaExpandAlt } from 'react-icons/fa'
 
 export default function Clients() {
   const columns = [
@@ -64,7 +65,23 @@ export default function Clients() {
       title: 'Access',
       dataIndex: 'access',
       key: 'access',
-      render: () => <span>Public</span>,
+      render: () => (
+        <Button
+          onClick={() => {
+            setModalOpen(true)
+          }}
+          type="text"
+          size="small"
+        >
+          <div style={{ display: 'flex' }}>
+            <Tag color="processing">Restricted</Tag>
+            <FaExpandAlt
+              size={16}
+              style={{ color: 'blue', marginTop: 3, marginLeft: 4 }}
+            />
+          </div>
+        </Button>
+      ),
     },
     {
       title: '',
@@ -72,7 +89,7 @@ export default function Clients() {
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Client) => (
         <span>
-          <FiEdit2
+          <FiEdit
             onClick={() => {
               setCurrentRecord(record)
               setSelectedRowKey(record.id)
@@ -158,6 +175,7 @@ export default function Clients() {
         </Button>
       </div>
       <Table
+        size="large"
         rowClassName={record => {
           if (selectedRowKey == record.id) {
             return 'ant-table-row-selected'
