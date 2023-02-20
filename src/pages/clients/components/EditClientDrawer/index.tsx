@@ -29,18 +29,11 @@ import styles from './index.module.css'
 
 interface RenderProps {
   open: boolean
-  onAdd: (newMember: Client) => void
   onUpdate: (updatedMember: Client) => void
   onCancel: () => void
   value: Client | null
 }
-const EditClientDrawer = ({
-  open,
-  onAdd,
-  onUpdate,
-  onCancel,
-  value,
-}: RenderProps) => {
+const EditClientDrawer = ({ open, onUpdate, onCancel, value }: RenderProps) => {
   const [form] = Form.useForm()
 
   const onSubmit = () => {

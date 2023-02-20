@@ -7,6 +7,9 @@ import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientContractType } from 'models'
 import { dateToMoment } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
+import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
+
+type ModalStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
   const columns = [
@@ -68,7 +71,7 @@ export default function Clients() {
       render: () => (
         <Button
           onClick={() => {
-            setModalOpen(true)
+            setModalStatus('edit')
           }}
           type="text"
           size="small"
@@ -93,7 +96,7 @@ export default function Clients() {
             onClick={() => {
               setCurrentRecord(record)
               setSelectedRowKey(record.id)
-              setModalOpen(true)
+              setModalStatus('edit')
             }}
             style={{ cursor: 'pointer' }}
           />
@@ -111,6 +114,7 @@ export default function Clients() {
       contractType: ClientContractType.MAINTENANCE,
       contractDate: new Date(),
       partnerName: 'bilemedim',
+      everyoneHasAccess: true,
     },
     {
       id: '2',
@@ -120,9 +124,10 @@ export default function Clients() {
       startDate: new Date(),
       contractDate: new Date(),
       partnerName: 'bilemedim',
+      everyoneHasAccess: true,
     },
   ]
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modalStatus, setModalStatus] = useState<ModalStatus>('none')
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState(data)
   const [selectedStatus, setSelectedStatus] = useState('active')
@@ -174,7 +179,7 @@ export default function Clients() {
           type="primary"
           onClick={() => {
             setCurrentRecord(null)
-            setModalOpen(true)
+            setModalStatus('create')
           }}
         >
           Add Client
@@ -202,14 +207,21 @@ export default function Clients() {
       />
       <EditClientDrawer
         key={currentRecord?.id}
-        open={modalOpen}
+        open={modalStatus === 'edit'}
         value={currentRecord}
         onCancel={() => {
-          setModalOpen(false)
+          setModalStatus('none')
+          setSelectedRowKey(null)
+        }}
+        onUpdate={value => console.log(value)}
+      />
+      <AddClientDrawer
+        open={modalStatus === 'create'}
+        onCancel={() => {
+          setModalStatus('none')
           setSelectedRowKey(null)
         }}
         onAdd={value => console.log(value)}
-        onUpdate={value => console.log(value)}
       />
     </div>
   )
