@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import { Client, ClientContractType, Resource } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
-import { dateToMoment } from '@/util'
+import { formatDate, momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import useApi from '@/services/useApi'
@@ -29,45 +29,37 @@ export default function AddClientDrawer({
   onAdd,
   onCancel,
 }: RenderProps) {
-  const [form] = Form.useForm()
+  const [form] = Form.useForm<ClientCreateBody>()
   const everyoneHasAccess = Form.useWatch('everyoneHasAccess', form)
   const { call, data, loading, error } = useApi('resource', 'getAll') as {
     data: Resource[]
-    call: () => Promise<any>
+    call: () => Promise<Resource[]>
     loading: boolean
-    error: any
+    error: unknown
   }
-  // const [resources, setResources] = useState<Resource[]>([])
-  // const filteredOptions = OPTIONS.filter(o => !selectedItems.includes(o))
 
   useEffect(() => {
-    call().then(r => {
-      // setResources(r)
-    })
+    call()
   }, [])
 
   const onSubmit = () => {
-    form.validateFields()
-  }
-  const onFinish = async (client: Client) => {
-    console.log(client)
-  }
-
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
+    form.validateFields().then(body => {
+      const resources = !body.everyoneHasAccess
+        ? data.filter(r => body.resourceIds?.includes(r.id))
+        : undefined
+      delete body.resourceIds
+      onAdd(Client.create({ ...body, resources, active: true }))
+      onClose()
+    })
   }
 
   const onClose = () => {
     onCancel()
     form.resetFields()
   }
-  const onChange = (key: string) => {
-    console.log(key)
-  }
 
   return (
     <Drawer
-      getContainer={false}
       title="Add Client"
       open={open}
       width={600}
@@ -106,8 +98,6 @@ export default function AddClientDrawer({
           partnerName: '',
           startDate: new Date(),
         })}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item
           required
@@ -157,7 +147,7 @@ export default function AddClientDrawer({
                   message: 'Please select a start date',
                 },
               ]}
-              getValueFromEvent={date => dateToMoment(date)}
+              getValueFromEvent={date => momentToDate(date)}
               getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker
@@ -189,8 +179,12 @@ export default function AddClientDrawer({
             <Form.Item
               name="contractDate"
               label="Contract date"
-              getValueFromEvent={date => dateToMoment(date)}
-              getValueProps={i => i ?? { value: moment(i) }}
+              getValueFromEvent={date =>
+                date ? momentToDate(date) : undefined
+              }
+              getValueProps={i => ({
+                value: i ? moment(i) : '',
+              })}
             >
               <DatePicker
                 format={DEFAULT_DATE_FORMAT}
@@ -228,6 +222,7 @@ export default function AddClientDrawer({
             />
           </Form.Item>
         )}
+        {!!error && 'Error'}
       </Form>
     </Drawer>
   )

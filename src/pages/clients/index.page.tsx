@@ -5,9 +5,10 @@ import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientContractType } from 'models'
-import { dateToMoment } from '@/util'
+import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
+import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -50,7 +51,7 @@ export default function Clients() {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+      render: (value: Date) => <span>{formatDate(value)}</span>,
     },
 
     {
@@ -62,7 +63,7 @@ export default function Clients() {
       title: 'Contract date',
       dataIndex: 'contractDate',
       key: 'contractDate',
-      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+      render: (value: Date) => <span>{formatDate(value)}</span>,
     },
     {
       title: 'Access',
@@ -140,6 +141,11 @@ export default function Clients() {
   const handleSearch = (value: string) => {
     setSearchText(value)
     filterData(selectedStatus, value)
+  }
+
+  const onAdd = (value: Client) => {
+    console.log(value)
+    setFilteredData([value, ...filteredData])
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {
@@ -229,7 +235,7 @@ export default function Clients() {
           setDrawerStatus('none')
           setSelectedRowKey(null)
         }}
-        onAdd={value => console.log(value)}
+        onAdd={onAdd}
       />
     </div>
   )

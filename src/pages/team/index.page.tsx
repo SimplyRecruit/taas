@@ -4,7 +4,7 @@ import { FiEdit2 } from 'react-icons/fi'
 import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
 import { Resource, UserRole } from 'models'
 import useApi from '@/services/useApi'
-import { dateToMoment } from '@/util'
+import { formatDate } from '@/util'
 import TeamFilter from '@/pages/team/components/TeamFilter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
@@ -43,7 +43,7 @@ export default function Team() {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+      render: (value: Date) => <span>{formatDate(value)}</span>,
     },
     {
       title: '',

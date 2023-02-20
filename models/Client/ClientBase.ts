@@ -18,8 +18,8 @@ export default class ClientBase extends Model {
   @IsEnum(ClientContractType)
   contractType: ClientContractType
 
-  @Length(1, 255)
-  partnerName: string
+  @Length(0, 255)
+  partnerName?: string
 
   @IsBoolean()
   active: boolean
