@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "",
+    "type": "object",
+    "properties": {
+        "redirecting": {
+            "type": "string",
+            "minLength": 1
+        },
+        "invalidCredentials": {
+            "type": "string",
+            "minLength": 1
+        },
+        "logIn": {
+            "type": "string",
+            "minLength": 1
+        },
+        "$schema": {
+            "type": "string",
+            "minLength": 1
+        },
+        "dsafasd": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "redirecting",
+        "invalidCredentials",
+        "logIn",
+        "$schema",
+        "dsafasd"
+    ],
+    "additionalProperties": false
+}

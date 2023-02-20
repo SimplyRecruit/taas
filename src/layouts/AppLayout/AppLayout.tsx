@@ -35,7 +35,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
     return <div>{children}</div>
   }
 
-  console.log(router.pathname)
   return (
     <ConfigProvider
       theme={{

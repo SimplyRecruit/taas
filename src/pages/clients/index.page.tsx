@@ -1,6 +1,10 @@
+import type { GetStaticProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { Button, Input, Modal, Select, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
 import { FiEdit } from 'react-icons/fi'
+
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -239,4 +243,13 @@ export default function Clients() {
       />
     </div>
   )
+}
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  locale ??= 'en'
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, [])),
+    },
+  }
 }
