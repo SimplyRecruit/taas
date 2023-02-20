@@ -20,7 +20,7 @@ import {
   PlusCircleOutlined,
   DeleteOutlined,
 } from '@ant-design/icons'
-import { formatDate } from '@/util'
+import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
 
@@ -132,7 +132,7 @@ const EditClientDrawer = ({
                     message: 'Please select a start date',
                   },
                 ]}
-                getValueFromEvent={date => formatDate(date)}
+                getValueFromEvent={date => momentToDate(date)}
                 getValueProps={i => ({ value: moment(i) })}
               >
                 <DatePicker
@@ -164,8 +164,12 @@ const EditClientDrawer = ({
               <Form.Item
                 name="contractDate"
                 label="Contract date"
-                getValueFromEvent={date => formatDate(date)}
-                getValueProps={i => i ?? { value: moment(i) }}
+                getValueFromEvent={date =>
+                  date ? momentToDate(date) : undefined
+                }
+                getValueProps={i => ({
+                  value: i ? moment(i) : '',
+                })}
               >
                 <DatePicker
                   format={DEFAULT_DATE_FORMAT}
