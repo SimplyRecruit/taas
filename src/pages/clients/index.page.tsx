@@ -9,7 +9,7 @@ import { dateToMoment } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 
-type ModalStatus = 'create' | 'edit' | 'none'
+type DrawerStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
   const columns = [
@@ -66,12 +66,11 @@ export default function Clients() {
     },
     {
       title: 'Access',
-      dataIndex: 'access',
       key: 'access',
-      render: () => (
+      render: (record: Client) => (
         <Button
           onClick={() => {
-            setModalStatus('edit')
+            openEditDrawer(record, '2')
           }}
           type="text"
           size="small"
@@ -94,9 +93,7 @@ export default function Clients() {
         <span>
           <FiEdit
             onClick={() => {
-              setCurrentRecord(record)
-              setSelectedRowKey(record.id)
-              setModalStatus('edit')
+              openEditDrawer(record, '1')
             }}
             style={{ cursor: 'pointer' }}
           />
@@ -127,7 +124,8 @@ export default function Clients() {
       everyoneHasAccess: true,
     },
   ]
-  const [modalStatus, setModalStatus] = useState<ModalStatus>('none')
+  const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
+  const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState(data)
   const [selectedStatus, setSelectedStatus] = useState('active')
@@ -142,6 +140,14 @@ export default function Clients() {
   const handleSearch = (value: string) => {
     setSearchText(value)
     filterData(selectedStatus, value)
+  }
+
+  const openEditDrawer = (record: Client, tabKey: string) => {
+    console.log(record)
+    setDrawerTabKey(tabKey)
+    setCurrentRecord(record)
+    setSelectedRowKey(record.id)
+    setDrawerStatus('edit')
   }
 
   useEffect(() => {
@@ -179,7 +185,7 @@ export default function Clients() {
           type="primary"
           onClick={() => {
             setCurrentRecord(null)
-            setModalStatus('create')
+            setDrawerStatus('create')
           }}
         >
           Add Client
@@ -207,18 +213,20 @@ export default function Clients() {
       />
       <EditClientDrawer
         key={currentRecord?.id}
-        open={modalStatus === 'edit'}
+        activeTabKey={drawerTabKey}
+        onActiveTabKeyChange={setDrawerTabKey}
+        open={drawerStatus === 'edit'}
         value={currentRecord}
         onCancel={() => {
-          setModalStatus('none')
+          setDrawerStatus('none')
           setSelectedRowKey(null)
         }}
         onUpdate={value => console.log(value)}
       />
       <AddClientDrawer
-        open={modalStatus === 'create'}
+        open={drawerStatus === 'create'}
         onCancel={() => {
-          setModalStatus('none')
+          setDrawerStatus('none')
           setSelectedRowKey(null)
         }}
         onAdd={value => console.log(value)}

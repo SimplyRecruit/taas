@@ -1,6 +1,5 @@
 import moment from 'dayjs'
 import {
-  InputNumber,
   Input,
   Form,
   Row,
@@ -9,15 +8,13 @@ import {
   Button,
   Space,
   DatePicker,
-  Switch,
-  Select,
   Tabs,
   TabsProps,
   Radio,
   Table,
   Popover,
 } from 'antd'
-import { ResourceCreateBody, Client, ClientContractType } from 'models'
+import { Client, ClientContractType } from 'models'
 import {
   CloseOutlined,
   PlusCircleOutlined,
@@ -30,12 +27,20 @@ import styles from './index.module.css'
 interface RenderProps {
   open: boolean
   onUpdate: (updatedMember: Client) => void
+  onActiveTabKeyChange: (tabKey: string) => void
+  activeTabKey: string
   onCancel: () => void
   value: Client | null
 }
-const EditClientDrawer = ({ open, onUpdate, onCancel, value }: RenderProps) => {
+const EditClientDrawer = ({
+  open,
+  onUpdate,
+  onActiveTabKeyChange,
+  activeTabKey,
+  onCancel,
+  value,
+}: RenderProps) => {
   const [form] = Form.useForm()
-
   const onSubmit = () => {
     form.validateFields()
   }
@@ -50,9 +55,6 @@ const EditClientDrawer = ({ open, onUpdate, onCancel, value }: RenderProps) => {
   const onClose = () => {
     onCancel()
     form.resetFields()
-  }
-  const onChange = (key: string) => {
-    console.log(key)
   }
 
   const items: TabsProps['items'] = [
@@ -182,12 +184,9 @@ const EditClientDrawer = ({ open, onUpdate, onCancel, value }: RenderProps) => {
         <div>
           <Form layout="vertical">
             <Form.Item label="Accessable by">
-              <Radio.Group
-                value={value}
-                onChange={e => (onChange ? onChange(e.target.value) : null)}
-              >
-                <Radio>Everyone</Radio>
-                <Radio>Custom</Radio>
+              <Radio.Group>
+                <Radio key="everyone">Everyone</Radio>
+                <Radio key="custom">Custom</Radio>
               </Radio.Group>
             </Form.Item>
           </Form>
@@ -207,6 +206,7 @@ const EditClientDrawer = ({ open, onUpdate, onCancel, value }: RenderProps) => {
             </Button>
           </Popover>
           <Table
+            rowKey="abbr"
             style={{ marginTop: 16 }}
             columns={[
               { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
@@ -263,9 +263,9 @@ const EditClientDrawer = ({ open, onUpdate, onCancel, value }: RenderProps) => {
       <Tabs
         tabBarStyle={{ position: 'sticky', top: 0, zIndex: 10 }}
         type="card"
-        defaultActiveKey="1"
+        activeKey={activeTabKey}
         items={items}
-        onChange={onChange}
+        onChange={onActiveTabKeyChange}
       />
     </Drawer>
   )
