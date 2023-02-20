@@ -1,26 +1,6 @@
-import { IsBoolean, IsDateString, IsEnum, Length } from 'class-validator'
-import Model from 'models/Model'
-import ClientContractType from './enums/ClientContractType'
+import ClientBase from 'models/Client/ClientBase'
+import Resource from 'models/Resource/Resource'
 
-export default class Client extends Model {
-  @Length(1, 10)
-  id: string
-
-  @Length(1, 255)
-  name: string
-
-  @IsDateString()
-  startDate: Date
-
-  @IsDateString()
-  contractDate: Date
-
-  @IsEnum(ClientContractType)
-  contractType: ClientContractType
-
-  @Length(1, 255)
-  partnerName: string
-
-  @IsBoolean()
-  active: boolean
+export default class Client extends ClientBase {
+  resources?: Resource[]
 }
