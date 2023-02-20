@@ -1,4 +1,4 @@
-import { Select } from 'antd'
+import { Radio, Select, Space } from 'antd'
 import { UserRole } from 'models'
 import { NON_SUPER_USER_ROLES } from 'models/User/enums/UserRole'
 interface RenderProps {
@@ -7,16 +7,18 @@ interface RenderProps {
 }
 const UserRoleSelector = ({ onChange, value }: RenderProps) => {
   return (
-    <Select
+    <Radio.Group
       value={value}
-      onChange={value => (onChange ? onChange(value) : null)}
+      onChange={e => (onChange ? onChange(e.target.value) : null)}
     >
-      {NON_SUPER_USER_ROLES.map(r => (
-        <Select.Option value={r as UserRole} key={r}>
-          {r}
-        </Select.Option>
-      ))}
-    </Select>
+      <Space size="middle" direction="vertical">
+        {NON_SUPER_USER_ROLES.map(r => (
+          <Radio value={r as UserRole} key={r}>
+            {r}
+          </Radio>
+        ))}
+      </Space>
+    </Radio.Group>
   )
 }
 

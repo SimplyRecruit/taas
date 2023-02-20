@@ -2,12 +2,19 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Button, Input, Modal, Select, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
-import { FiEdit2 } from 'react-icons/fi'
+import { Button, Table, Tag } from 'antd'
+import { FiEdit } from 'react-icons/fi'
+
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientContractType } from 'models'
-import { dateToMoment } from '@/util'
+import { formatDate } from '@/util'
+import { FaExpandAlt } from 'react-icons/fa'
+import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
+import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
+
+type DrawerStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
   const columns = [
@@ -48,7 +55,7 @@ export default function Clients() {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+      render: (value: Date) => <span>{formatDate(value)}</span>,
     },
 
     {
@@ -60,23 +67,38 @@ export default function Clients() {
       title: 'Contract date',
       dataIndex: 'contractDate',
       key: 'contractDate',
-      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+      render: (value: Date) => <span>{formatDate(value)}</span>,
     },
     {
       title: 'Access',
-      dataIndex: 'access',
       key: 'access',
-      render: () => <span>Public</span>,
+      render: (record: Client) => (
+        <Button
+          onClick={() => {
+            openEditDrawer(record, '2')
+          }}
+          type="text"
+          size="small"
+        >
+          <div style={{ display: 'flex' }}>
+            <Tag color="processing">Restricted</Tag>
+            <FaExpandAlt
+              size={16}
+              style={{ color: 'blue', marginTop: 3, marginLeft: 4 }}
+            />
+          </div>
+        </Button>
+      ),
     },
     {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: () => (
+      render: (record: Client) => (
         <span>
-          <FiEdit2
+          <FiEdit
             onClick={() => {
-              setModalOpen(true)
+              openEditDrawer(record, '1')
             }}
             style={{ cursor: 'pointer' }}
           />
@@ -94,6 +116,7 @@ export default function Clients() {
       contractType: ClientContractType.MAINTENANCE,
       contractDate: new Date(),
       partnerName: 'bilemedim',
+      everyoneHasAccess: true,
     },
     {
       id: '2',
@@ -103,12 +126,16 @@ export default function Clients() {
       startDate: new Date(),
       contractDate: new Date(),
       partnerName: 'bilemedim',
+      everyoneHasAccess: true,
     },
   ]
-  const [modalOpen, setModalOpen] = useState(false)
+  const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
+  const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState(data)
   const [selectedStatus, setSelectedStatus] = useState('active')
+  const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
+  const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
@@ -118,6 +145,19 @@ export default function Clients() {
   const handleSearch = (value: string) => {
     setSearchText(value)
     filterData(selectedStatus, value)
+  }
+
+  const onAdd = (value: Client) => {
+    console.log(value)
+    setFilteredData([value, ...filteredData])
+  }
+
+  const openEditDrawer = (record: Client, tabKey: string) => {
+    console.log(record)
+    setDrawerTabKey(tabKey)
+    setCurrentRecord(record)
+    setSelectedRowKey(record.id)
+    setDrawerStatus('edit')
   }
 
   useEffect(() => {
@@ -151,12 +191,25 @@ export default function Clients() {
           onSearch={handleSearch}
           searchText={searchText}
         />
-        <Button type="primary" onClick={() => setModalOpen(true)}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setCurrentRecord(null)
+            setDrawerStatus('create')
+          }}
+        >
           Add Client
         </Button>
       </div>
       <Table
-        rowKey="id"
+        size="large"
+        rowClassName={record => {
+          if (selectedRowKey == record.id) {
+            return 'ant-table-row-selected'
+          }
+          return ''
+        }}
+        rowKey={record => record.id}
         columns={columns}
         dataSource={filteredData}
         pagination={{
@@ -169,11 +222,24 @@ export default function Clients() {
         }}
       />
       <EditClientDrawer
-        open={modalOpen}
-        value={null}
-        onCancel={() => setModalOpen(false)}
-        onAdd={value => console.log(value)}
+        key={currentRecord?.id}
+        activeTabKey={drawerTabKey}
+        onActiveTabKeyChange={setDrawerTabKey}
+        open={drawerStatus === 'edit'}
+        value={currentRecord}
+        onCancel={() => {
+          setDrawerStatus('none')
+          setSelectedRowKey(null)
+        }}
         onUpdate={value => console.log(value)}
+      />
+      <AddClientDrawer
+        open={drawerStatus === 'create'}
+        onCancel={() => {
+          setDrawerStatus('none')
+          setSelectedRowKey(null)
+        }}
+        onAdd={onAdd}
       />
     </div>
   )

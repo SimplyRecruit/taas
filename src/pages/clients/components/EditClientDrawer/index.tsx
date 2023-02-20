@@ -1,0 +1,278 @@
+import moment from 'dayjs'
+import {
+  Input,
+  Form,
+  Row,
+  Col,
+  Drawer,
+  Button,
+  Space,
+  DatePicker,
+  Tabs,
+  TabsProps,
+  Radio,
+  Table,
+  Popover,
+} from 'antd'
+import { Client, ClientContractType } from 'models'
+import {
+  CloseOutlined,
+  PlusCircleOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons'
+import { momentToDate } from '@/util'
+import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
+import styles from './index.module.css'
+
+interface RenderProps {
+  open: boolean
+  onUpdate: (updatedMember: Client) => void
+  onActiveTabKeyChange: (tabKey: string) => void
+  activeTabKey: string
+  onCancel: () => void
+  value: Client | null
+}
+const EditClientDrawer = ({
+  open,
+  onUpdate,
+  onActiveTabKeyChange,
+  activeTabKey,
+  onCancel,
+  value,
+}: RenderProps) => {
+  const [form] = Form.useForm()
+  const onSubmit = () => {
+    form.validateFields()
+  }
+  const onFinish = async (client: Client) => {
+    console.log(client)
+  }
+
+  const onFinishFailed = (errorInfo: unknown) => {
+    console.log('Failed:', errorInfo)
+  }
+
+  const onClose = () => {
+    onCancel()
+    form.resetFields()
+  }
+
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: `Settings`,
+      children: (
+        <Form
+          form={form}
+          requiredMark="optional"
+          name="basic"
+          layout="vertical"
+          validateTrigger="onBlur"
+          style={{ width: '100%' }}
+          initialValues={
+            value
+              ? Client.create({
+                  ...value,
+                })
+              : Client.createPartially({
+                  id: '',
+                  name: '',
+                  partnerName: '',
+                  startDate: new Date(),
+                })
+          }
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+        >
+          <Form.Item
+            required
+            name="id"
+            label="ID"
+            rules={[
+              {
+                validator: Client.validator('id'),
+                message: 'Please enter a value',
+              },
+            ]}
+          >
+            <Input style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item
+            required
+            name="name"
+            label="Name"
+            rules={[
+              {
+                validator: Client.validator('name'),
+                message: 'Please enter a value',
+              },
+            ]}
+          >
+            <Input style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item
+            name="partnerName"
+            label="Partner name"
+            rules={[
+              {
+                validator: Client.validator('partnerName'),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Row>
+            <Col span={8}>
+              <Form.Item
+                name="startDate"
+                label="Start date"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a start date',
+                  },
+                ]}
+                getValueFromEvent={date => momentToDate(date)}
+                getValueProps={i => ({ value: moment(i) })}
+              >
+                <DatePicker
+                  allowClear={false}
+                  format={DEFAULT_DATE_FORMAT}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a contract type',
+                  },
+                ]}
+                name="contractType"
+                label="Contract type"
+              >
+                <Radio.Group>
+                  <Space size="middle" direction="vertical">
+                    {Object.keys(ClientContractType).map(e => (
+                      <Radio value={e} key={e}>
+                        {e}
+                      </Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                name="contractDate"
+                label="Contract date"
+                getValueFromEvent={date =>
+                  date ? momentToDate(date) : undefined
+                }
+                getValueProps={i => ({
+                  value: i ? moment(i) : '',
+                })}
+              >
+                <DatePicker
+                  format={DEFAULT_DATE_FORMAT}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      ),
+    },
+    {
+      key: '2',
+      label: `Access`,
+      children: (
+        <div>
+          <Form layout="vertical">
+            <Form.Item label="Accessable by">
+              <Radio.Group>
+                <Radio key="everyone">Everyone</Radio>
+                <Radio key="custom">Custom</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Form>
+
+          <Popover
+            showArrow={false}
+            placement="bottomRight"
+            content={
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            }
+          >
+            <Button type="link" icon={<PlusCircleOutlined />}>
+              Add new
+            </Button>
+          </Popover>
+          <Table
+            rowKey="abbr"
+            style={{ marginTop: 16 }}
+            columns={[
+              { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
+              { title: 'Name' },
+              { title: 'Role' },
+              { title: 'Hourly rate' },
+              {
+                title: '',
+                width: DEFAULT_ACTION_COLUMN_WIDTH,
+                render: () => {
+                  return (
+                    <Button
+                      size="small"
+                      type="text"
+                      icon={<DeleteOutlined></DeleteOutlined>}
+                    ></Button>
+                  )
+                },
+              },
+            ]}
+            dataSource={[{ abbr: 'alo' }]}
+          ></Table>
+        </div>
+      ),
+    },
+  ]
+  return (
+    <Drawer
+      className={styles.wrapper}
+      title={value ? 'Edit Client' : 'Add Client'}
+      open={open}
+      width={600}
+      onClose={onClose}
+      closable={false}
+      mask={false}
+      footer={
+        <Space>
+          <Button onClick={onSubmit} type="primary" htmlType="submit">
+            Save
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </Space>
+      }
+      style={{ borderRadius: '16px', position: 'relative' }}
+      extra={
+        <Button
+          onClick={onClose}
+          size="small"
+          type="text"
+          icon={<CloseOutlined />}
+        />
+      }
+    >
+      <Tabs
+        tabBarStyle={{ position: 'sticky', top: 0, zIndex: 10 }}
+        type="card"
+        activeKey={activeTabKey}
+        items={items}
+        onChange={onActiveTabKeyChange}
+      />
+    </Drawer>
+  )
+}
+
+export default EditClientDrawer

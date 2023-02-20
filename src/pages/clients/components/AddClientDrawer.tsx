@@ -1,6 +1,5 @@
 import moment from 'dayjs'
 import {
-  InputNumber,
   Input,
   Form,
   Row,
@@ -9,57 +8,73 @@ import {
   Button,
   Space,
   DatePicker,
-  Switch,
+  Radio,
   Select,
 } from 'antd'
-import { ResourceCreateBody, Client, ClientContractType } from 'models'
+import { Client, ClientContractType, Resource } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
-import { dateToMoment } from '@/util'
+import { formatDate, momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
+import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
+import useApi from '@/services/useApi'
+import { useEffect, useState } from 'react'
 
 interface RenderProps {
   open: boolean
   onAdd: (newMember: Client) => void
-  onUpdate: (updatedMember: Client) => void
   onCancel: () => void
-  value: Client | null
 }
-const EditClientDrawer = ({
+export default function AddClientDrawer({
   open,
   onAdd,
-  onUpdate,
   onCancel,
-  value,
-}: RenderProps) => {
-  const [form] = Form.useForm()
-
-  const onFinish = async (client: Client) => {
-    console.log(client)
+}: RenderProps) {
+  const [form] = Form.useForm<ClientCreateBody>()
+  const everyoneHasAccess = Form.useWatch('everyoneHasAccess', form)
+  const { call, data, loading, error } = useApi('resource', 'getAll') as {
+    data: Resource[]
+    call: () => Promise<Resource[]>
+    loading: boolean
+    error: unknown
   }
 
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
+  useEffect(() => {
+    call()
+  }, [])
+
+  const onSubmit = () => {
+    form.validateFields().then(body => {
+      const resources = !body.everyoneHasAccess
+        ? data.filter(r => body.resourceIds?.includes(r.id))
+        : undefined
+      delete body.resourceIds
+      onAdd(Client.create({ ...body, resources, active: true }))
+      onClose()
+    })
   }
 
   const onClose = () => {
     onCancel()
     form.resetFields()
   }
+
   return (
     <Drawer
-      title={value ? 'Edit Client' : 'Add Client'}
+      title="Add Client"
       open={open}
+      width={600}
       onClose={onClose}
       closable={false}
+      mask={false}
       footer={
         <Space>
-          <Button type="primary" htmlType="submit">
+          <Button onClick={onSubmit} type="primary" htmlType="submit">
             Save
           </Button>
           <Button onClick={onClose}>Cancel</Button>
         </Space>
       }
-      style={{ borderRadius: '16px' }}
+      style={{ borderRadius: '16px', position: 'relative' }}
       extra={
         <Button
           onClick={onClose}
@@ -76,24 +91,17 @@ const EditClientDrawer = ({
         layout="vertical"
         validateTrigger="onBlur"
         style={{ width: '100%' }}
-        initialValues={
-          value
-            ? Client.create({
-                ...value,
-              })
-            : Client.createPartially({
-                id: '',
-                name: '',
-                partnerName: '',
-                startDate: new Date(),
-              })
-        }
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        initialValues={ClientCreateBody.createPartially({
+          active: true,
+          id: '',
+          name: '',
+          partnerName: '',
+          startDate: new Date(),
+        })}
       >
         <Form.Item
           required
-          name="ID"
+          name="id"
           label="ID"
           rules={[
             {
@@ -129,7 +137,7 @@ const EditClientDrawer = ({
           <Input />
         </Form.Item>
         <Row>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item
               name="startDate"
               label="Start date"
@@ -139,7 +147,7 @@ const EditClientDrawer = ({
                   message: 'Please select a start date',
                 },
               ]}
-              getValueFromEvent={date => dateToMoment(date)}
+              getValueFromEvent={date => momentToDate(date)}
               getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker
@@ -158,17 +166,25 @@ const EditClientDrawer = ({
               name="contractType"
               label="Contract type"
             >
-              <Select
-                options={Object.keys(ClientContractType).map(e => {
-                  return { value: e, key: e }
-                })}
-              />
+              <Radio.Group>
+                <Space size="middle" direction="vertical">
+                  {Object.keys(ClientContractType).map(e => (
+                    <Radio value={e} key={e}>
+                      {e}
+                    </Radio>
+                  ))}
+                </Space>
+              </Radio.Group>
             </Form.Item>
             <Form.Item
               name="contractDate"
               label="Contract date"
-              getValueFromEvent={date => dateToMoment(date)}
-              getValueProps={i => i ?? { value: moment(i) }}
+              getValueFromEvent={date =>
+                date ? momentToDate(date) : undefined
+              }
+              getValueProps={i => ({
+                value: i ? moment(i) : '',
+              })}
             >
               <DatePicker
                 format={DEFAULT_DATE_FORMAT}
@@ -177,9 +193,37 @@ const EditClientDrawer = ({
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item name="everyoneHasAccess" label="Accessable by" required>
+          <Radio.Group>
+            <Radio key="everyone" value={true}>
+              Everyone
+            </Radio>
+            <Radio key="custom" value={false}>
+              Custom
+            </Radio>
+          </Radio.Group>
+        </Form.Item>
+        {everyoneHasAccess === false && !loading && !!data && (
+          <Form.Item name="resourceIds">
+            <Select
+              filterOption={(inputValue, option) =>
+                option?.label
+                  .toLocaleLowerCase()
+                  .includes(inputValue.toLocaleLowerCase()) ?? false
+              }
+              mode="multiple"
+              allowClear
+              style={{ width: '100%' }}
+              placeholder="Please select"
+              options={data.map(e => ({
+                value: e.id,
+                label: `${e.id} - ${e.name}`,
+              }))}
+            />
+          </Form.Item>
+        )}
+        {!!error && 'Error'}
       </Form>
     </Drawer>
   )
 }
-
-export default EditClientDrawer

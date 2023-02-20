@@ -11,9 +11,9 @@ const ClientsFilter = ({
   searchText,
 }: RenderProps) => {
   const items = [
-    { value: 'all', text: 'Show all' },
-    { value: 'active', text: 'Show active' },
-    { value: 'inactive', text: 'Show archived' },
+    { value: 'all', text: 'All' },
+    { value: 'active', text: 'Active' },
+    { value: 'inactive', text: 'Archived' },
   ]
   return (
     <Filter

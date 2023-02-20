@@ -20,7 +20,7 @@ import {
 } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import useApi from '@/services/useApi'
-import { dateToMoment } from '@/util'
+import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 
 interface RenderProps {
@@ -78,6 +78,15 @@ const InviteMemberModal = ({
       open={open}
       onClose={onClose}
       closable={false}
+      mask={false}
+      footer={
+        <Space>
+          <Button type="primary" htmlType="submit" loading={loading()}>
+            Save
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </Space>
+      }
       style={{ borderRadius: '16px' }}
       extra={
         <Button
@@ -135,14 +144,29 @@ const InviteMemberModal = ({
         >
           <Input disabled={!!value} />
         </Form.Item>
+        <Form.Item name="role" label="Role">
+          <UserRoleSelector />
+        </Form.Item>
         <Row>
           <Col span={12}>
-            <Form.Item name="role" label="Role">
-              <UserRoleSelector />
+            <Form.Item
+              name="startDate"
+              label="Start date"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a start date',
+                },
+              ]}
+              getValueFromEvent={date => momentToDate(date)}
+              getValueProps={i => ({ value: moment(i) })}
+            >
+              <DatePicker
+                allowClear={false}
+                format={DEFAULT_DATE_FORMAT}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
-          </Col>
-          <Col span={2} />
-          <Col span={10}>
             <Form.Item
               name="hourlyRate"
               label="Hourly rate"
@@ -160,31 +184,6 @@ const InviteMemberModal = ({
                 placeholder="Enter rate"
               />
             </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              name="startDate"
-              label="Start date"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select a start date',
-                },
-              ]}
-              getValueFromEvent={date => dateToMoment(date)}
-              getValueProps={i => ({ value: moment(i) })}
-            >
-              <DatePicker
-                allowClear={false}
-                format={DEFAULT_DATE_FORMAT}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={2} />
-          <Col>
             {!!value && (
               <Form.Item valuePropName="checked" name="active" label="Active">
                 <Switch />
@@ -192,12 +191,6 @@ const InviteMemberModal = ({
             )}
           </Col>
         </Row>
-        <Space>
-          <Button type="primary" htmlType="submit" loading={loading()}>
-            Save
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
-        </Space>
       </Form>
     </Drawer>
   )

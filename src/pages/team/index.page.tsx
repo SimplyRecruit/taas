@@ -6,7 +6,7 @@ import { FiEdit2 } from 'react-icons/fi'
 import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
 import { Resource, UserRole } from 'models'
 import useApi from '@/services/useApi'
-import { dateToMoment } from '@/util'
+import { formatDate } from '@/util'
 import TeamFilter from '@/pages/team/components/TeamFilter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
@@ -45,7 +45,7 @@ export default function Team() {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{dateToMoment(value)}</span>,
+      render: (value: Date) => <span>{formatDate(value)}</span>,
     },
     {
       title: '',
@@ -55,8 +55,8 @@ export default function Team() {
         <FiEdit2
           style={{ cursor: 'pointer' }}
           onClick={() => {
-            console.log(record)
             setCurrentRecord(record)
+            setSelectedRowKey(record.id)
             setInviteMemberModalOpen(true)
           }}
         />
@@ -76,34 +76,15 @@ export default function Team() {
   }, [resources])
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
-  const [changeRateModalOpen, setChangeRateModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Resource[]>([])
   const [data, setData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
+  const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
   const find = (record: Resource): number => {
     return data.findIndex(x => x.id === record.id)
-  }
-
-  const handleRoleChange = (record: Resource, value: string) => {
-    const index = find(record)
-    if (index != -1) {
-      data[index].role = value as UserRole
-      setData([...data])
-      filterData(selectedStatus, searchText)
-    }
-  }
-
-  const handleHourlyRateChange = (record: Resource, value: number) => {
-    const index = find(record)
-    if (index != -1) {
-      const updatedData = [...data]
-      updatedData[index].hourlyRate = value
-      setData(updatedData)
-      filterData(selectedStatus, searchText)
-    }
   }
 
   const handleStatusChange = (value: string) => {
@@ -171,7 +152,13 @@ export default function Team() {
         </Button>
       </div>
       <Table
-        rowKey="id"
+        rowKey={record => record.id}
+        rowClassName={record => {
+          if (selectedRowKey == record.id) {
+            return 'ant-table-row-selected'
+          }
+          return ''
+        }}
         loading={loading}
         columns={columns}
         dataSource={filteredData}
@@ -190,6 +177,7 @@ export default function Team() {
         open={inviteMemberModalOpen}
         onCancel={() => {
           setInviteMemberModalOpen(false)
+          setSelectedRowKey(null)
         }}
         onUpdate={onUpdate}
         onAdd={onAdd}

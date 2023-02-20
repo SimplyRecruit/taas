@@ -95,7 +95,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
           <Layout.Sider
             collapsible
             collapsed={sidebarCollapsed}
-            style={{ backgroundColor: '#F9FAFD' }}
             theme="light"
             trigger={null}
             width={SIDER_WIDTH}
