@@ -16,6 +16,10 @@ export default class ResourceBase extends Model {
   @MaxLength(100)
   name: string
 
+  @MinLength(1)
+  @MaxLength(100)
+  abbr: string
+
   @IsDateString()
   startDate: Date
 

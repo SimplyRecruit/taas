@@ -30,14 +30,14 @@ interface RenderProps {
   onCancel: () => void
   value: Resource | null
 }
-const InviteMemberModal = ({
+const EditMemberDrawer = ({
   open,
   onAdd,
   onUpdate,
   onCancel,
   value,
 }: RenderProps) => {
-  const [form] = Form.useForm()
+  const [form] = Form.useForm<Resource>()
   const { loading: loadingCreate, call: callCreate } = useApi(
     'user',
     'inviteMember'
@@ -47,6 +47,10 @@ const InviteMemberModal = ({
     'update'
   )
   const loading = () => loadingCreate || loadingUpdate
+
+  const onSubmit = () => {
+    form.validateFields().then(member => onFinish(member))
+  }
 
   const onFinish = async (member: Resource) => {
     try {
@@ -81,7 +85,12 @@ const InviteMemberModal = ({
       mask={false}
       footer={
         <Space>
-          <Button type="primary" htmlType="submit" loading={loading()}>
+          <Button
+            onClick={onSubmit}
+            type="primary"
+            htmlType="submit"
+            loading={loading()}
+          >
             Save
           </Button>
           <Button onClick={onClose}>Cancel</Button>
@@ -120,6 +129,18 @@ const InviteMemberModal = ({
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
+        <Form.Item
+          name="abbr"
+          label="Abbreviation"
+          rules={[
+            {
+              validator: ResourceCreateBody.validator('abbr'),
+              message: 'Please enter a value',
+            },
+          ]}
+        >
+          <Input style={{ width: '100%' }} />
+        </Form.Item>
         <Form.Item
           name="name"
           label="Name"
@@ -196,4 +217,4 @@ const InviteMemberModal = ({
   )
 }
 
-export default InviteMemberModal
+export default EditMemberDrawer

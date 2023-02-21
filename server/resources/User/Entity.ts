@@ -1,13 +1,17 @@
 import { UserRole, UserStatus } from 'models'
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, Index, ManyToOne, OneToOne } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'
 import ResourceEntity from '~/resources/Resource/Entity'
 
 @Entity('user')
+@Index(['abbr', 'organization'], { unique: true })
 export default class UserEntity extends EntityBase {
   @Column({ nullable: true })
   name: string
+
+  @Column({ nullable: true })
+  abbr: string
 
   @Column({ unique: true })
   email: string

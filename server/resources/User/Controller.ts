@@ -117,7 +117,8 @@ export default class UserController {
   @Post('/invite-member')
   @Authorized(UserRole.ADMIN)
   async inviteMember(
-    @Body() { email, hourlyRate, name, role, startDate }: ResourceCreateBody,
+    @Body()
+    { email, hourlyRate, name, abbr, role, startDate }: ResourceCreateBody,
     @CurrentUser() currentUser: UserEntity,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
@@ -128,12 +129,12 @@ export default class UserController {
         const user = await em.save(UserEntity, {
           email,
           name,
+          abbr,
           role,
           organization: currentUser.organization,
         })
         id = user.id
         await em.save(ResourceEntity, {
-          id: randomUUID(),
           hourlyRate,
           user,
           startDate: startDate,

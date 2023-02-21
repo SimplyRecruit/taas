@@ -36,12 +36,13 @@ export default class ResourceController {
     return entityObjects.map(e =>
       Resource.create({
         id: e.id,
+        name: e.user.name,
+        abbr: e.user.abbr,
         active: e.active,
         hourlyRate: e.hourlyRate,
         role: e.user.role,
         startDate: e.startDate,
         email: e.user.email,
-        name: e.user.name,
       })
     )
   }
@@ -66,7 +67,12 @@ export default class ResourceController {
           active: body.active,
           hourlyRate: body.hourlyRate,
           startDate: body.startDate,
-          user: { name: body.name, isEnabled: body.active, role: body.role },
+          user: {
+            name: body.name,
+            abbr: body.abbr,
+            isEnabled: body.active,
+            role: body.role,
+          },
         })
         await em.save(ResourceEntity, {
           ...merged,

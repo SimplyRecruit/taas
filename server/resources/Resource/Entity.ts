@@ -6,15 +6,12 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm'
-import EntityBaseOnlyDates from '~/EntityBaseOnlyDates'
+import EntityBase from '~/EntityBase'
 import CustomerResourceEntity from '~/resources/relations/CustomerResource'
 import UserEntity from '~/resources/User/Entity'
 
 @Entity('resource')
-export default class ResourceEntity extends EntityBaseOnlyDates {
-  @PrimaryColumn()
-  id: string
-
+export default class ResourceEntity extends EntityBase {
   @Column({ type: 'timestamptz' })
   startDate: Date
 

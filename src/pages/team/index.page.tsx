@@ -1,10 +1,10 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Button, Input, Modal, Select, Space, Table } from 'antd'
+import { Button, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import { FiEdit2 } from 'react-icons/fi'
-import InviteMemberModal from '@/pages/team/components/InviteMemberModal'
-import { Resource, UserRole } from 'models'
+import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
+import { Resource } from 'models'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import TeamFilter from '@/pages/team/components/TeamFilter'
@@ -12,6 +12,21 @@ import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 
 export default function Team() {
   const columns = [
+    {
+      title: 'Abbreviation',
+      dataIndex: 'abbr',
+      key: 'abbr',
+      render: (text: string, record: Resource) => (
+        <span
+          style={{
+            textDecoration: !record.active ? 'line-through' : 'none',
+          }}
+        >
+          {text}
+        </span>
+      ),
+    },
+
     {
       title: 'Name',
       dataIndex: 'name',
@@ -104,8 +119,8 @@ export default function Team() {
       setData([...data])
       filterData(selectedStatus, searchText)
     }
-    setCurrentRecord(null)
     setInviteMemberModalOpen(false)
+    setSelectedRowKey(null)
   }
   const onAdd = (record: Resource) => {
     setData([record, ...data])
@@ -171,7 +186,7 @@ export default function Team() {
           showSizeChanger: true,
         }}
       />
-      <InviteMemberModal
+      <EditMemberDrawer
         key={`invite-member-modal${currentRecord?.id}`}
         value={currentRecord}
         open={inviteMemberModalOpen}
