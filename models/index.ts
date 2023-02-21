@@ -1,5 +1,6 @@
 export { default as User } from 'models/User/User'
 export { default as LoginReqBody } from 'models/User/req-bodies/LoginReqBody'
+export { default as ResetPasswordReqBody } from 'models/User/req-bodies/ResetPasswordReqBody'
 export { default as RegisterOrganizationReqBody } from 'models/User/req-bodies/RegisterOrganizationReqBody'
 export { default as UserJwtPayload } from 'models/User/UserJwtPayload'
 export { default as UserRole } from 'models/User/enums/UserRole'

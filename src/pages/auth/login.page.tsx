@@ -29,7 +29,7 @@ export default function LoginPage() {
     try {
       const token: string = await call(values)
       new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token, { path: '/' })
-      await router.replace(Route.DashBoard)
+      await router.replace(Route.TimeTrack)
     } catch (e) {
       /* Invalid Credentials */
     }

@@ -10,6 +10,7 @@ import {
   User,
   UserRole,
   UserStatus,
+  ResetPasswordReqBody,
 } from 'models'
 import {
   Authorized,
@@ -158,9 +159,8 @@ export default class UserController {
 
   @Post('/reset-password')
   async resetPassword(
-    @BodyParam('token') token: string,
-    @BodyParam('email') email: string,
-    @BodyParam('newPassword') newPassword: string
+    @Body()
+    { token, email, password }: ResetPasswordReqBody
   ) {
     await dataSource.transaction(async em => {
       try {
@@ -174,7 +174,7 @@ export default class UserController {
           !Bcrypt.compareSync(token, tokenHash)
         )
           throw new UnauthorizedError()
-        user.passwordHash = Bcrypt.hashSync(newPassword, 8)
+        user.passwordHash = Bcrypt.hashSync(password, 8)
         user.status = UserStatus.CONFIRMED
         await em.save(user)
         await em.remove(sessionToken)
