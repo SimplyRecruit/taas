@@ -48,7 +48,14 @@ export default function AddClientDrawer({
         ? data.filter(r => body.resourceIds?.includes(r.id))
         : undefined
       delete body.resourceIds
-      onAdd(Client.create({ ...body, resources, active: true }))
+      onAdd(
+        Client.create({
+          ...body,
+          resources,
+          active: true,
+          id: '3',
+        })
+      )
       onClose()
     })
   }
@@ -93,19 +100,19 @@ export default function AddClientDrawer({
         style={{ width: '100%' }}
         initialValues={ClientCreateBody.createPartially({
           active: true,
-          id: '',
           name: '',
+          abbr: '',
           partnerName: '',
           startDate: new Date(),
         })}
       >
         <Form.Item
           required
-          name="id"
-          label="ID"
+          name="abbr"
+          label="Abbreviation"
           rules={[
             {
-              validator: Client.validator('id'),
+              validator: Client.validator('abbr'),
               message: 'Please enter a value',
             },
           ]}

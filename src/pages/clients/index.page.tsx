@@ -10,16 +10,15 @@ import { Client, ClientContractType } from 'models'
 import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
-import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: 'Abbreviation',
+      dataIndex: 'abbr',
+      key: 'abbr',
       render: (text: string, record: Client) => (
         <span
           style={{
@@ -109,6 +108,7 @@ export default function Clients() {
     {
       id: '1',
       name: 'deneme proj',
+      abbr: 'deneme',
       active: true,
       startDate: new Date(),
       contractType: ClientContractType.MAINTENANCE,
@@ -118,6 +118,7 @@ export default function Clients() {
     },
     {
       id: '2',
+      abbr: 'test',
       name: 'test proj',
       active: true,
       contractType: ClientContractType.ON_DEMAND,

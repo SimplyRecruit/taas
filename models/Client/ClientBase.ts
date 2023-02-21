@@ -3,11 +3,11 @@ import Model from 'models/Model'
 import ClientContractType from './enums/ClientContractType'
 
 export default class ClientBase extends Model {
-  @Length(1, 10)
-  id: string
-
   @Length(1, 255)
   name: string
+
+  @Length(1, 255)
+  abbr: string
 
   @IsDateString()
   startDate: Date
