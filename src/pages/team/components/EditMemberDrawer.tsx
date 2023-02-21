@@ -126,8 +126,6 @@ const EditMemberDrawer = ({
                 role: UserRole.END_USER,
               })
         }
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item
           name="abbr"
