@@ -2,22 +2,24 @@ import { ClientContractType } from 'models'
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryColumn,
 } from 'typeorm'
-import EntityBaseOnlyDates from '~/EntityBaseOnlyDates'
+import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'
-import CustomerResourceEntity from '~/resources/relations/CustomerResource'
+import ClientResourceEntity from '~/resources/relations/ClientResource'
 
-@Entity('customer')
-export default class CustomerEntity extends EntityBaseOnlyDates {
-  @PrimaryColumn()
-  id: string
-
+@Entity('client')
+@Index(['abbr', 'organization'], { unique: true })
+export default class ClientEntity extends EntityBase {
   @Column()
   name: string
+
+  @Column({ nullable: true })
+  abbr: string
 
   @Column({ type: 'timestamptz' })
   startDate: Date
@@ -42,8 +44,8 @@ export default class CustomerEntity extends EntityBaseOnlyDates {
   organization: OrganizationEntity
 
   @OneToMany(
-    () => CustomerResourceEntity,
-    customerResource => customerResource.customer
+    () => ClientResourceEntity,
+    clientResource => clientResource.client
   )
-  customerResource: CustomerResourceEntity
+  clientResource: ClientResourceEntity
 }

@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm'
 import EntityBase from '~/EntityBase'
-import CustomerEntity from '~/resources/Customer/Entity'
+import ClientEntity from '~/resources/Client/Entity'
 import UserEntity from '~/resources/User/Entity'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 
@@ -12,8 +12,8 @@ export default class OrganizationEntity extends EntityBase {
   @OneToMany(() => UserEntity, user => user.organization)
   users: UserEntity[]
 
-  @OneToMany(() => CustomerEntity, customer => customer.organization)
-  customers: CustomerEntity[]
+  @OneToMany(() => ClientEntity, client => client.organization)
+  clients: ClientEntity[]
 
   @OneToMany(() => WorkPeriodEntity, workPeriod => workPeriod.organization)
   workPeriods: WorkPeriodEntity[]

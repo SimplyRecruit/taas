@@ -23,7 +23,7 @@ const handle = app.getRequestHandler()
 console.log('ENV VAR TEST:', hostname, port)
 
 // Controllers
-import CustomerController from '~/resources/Customer/Controller'
+import ClientController from '~/resources/Client/Controller'
 import ResourceController from '~/resources/Resource/Controller'
 import UserController from '~/resources/User/Controller'
 import WorkPeriodController from '~/resources/WorkPeriod/Controller'
@@ -66,7 +66,7 @@ smtp.setApiKey(process.env.SMTP_KEY!)
         UserController,
         ResourceController,
         WorkPeriodController,
-        CustomerController,
+        ClientController,
       ],
       routePrefix: '/api',
       validation: {

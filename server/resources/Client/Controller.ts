@@ -16,16 +16,16 @@ import { AlreadyExistsError } from 'server/errors/AlreadyExistsError'
 import { EntityNotFoundError } from 'typeorm'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import CustomerEntity from '~/resources/Customer/Entity'
-import CustomerResourceEntity from '~/resources/relations/CustomerResource'
+import ClientEntity from '~/resources/Client/Entity'
+import ClientResourceEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'
 
-@JsonController('/customer')
+@JsonController('/client')
 @Authorized(UserRole.ADMIN)
-export default class CustomerController {
+export default class ClientController {
   @Get()
   async getAll(@CurrentUser() currentUser: UserEntity) {
-    return await CustomerEntity.findBy({
+    return await ClientEntity.findBy({
       organization: { id: currentUser.organization.id },
     })
   }
@@ -33,89 +33,86 @@ export default class CustomerController {
   @Patch('/:id')
   async update(
     @CurrentUser() currentUser: UserEntity,
-    @Param('id') customerId: string,
+    @Param('id') clientId: string,
     @Body({ validate: { skipMissingProperties: true } }) body: Client
   ) {
     await dataSource.transaction(async em => {
       try {
-        const customer = await em.findOneOrFail(CustomerEntity, {
-          where: { id: customerId },
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: { id: clientId },
           relations: { organization: true },
         })
-        if (customer.organization.id !== currentUser.organization.id)
+        if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.update(CustomerEntity, customerId, body)
+        await em.update(ClientEntity, clientId, body)
       } catch (error: unknown) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
         else throw new InternalServerError('Internal Server Error')
       }
     })
-    return 'Customer Update Successful'
+    return 'Client Update Successful'
   }
 
   @Post()
-  async create(
-    @CurrentUser() currentUser: UserEntity,
-    @Body() customer: Client
-  ) {
+  async create(@CurrentUser() currentUser: UserEntity, @Body() client: Client) {
     await dataSource.transaction(async em => {
       try {
-        if ((await em.findOneBy(CustomerEntity, { id: customer.id })) != null)
+        if ((await em.findOneBy(ClientEntity, { id: client.id })) != null)
           throw new AlreadyExistsError('Resource already exists')
         await em.save(
-          CustomerEntity.create({
+          ClientEntity.create({
             organization: currentUser.organization,
-            ...customer,
+            ...client,
           })
         )
       } catch (error) {
         if (error instanceof AlreadyExistsError)
-          throw new AlreadyExistsError('Customer already exists')
+          throw new AlreadyExistsError('client already exists')
         else throw new InternalServerError('Internal Server Error')
       }
     })
-    return 'Customer Creation Successful'
+    return 'Client Creation Successful'
   }
 
   @Delete('/:id')
   async delete(
-    @Param('id') customerId: string,
+    @Param('id') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
     await dataSource.transaction(async em => {
       try {
-        const customer = await em.findOneOrFail(CustomerEntity, {
-          where: { id: customerId },
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: { id: clientId },
           relations: { organization: true },
         })
-        if (customer.organization.id !== currentUser.organization.id)
+        if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.remove(customer)
+        await em.remove(client)
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
         else throw new InternalServerError('Internal Server Error')
       }
     })
-    return 'Customer Deletion Successful'
+    return 'Client Deletion Successful'
   }
 
   @Get('/:id/resources')
   async getResourcesOf(
     @CurrentUser() currentUser: UserEntity,
-    @Param('id') customerId: string
+    @Param('id') clientId: string
   ) {
     try {
-      const customer = await CustomerEntity.findOneOrFail({
-        where: { id: customerId },
+      const client = await ClientEntity.findOneOrFail({
+        where: { id: clientId },
         relations: { organization: true },
       })
-      if (customer.organization.id !== currentUser.organization.id)
+      if (client.organization.id !== currentUser.organization.id)
         throw new ForbiddenError()
-      const [resources, count] = await CustomerResourceEntity.findAndCount({
+      const [resources, count] = await ClientResourceEntity.findAndCount({
         relations: { resource: true },
-        where: { customer: { id: customer.id } },
+        where: { client: { id: client.id } },
       })
       return { resources, count }
     } catch (error) {

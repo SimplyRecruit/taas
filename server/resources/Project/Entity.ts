@@ -1,15 +1,15 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import EntityBaseOnlyDates from '~/EntityBaseOnlyDates'
-import CustomerEntity from '~/resources/Customer/Entity'
+import ClientEntity from '~/resources/Client/Entity'
 
 @Entity('project')
 export default class ProjectEntity extends EntityBaseOnlyDates {
   @PrimaryColumn()
   id: string
 
-  @ManyToOne(() => CustomerEntity)
+  @ManyToOne(() => ClientEntity)
   @JoinColumn()
-  customer: CustomerEntity
+  client: ClientEntity
 
   @Column()
   name: string

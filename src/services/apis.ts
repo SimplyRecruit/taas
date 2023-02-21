@@ -23,11 +23,11 @@ function createUrl(params: { [key: string]: string }, route: string) {
 }
 
 export default {
-    customer: {
+    client: {
         async getAll(
         ) : Promise<AxiosResponse>
         {
-            const route = "/customer"
+            const route = "/client"
             const url = route
             return await createAxiosInstance().request({
                 method: "get",
@@ -39,7 +39,7 @@ export default {
             params: { id: string, },
         ) : Promise<AxiosResponse>
         {
-            const route = "/customer/:id"
+            const route = "/client/:id"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "patch",
@@ -51,7 +51,7 @@ export default {
             body: Client,
         ) : Promise<AxiosResponse>
         {
-            const route = "/customer"
+            const route = "/client"
             const url = route
             return await createAxiosInstance().request({
                 method: "post",
@@ -63,7 +63,7 @@ export default {
             params: { id: string, },
         ) : Promise<AxiosResponse>
         {
-            const route = "/customer/:id"
+            const route = "/client/:id"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "delete",
@@ -74,7 +74,7 @@ export default {
             params: { id: string, },
         ) : Promise<AxiosResponse>
         {
-            const route = "/customer/:id/resources"
+            const route = "/client/:id/resources"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "get",
@@ -117,32 +117,32 @@ export default {
                 url,
             })
         },
-        async getCustomers(
+        async getClients(
         ) : Promise<AxiosResponse>
         {
-            const route = "/resource/customers"
+            const route = "/resource/clients"
             const url = route
             return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
         },
-        async getCustomersOf(
+        async getClientsOf(
             params: { id: string, },
         ) : Promise<AxiosResponse>
         {
-            const route = "/resource/:id/customers"
+            const route = "/resource/:id/clients"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "get",
                 url,
             })
         },
-        async assignCustomerToResource(
-            params: { customerId: string,resourceId: string, },
+        async assignClientToResource(
+            params: { clientId: string,resourceId: string, },
         ) : Promise<AxiosResponse>
         {
-            const route = "/resource/:resourceId/customers/:customerId"
+            const route = "/resource/:resourceId/clients/:clientId"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "post",

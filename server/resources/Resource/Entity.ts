@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
 } from 'typeorm'
 import EntityBase from '~/EntityBase'
-import CustomerResourceEntity from '~/resources/relations/CustomerResource'
+import ClientResourceEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'
 
 @Entity('resource')
@@ -26,8 +26,8 @@ export default class ResourceEntity extends EntityBase {
   user: UserEntity
 
   @OneToMany(
-    () => CustomerResourceEntity,
-    customerResource => customerResource.resource
+    () => ClientResourceEntity,
+    clientResource => clientResource.resource
   )
-  customerResource: CustomerResourceEntity
+  clientResource: ClientResourceEntity
 }

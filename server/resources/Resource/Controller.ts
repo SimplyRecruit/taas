@@ -18,8 +18,8 @@ import { EntityNotFoundError } from 'typeorm'
 import { Body } from '~/decorators/CustomRequestParams'
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError'
 import { dataSource } from '~/main'
-import CustomerEntity from '~/resources/Customer/Entity'
-import CustomerResourceEntity from '~/resources/relations/CustomerResource'
+import ClientEntity from '~/resources/Client/Entity'
+import ClientResourceEntity from '~/resources/relations/ClientResource'
 import ResourceEntity from '~/resources/Resource/Entity'
 import UserEntity from '~/resources/User/Entity'
 import { mergeDeep } from '~/common/Util'
@@ -129,17 +129,17 @@ export default class ResourceController {
     return 'Resource Deletion Successful'
   }
 
-  @Get('/customers')
-  async getCustomers(@CurrentUser() currentUser: UserEntity) {
+  @Get('/clients')
+  async getClients(@CurrentUser() currentUser: UserEntity) {
     try {
       const currentResource = await ResourceEntity.findOneByOrFail({
         user: { id: currentUser.id },
       })
-      const [customers, count] = await CustomerResourceEntity.findAndCount({
-        relations: { customer: true },
+      const [clients, count] = await ClientResourceEntity.findAndCount({
+        relations: { client: true },
         where: { resource: { id: currentResource.id } },
       })
-      return { customers, count }
+      return { clients, count }
     } catch (error: unknown) {
       if (error instanceof EntityNotFoundError)
         throw new ForbiddenError('You are not a resource')
@@ -147,18 +147,18 @@ export default class ResourceController {
     }
   }
 
-  @Get('/:id/customers')
+  @Get('/:id/clients')
   @Authorized(UserRole.ADMIN)
-  async getCustomersOf(@Param('id') resourceUserId: string) {
+  async getClientsOf(@Param('id') resourceUserId: string) {
     try {
       const resource = await ResourceEntity.findOneByOrFail({
         id: resourceUserId,
       })
-      const customers = await CustomerResourceEntity.find({
-        relations: { customer: true },
+      const clients = await ClientResourceEntity.find({
+        relations: { client: true },
         where: { resource: { id: resource.id } },
       })
-      return customers
+      return clients
     } catch (error) {
       if (error instanceof EntityNotFoundError)
         throw new ForbiddenError('You are not a resource')
@@ -166,17 +166,17 @@ export default class ResourceController {
     }
   }
 
-  @Post('/:resourceId/customers/:customerId')
+  @Post('/:resourceId/clients/:clientId')
   @Authorized(UserRole.ADMIN)
-  async assignCustomerToResource(
+  async assignClientToResource(
     @CurrentUser() currentUser: UserEntity,
     @Param('resourceId') resourceId: string,
-    @Param('customerId') customerId: string
+    @Param('clientId') clientId: string
   ) {
     await dataSource.transaction(async em => {
       try {
-        const existing = await em.findOne(CustomerResourceEntity, {
-          where: { resource: { id: resourceId }, customer: { id: customerId } },
+        const existing = await em.findOne(ClientResourceEntity, {
+          where: { resource: { id: resourceId }, client: { id: clientId } },
         })
         if (existing != null) throw new AlreadyExistsError()
         const resource = await em.findOneOrFail(ResourceEntity, {
@@ -185,23 +185,21 @@ export default class ResourceController {
         })
         if (resource.user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        const customer = await em.findOneOrFail(CustomerEntity, {
-          where: { id: customerId },
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: { id: clientId },
           relations: { organization: true },
         })
-        if (customer.organization.id !== currentUser.organization.id)
+        if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.save(CustomerResourceEntity, { customer, resource })
+        await em.save(ClientResourceEntity, { client, resource })
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
         else if (error instanceof AlreadyExistsError)
-          throw new AlreadyExistsError(
-            'Customer is already assigned to resource'
-          )
+          throw new AlreadyExistsError('client is already assigned to resource')
         else throw new InternalServerError('Internal Server Error')
       }
     })
-    return 'Assigned Customer to Resource'
+    return 'Assigned client to Resource'
   }
 }

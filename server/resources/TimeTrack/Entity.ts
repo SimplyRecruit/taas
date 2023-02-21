@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import EntityBase from '~/EntityBase'
-import CustomerEntity from '~/resources/Customer/Entity'
+import ClientEntity from '~/resources/Client/Entity'
 import ProjectEntity from '~/resources/Project/Entity'
 import ResourceEntity from '~/resources/Resource/Entity'
 
@@ -10,9 +10,9 @@ export default class TimeTrackEntity extends EntityBase {
   @JoinColumn()
   resource: ResourceEntity
 
-  @ManyToOne(() => CustomerEntity)
+  @ManyToOne(() => ClientEntity)
   @JoinColumn()
-  customer: CustomerEntity
+  client: ClientEntity
 
   @ManyToOne(() => ProjectEntity)
   @JoinColumn()
