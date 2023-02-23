@@ -46,5 +46,5 @@ export default class ClientEntity extends EntityBase {
     () => ClientResourceEntity,
     clientResource => clientResource.client
   )
-  clientResource: ClientResourceEntity
+  clientResource: ClientResourceEntity[]
 }
