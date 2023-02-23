@@ -1,4 +1,5 @@
 import { Client, UserRole } from 'models'
+import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
   CurrentUser,
@@ -55,21 +56,23 @@ export default class ClientController {
   }
 
   @Post()
-  async create(@CurrentUser() currentUser: UserEntity, @Body() client: Client) {
+  async create(
+    @CurrentUser() currentUser: UserEntity,
+    @Body() client: ClientCreateBody
+  ) {
     await dataSource.transaction(async em => {
       try {
-        if ((await em.findOneBy(ClientEntity, { id: client.id })) != null)
-          throw new AlreadyExistsError('Resource already exists')
+        const { resourceIds, ...body } = client
         await em.save(
           ClientEntity.create({
             organization: currentUser.organization,
-            ...client,
+            ...body,
           })
         )
-      } catch (error) {
-        if (error instanceof AlreadyExistsError)
-          throw new AlreadyExistsError('client already exists')
-        else throw new InternalServerError('Internal Server Error')
+      } catch (error: any) {
+        if (error.code == 23505)
+          throw new AlreadyExistsError('Abbr already exists')
+        throw new InternalServerError('Internal Server Error')
       }
     })
     return 'Client Creation Successful'
