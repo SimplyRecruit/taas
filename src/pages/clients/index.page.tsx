@@ -114,7 +114,6 @@ export default function Clients() {
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
-  function test() {}
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
   }
