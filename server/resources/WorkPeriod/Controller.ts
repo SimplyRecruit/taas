@@ -47,7 +47,7 @@ export default class WorkPeriodController {
     }
   }
 
-  @Post()
+  @Post(String)
   async create(
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodDate }: WorkPeriod
@@ -66,7 +66,7 @@ export default class WorkPeriodController {
     return 'Done'
   }
 
-  @Delete()
+  @Delete(String)
   async delete(
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodDate }: WorkPeriod
@@ -89,7 +89,7 @@ export default class WorkPeriodController {
     return 'Work Period Deletion Successful'
   }
 
-  @Put()
+  @Put(String)
   async toggle(
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodDate }: WorkPeriod

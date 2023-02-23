@@ -215,7 +215,7 @@ export default class UserController {
     return 'Password reset email successfully sent'
   }
 
-  @Get(undefined, '/me')
+  @Get(User, '/me')
   async me(@CurrentUser() user: UserEntity) {
     return User.create({
       id: user.id,

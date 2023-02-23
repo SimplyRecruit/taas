@@ -4,7 +4,7 @@ import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
-import { Client, Resource, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, TableQueryParameters, WorkPeriod,  } from "models"
+import { Client, Resource, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, User, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
@@ -96,7 +96,7 @@ export default {
         async update(
             body: ResourceUpdateBody,
             params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
@@ -108,7 +108,7 @@ export default {
         },
         async delete(
             params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
@@ -140,7 +140,7 @@ export default {
         },
         async assignClientToResource(
             params: { clientId: string,resourceId: string, },
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/resource/:resourceId/clients/:clientId"
             const url = createUrl(params, route)
@@ -208,7 +208,7 @@ export default {
             })
         },
         async me(
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<User>>
         {
             const route = "/user/me"
             const url = route
@@ -233,7 +233,7 @@ export default {
         },
         async create(
             body: WorkPeriod,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/work-period"
             const url = route
@@ -245,7 +245,7 @@ export default {
         },
         async delete(
             body: WorkPeriod,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/work-period"
             const url = route
@@ -257,7 +257,7 @@ export default {
         },
         async toggle(
             body: WorkPeriod,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/work-period"
             const url = route

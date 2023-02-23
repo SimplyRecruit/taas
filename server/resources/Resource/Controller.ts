@@ -44,7 +44,7 @@ export default class ResourceController {
     )
   }
 
-  @Patch(undefined, '/:id')
+  @Patch(String, '/:id')
   @Authorized(UserRole.ADMIN)
   async update(
     @CurrentUser() currentUser: UserEntity,
@@ -101,7 +101,7 @@ export default class ResourceController {
   //     return "Resource Creation Successful"
   // }
 
-  @Delete(undefined, '/:id')
+  @Delete(String, '/:id')
   @Authorized(UserRole.ADMIN)
   async delete(
     @Param('id') resourceId: string,
@@ -163,7 +163,7 @@ export default class ResourceController {
     }
   }
 
-  @Post(undefined, '/:resourceId/clients/:clientId')
+  @Post(String, '/:resourceId/clients/:clientId')
   @Authorized(UserRole.ADMIN)
   async assignClientToResource(
     @CurrentUser() currentUser: UserEntity,
