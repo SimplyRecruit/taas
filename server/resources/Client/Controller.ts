@@ -58,18 +58,25 @@ export default class ClientController {
   @Post()
   async create(
     @CurrentUser() currentUser: UserEntity,
-    @Body() client: ClientCreateBody
+    @Body() body: ClientCreateBody
   ) {
     await dataSource.transaction(async em => {
       try {
-        const { resourceIds, ...body } = client
-        await em.save(
+        const { resourceIds, ...rest } = body
+        const client = await em.save(
           ClientEntity.create({
             organization: currentUser.organization,
-            ...body,
+            ...rest,
           })
         )
+        if (resourceIds?.length) {
+          const clientResources = resourceIds.map(resourceId =>
+            ClientResourceEntity.create({ client, resourceId })
+          )
+          await em.insert(ClientResourceEntity, clientResources)
+        }
       } catch (error: any) {
+        console.log(error)
         if (error.code == 23505)
           throw new AlreadyExistsError('Abbr already exists')
         throw new InternalServerError('Internal Server Error')

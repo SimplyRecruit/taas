@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
 } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'
