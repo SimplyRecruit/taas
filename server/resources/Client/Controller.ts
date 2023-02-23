@@ -35,13 +35,25 @@ export default class ClientController {
       },
     })
     return rows.map(
-      ({ id, active, name, abbr, startDate, contractType, clientResource }) =>
+      ({
+        id,
+        active,
+        name,
+        abbr,
+        startDate,
+        contractDate,
+        partnerName,
+        contractType,
+        clientResource,
+      }) =>
         Client.create({
           id,
           active,
           name,
           abbr,
           startDate,
+          partnerName,
+          contractDate,
           contractType,
           everyoneHasAccess:
             clientResource.length && clientResource[0].resourceId === '0'
