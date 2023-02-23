@@ -10,6 +10,7 @@ import { Client, ClientContractType } from 'models'
 import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
+import useApi from '@/services/useApi'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -104,46 +105,21 @@ export default function Clients() {
     },
   ]
 
-  const data: Client[] = [
-    {
-      id: '1',
-      name: 'deneme proj',
-      abbr: 'deneme',
-      active: true,
-      startDate: new Date(),
-      contractType: ClientContractType.MAINTENANCE,
-      contractDate: new Date(),
-      partnerName: 'bilemedim',
-      everyoneHasAccess: true,
-    },
-    {
-      id: '2',
-      abbr: 'test',
-      name: 'test proj',
-      active: true,
-      contractType: ClientContractType.ON_DEMAND,
-      startDate: new Date(),
-      contractDate: new Date(),
-      partnerName: 'bilemedim',
-      everyoneHasAccess: true,
-    },
-  ]
+  const { data, call, error, loading } = useApi('client', 'getAll')
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState(data)
+  const [filteredData, setFilteredData] = useState<Client[]>([])
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
-    filterData(value, searchText)
   }
 
   const handleSearch = (value: string) => {
     setSearchText(value)
-    filterData(selectedStatus, value)
   }
 
   const onAdd = (value: Client) => {
@@ -160,17 +136,24 @@ export default function Clients() {
   }
 
   useEffect(() => {
-    filterData(selectedStatus, searchText)
+    call()
   }, [])
 
-  const filterData = (status: string, search: string) => {
+  useEffect(() => {
+    if (!data) return
+    filterData()
+  }, [data, searchText, selectedStatus])
+
+  const filterData = () => {
     let filtered = data
-    if (status !== 'all') {
-      filtered = filtered.filter(item => item.active === (status == 'active'))
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(
+        item => item.active === (selectedStatus == 'active')
+      )
     }
-    if (search) {
+    if (searchText) {
       filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
     setFilteredData(filtered)

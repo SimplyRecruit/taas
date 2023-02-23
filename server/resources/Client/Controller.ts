@@ -1,4 +1,4 @@
-import { Client, UserRole } from 'models'
+import { Client, Resource, UserRole } from 'models'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
@@ -26,9 +26,42 @@ import UserEntity from '~/resources/User/Entity'
 export default class ClientController {
   @Get()
   async getAll(@CurrentUser() currentUser: UserEntity) {
-    return await ClientEntity.findBy({
-      organization: { id: currentUser.organization.id },
+    const rows = await ClientEntity.find({
+      where: {
+        organization: { id: currentUser.organization.id },
+      },
+      relations: {
+        clientResource: { resource: { user: true } },
+      },
     })
+    return rows.map(
+      ({ id, active, name, abbr, startDate, contractType, clientResource }) =>
+        Client.create({
+          id,
+          active,
+          name,
+          abbr,
+          startDate,
+          contractType,
+          everyoneHasAccess:
+            clientResource.length && clientResource[0].resourceId === '0'
+              ? true
+              : false,
+          resources: clientResource.map(
+            ({ resource: { id, user, active, startDate, hourlyRate } }) =>
+              Resource.create({
+                id,
+                abbr: user.abbr,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                active,
+                startDate,
+                hourlyRate,
+              })
+          ),
+        })
+    )
   }
 
   @Patch('/:id')
