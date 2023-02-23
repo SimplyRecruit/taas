@@ -1,7 +1,13 @@
 {
     "$schema": "../schemas/common.json",
+    "test": "deneme",
     "button": {
-        "submit": "Gönder"
+        "submit": "Gönder",
+        "back": "Geri"
     },
-    "test": "deneme"
+    "profileMenu": {
+        "settings": "Ayarlar",
+        "signOut": "Oturumu Kapat",
+        "language": "Dil: {{lang}}"
+    }
 }

@@ -14,7 +14,7 @@
 			"  locale ??= 'en'",
 			"  return {",
 			"    props: {",
-			"      ...(await serverSideTranslations(locale, ['$1'])),",
+			"      ...(await serverSideTranslations(locale, ['common', '$1'])),",
 			"    },",
 			"  }",
 			"}"

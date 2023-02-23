@@ -1,7 +1,13 @@
 {
     "$schema": "../schemas/common.json",
+    "test": "test",
     "button": {
-        "submit": "Submit"
+        "submit": "Submit",
+        "back": "Back"
     },
-    "test": "test"
+    "profileMenu": {
+        "settings": "Settings",
+        "signOut": "Sign Out",
+        "language": "Language: {{lang}}"
+    }
 }

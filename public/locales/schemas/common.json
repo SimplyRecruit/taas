@@ -13,10 +13,37 @@
                 "submit": {
                     "type": "string",
                     "minLength": 1
+                },
+                "back": {
+                    "type": "string",
+                    "minLength": 1
                 }
             },
             "required": [
-                "submit"
+                "submit",
+                "back"
+            ]
+        },
+        "profileMenu": {
+            "type": "object",
+            "properties": {
+                "settings": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "signOut": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "language": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": [
+                "settings",
+                "signOut",
+                "language"
             ]
         },
         "test": {
@@ -27,6 +54,7 @@
     "required": [
         "$schema",
         "button",
+        "profileMenu",
         "test"
     ],
     "additionalProperties": false
