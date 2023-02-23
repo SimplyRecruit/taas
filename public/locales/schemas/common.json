@@ -3,18 +3,31 @@
     "description": "",
     "type": "object",
     "properties": {
-        "test": {
+        "$schema": {
             "type": "string",
             "minLength": 1
         },
-        "$schema": {
+        "button": {
+            "type": "object",
+            "properties": {
+                "submit": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": [
+                "submit"
+            ]
+        },
+        "test": {
             "type": "string",
             "minLength": 1
         }
     },
     "required": [
-        "test",
-        "$schema"
+        "$schema",
+        "button",
+        "test"
     ],
     "additionalProperties": false
 }

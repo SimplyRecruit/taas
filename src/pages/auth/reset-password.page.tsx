@@ -11,7 +11,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { GetStaticProps } from 'next/types'
 
 export default function ResetPasswordPage() {
-  const { t } = useTranslation('resetPassword')
+  const { t } = useTranslation(['resetPassword', 'common'])
   const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'resetPassword')
   const [form] = Form.useForm()
@@ -94,7 +94,7 @@ export default function ResetPasswordPage() {
           </Form.Item>
           <Form.Item>
             <Button loading={loading} block htmlType="submit">
-              Submit
+              {t('common:button.submit')}
             </Button>
           </Form.Item>
           <Link passHref href="/forgot-password">
@@ -112,7 +112,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   locale ??= 'en'
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['login'])),
+      ...(await serverSideTranslations(locale, ['login', 'common'])),
     },
   }
 }

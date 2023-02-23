@@ -1,7 +1,6 @@
 {
+    "$schema": "../schemas/login.json",
     "redirecting": "Yönlendiriliyorsunuz...",
     "invalidCredentials": "Yanlış Giriş Bilgisi",
-    "logIn": "Oturum Aç",
-    "$schema": "../schemas/login.json",
-    "dsafasd": ""
+    "logIn": "Oturum Aç"
 }
