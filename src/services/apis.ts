@@ -84,7 +84,7 @@ export default {
     },
     resource: {
         async getAll(
-        ) : Promise<AxiosResponse<Resource>>
+        ) : Promise<AxiosResponse<Resource[]>>
         {
             const route = "/resource"
             const url = route

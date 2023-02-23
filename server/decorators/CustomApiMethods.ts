@@ -12,7 +12,7 @@ import type { HandlerOptions } from 'routing-controllers/types/decorator-options
 type Class = Function
 
 export function Get(
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class {
@@ -20,7 +20,7 @@ export function Get(
 }
 
 export function Post(
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class {
@@ -28,7 +28,7 @@ export function Post(
 }
 
 export function Put(
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class {
@@ -36,7 +36,7 @@ export function Put(
 }
 
 export function Patch(
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class {
@@ -44,7 +44,7 @@ export function Patch(
 }
 
 export function Delete(
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class {
@@ -53,26 +53,32 @@ export function Delete(
 
 function apiMethod(
   rcFunc: (route?: RegExp, options?: HandlerOptions) => Class,
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class
 function apiMethod(
   rcFunc: (route?: string, options?: HandlerOptions) => Class,
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: RegExp | string,
   options?: HandlerOptions
 ): Class
 function apiMethod(
   rcFunc: (route: any, options?: HandlerOptions) => Class,
-  promiseReturnType?: Class,
+  promiseReturnType?: Class | [Class],
   route?: any,
   options?: HandlerOptions
 ): Class {
   return function (target: any, key: string) {
-    rcFunc(route, { ...options, promiseReturnType } as HandlerOptions)(
-      target,
-      key
-    )
+    let returnsArray = false
+    if (Array.isArray(promiseReturnType)) {
+      promiseReturnType = promiseReturnType[0]
+      returnsArray = true
+    }
+    rcFunc(route, {
+      ...options,
+      promiseReturnType,
+      returnsArray,
+    } as HandlerOptions)(target, key)
   }
 }

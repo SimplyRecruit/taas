@@ -31,6 +31,7 @@ export async function generateApiCalls() {
         method: methodType
         params: any
         promiseReturnType: string
+        returnsArray: boolean
       }
     }
   } = {}
@@ -113,9 +114,11 @@ export async function generateApiCalls() {
             break
         }
       }
-      const promiseReturnTypeClass = (
-        action.options as { promiseReturnType: Class }
-      ).promiseReturnType
+      const { promiseReturnType: promiseReturnTypeClass, returnsArray } =
+        action.options as {
+          promiseReturnType: Class
+          returnsArray: boolean
+        }
 
       let promiseReturnType
       if (typeof promiseReturnTypeClass === 'function') {
@@ -132,6 +135,7 @@ export async function generateApiCalls() {
         method: <methodType>action.type,
         params: finalParams,
         promiseReturnType,
+        returnsArray,
       }
     }
   }

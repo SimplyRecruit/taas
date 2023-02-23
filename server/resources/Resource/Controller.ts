@@ -23,7 +23,7 @@ import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 
 @JsonController('/resource')
 export default class ResourceController {
-  @Get(Resource)
+  @Get([Resource])
   @Authorized(UserRole.ADMIN)
   async getAll(@CurrentUser() currentUser: UserEntity) {
     const entityObjects = await ResourceEntity.find({
