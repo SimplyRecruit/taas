@@ -3,6 +3,10 @@
     "description": "",
     "type": "object",
     "properties": {
+        "$schema": {
+            "type": "string",
+            "minLength": 1
+        },
         "redirecting": {
             "type": "string",
             "minLength": 1
@@ -14,21 +18,13 @@
         "logIn": {
             "type": "string",
             "minLength": 1
-        },
-        "$schema": {
-            "type": "string",
-            "minLength": 1
-        },
-        "dsafasd": {
-            "type": "string"
         }
     },
     "required": [
+        "$schema",
         "redirecting",
         "invalidCredentials",
-        "logIn",
-        "$schema",
-        "dsafasd"
+        "logIn"
     ],
     "additionalProperties": false
 }

@@ -1,4 +1,7 @@
 {
-    "test": "Test",
-    "$schema": "../schemas/common.json"
+    "$schema": "../schemas/common.json",
+    "button": {
+        "submit": "Submit"
+    },
+    "test": "test"
 }

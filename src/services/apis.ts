@@ -4,7 +4,7 @@ import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
-import { Client, Resource, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, User, TableQueryParameters, WorkPeriod,  } from "models"
+import { Client, ClientCreateBody, Resource, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, ResetPasswordReqBody, User, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
@@ -48,7 +48,7 @@ export default {
             })
         },
         async create(
-            body: Client,
+            body: ClientCreateBody,
         ) : Promise<AxiosResponse<any>>
         {
             const route = "/client"
@@ -188,6 +188,7 @@ export default {
             })
         },
         async resetPassword(
+            body: ResetPasswordReqBody,
         ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/reset-password"
@@ -195,9 +196,11 @@ export default {
             return await createAxiosInstance().request({
                 method: "post",
                 url,
+                data: body,
             })
         },
         async forgotPassword(
+            queries: { email: string, },
         ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/forgot-password"
@@ -205,6 +208,7 @@ export default {
             return await createAxiosInstance().request({
                 method: "post",
                 url,
+                params: queries,
             })
         },
         async me(

@@ -1,4 +1,5 @@
-import { Client, UserRole } from 'models'
+import { Client, Resource, UserRole } from 'models'
+import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
   CurrentUser,
@@ -22,9 +23,54 @@ import UserEntity from '~/resources/User/Entity'
 export default class ClientController {
   @Get()
   async getAll(@CurrentUser() currentUser: UserEntity) {
-    return await ClientEntity.findBy({
-      organization: { id: currentUser.organization.id },
+    const rows = await ClientEntity.find({
+      where: {
+        organization: { id: currentUser.organization.id },
+      },
+      relations: {
+        clientResource: { resource: { user: true } },
+      },
     })
+    return rows.map(
+      ({
+        id,
+        active,
+        name,
+        abbr,
+        startDate,
+        contractDate,
+        partnerName,
+        contractType,
+        clientResource,
+      }) =>
+        Client.create({
+          id,
+          active,
+          name,
+          abbr,
+          startDate,
+          partnerName,
+          contractDate,
+          contractType,
+          everyoneHasAccess:
+            clientResource.length && clientResource[0].resourceId === '0'
+              ? true
+              : false,
+          resources: clientResource.map(
+            ({ resource: { id, user, active, startDate, hourlyRate } }) =>
+              Resource.create({
+                id,
+                abbr: user.abbr,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                active,
+                startDate,
+                hourlyRate,
+              })
+          ),
+        })
+    )
   }
 
   @Patch(undefined, '/:id')
@@ -52,21 +98,30 @@ export default class ClientController {
   }
 
   @Post()
-  async create(@CurrentUser() currentUser: UserEntity, @Body() client: Client) {
+  async create(
+    @CurrentUser() currentUser: UserEntity,
+    @Body() body: ClientCreateBody
+  ) {
     await dataSource.transaction(async em => {
       try {
-        if ((await em.findOneBy(ClientEntity, { id: client.id })) != null)
-          throw new AlreadyExistsError('Resource already exists')
-        await em.save(
+        const { resourceIds, ...rest } = body
+        const client = await em.save(
           ClientEntity.create({
             organization: currentUser.organization,
-            ...client,
+            ...rest,
           })
         )
-      } catch (error) {
-        if (error instanceof AlreadyExistsError)
-          throw new AlreadyExistsError('client already exists')
-        else throw new InternalServerError('Internal Server Error')
+        if (resourceIds?.length) {
+          const clientResources = resourceIds.map(resourceId =>
+            ClientResourceEntity.create({ client, resourceId })
+          )
+          await em.insert(ClientResourceEntity, clientResources)
+        }
+      } catch (error: any) {
+        console.log(error)
+        if (error.code == 23505)
+          throw new AlreadyExistsError('Abbr already exists')
+        throw new InternalServerError('Internal Server Error')
       }
     })
     return 'Client Creation Successful'

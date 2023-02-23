@@ -1,19 +1,18 @@
-import { Route } from '@/constants'
-import cookieKeys from '@/constants/cookie-keys'
 import useApi from '@/services/useApi'
 import { Button, Card, Form, Input, Typography } from 'antd'
-import { LoginReqBody } from 'models'
+import { ResetPasswordReqBody } from 'models'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import Cookies from 'universal-cookie'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { GetStaticProps } from 'next/types'
+import { Route } from '@/constants'
 
-export default function LoginPage() {
-  const { t } = useTranslation('login')
+export default function ForgotPasswordPage() {
+  const { t } = useTranslation(['forgot-password', 'common'])
   const router = useRouter()
-  const { data, error, loading, call } = useApi('user', 'login')
+  const { data, error, loading, call } = useApi('user', 'forgotPassword')
   const [form] = Form.useForm()
   const changeLocale = (locale: string) => {
     new Cookies().set('NEXT_LOCALE', locale, { path: '/' })
@@ -24,12 +23,9 @@ export default function LoginPage() {
     )
   }
 
-  const onFinish = async (values: LoginReqBody) => {
-    console.log('Success:', values)
+  const onFinish = async ({ email }: { email: string }) => {
     try {
-      const token = await call(values)
-      new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token, { path: '/' })
-      await router.replace(Route.DashBoard)
+      await call({ email })
     } catch (e) {
       /* Invalid Credentials */
     }
@@ -67,11 +63,11 @@ export default function LoginPage() {
       <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
         <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>
           {error ? (
-            <span style={{ color: 'red' }}>{t('invalidCredentials')}</span>
+            <span style={{ color: 'red' }}>{t('error')}</span>
           ) : data ? (
-            <span style={{ color: 'green' }}>{t('redirecting')}</span>
+            <span style={{ color: 'green' }}>{t('success')}</span>
           ) : (
-            t('logIn')
+            t('title')
           )}
         </Typography.Title>
         <Form
@@ -79,33 +75,23 @@ export default function LoginPage() {
           name="basic"
           layout="vertical"
           style={{ width: '100%' }}
-          initialValues={LoginReqBody.create({ email: '', password: '' })}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
-          <Form.Item
-            name="email"
-            rules={[{ validator: LoginReqBody.validator('email') }]}
-          >
+          <Form.Item name="email">
             <Input type="email" placeholder="Enter your email" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ validator: LoginReqBody.validator('password') }]}
-          >
-            <Input.Password placeholder="Enter your password" />
           </Form.Item>
           <Form.Item>
             <Button loading={loading} block htmlType="submit">
-              Submit
+              {t('common:button.submit')}
             </Button>
           </Form.Item>
-          <Link passHref href="/forgot-password">
-            <Button style={{ padding: 0 }} type="ghost">
-              Forgot password?
-            </Button>
-          </Link>
         </Form>
+        <Link passHref href={Route.Login}>
+          <Button style={{ padding: 0 }} type="ghost">
+            {t('login')}
+          </Button>
+        </Link>
       </Card>
     </div>
   )
@@ -115,7 +101,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   locale ??= 'en'
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['login'])),
+      ...(await serverSideTranslations(locale, ['forgot-password', 'common'])),
     },
   }
 }

@@ -1,7 +1,11 @@
 import { Route } from '@/constants'
 import { User } from 'models'
 
-export const authRoutes: string[] = [Route.Login]
+export const authRoutes: string[] = [
+  Route.Login,
+  Route.ResetPassword,
+  Route.ForgotPassword,
+]
 
 export async function checkAuthentication(
   path: string,
@@ -12,7 +16,8 @@ export async function checkAuthentication(
     const user = (await (
       await fetch(
         new URL(
-          (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000') + '/api/user/me'
+          (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000') +
+            '/api/user/me'
         ).href,
         {
           method: 'GET',

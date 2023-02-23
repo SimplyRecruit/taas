@@ -30,16 +30,16 @@ export default class ResourceController {
       where: { user: { organization: { id: currentUser.organization.id } } },
       relations: { user: true },
     })
-    return entityObjects.map(e =>
+    return entityObjects.map(({ id, user, active, startDate, hourlyRate }) =>
       Resource.create({
-        id: e.id,
-        name: e.user.name,
-        abbr: e.user.abbr,
-        active: e.active,
-        hourlyRate: e.hourlyRate,
-        role: e.user.role,
-        startDate: e.startDate,
-        email: e.user.email,
+        id,
+        abbr: user.abbr,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        active,
+        hourlyRate,
+        startDate,
       })
     )
   }

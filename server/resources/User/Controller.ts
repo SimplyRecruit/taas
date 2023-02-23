@@ -10,15 +10,16 @@ import {
   User,
   UserRole,
   UserStatus,
+  ResetPasswordReqBody,
 } from 'models'
 import {
   Authorized,
-  BodyParam,
   CurrentUser,
   HeaderParam,
   InternalServerError,
   JsonController,
   NotFoundError,
+  QueryParam,
   Req,
   UnauthorizedError,
 } from 'routing-controllers'
@@ -104,7 +105,6 @@ export default class UserController {
         await sendEmail(email, emailTemplate)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        console.log(error)
         if (error.code == 23505)
           throw new AlreadyExistsError('User already exists')
         throw new InternalServerError('Internal Server Error')
@@ -157,9 +157,8 @@ export default class UserController {
 
   @Post(undefined, '/reset-password')
   async resetPassword(
-    @BodyParam('token') token: string,
-    @BodyParam('email') email: string,
-    @BodyParam('newPassword') newPassword: string
+    @Body()
+    { token, email, password }: ResetPasswordReqBody
   ) {
     await dataSource.transaction(async em => {
       try {
@@ -173,7 +172,7 @@ export default class UserController {
           !Bcrypt.compareSync(token, tokenHash)
         )
           throw new UnauthorizedError()
-        user.passwordHash = Bcrypt.hashSync(newPassword, 8)
+        user.passwordHash = Bcrypt.hashSync(password, 8)
         user.status = UserStatus.CONFIRMED
         await em.save(user)
         await em.remove(sessionToken)
@@ -192,7 +191,7 @@ export default class UserController {
 
   @Post(undefined, '/forgot-password')
   async forgotPassword(
-    @BodyParam('email') email: string,
+    @QueryParam('email') email: string,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
   ) {

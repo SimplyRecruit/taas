@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=production TS_NODE_PROJECT=dist/tsconfig.prod.json node -r tsconfig-paths/register ./dist/server/main.js",
     "lint": "next lint",
     "prepare": "husky install",
-    "pre-commit": "lint-staged",
+    "pre-push": "lint-staged",
     "generate-locale-schemas": "node -e \"require('./generate-locale-schemas.js').generateSchemas()\"",
     "create-locale-namespace": "node -e \"require('./generate-locale-schemas.js').createNamespace()\""
   },

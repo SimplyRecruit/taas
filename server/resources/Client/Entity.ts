@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
 } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'
@@ -18,13 +17,13 @@ export default class ClientEntity extends EntityBase {
   @Column()
   name: string
 
-  @Column({ nullable: true })
+  @Column()
   abbr: string
 
   @Column({ type: 'timestamptz' })
   startDate: Date
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz', nullable: true })
   contractDate: Date
 
   @Column({
@@ -33,7 +32,7 @@ export default class ClientEntity extends EntityBase {
   })
   contractType: ClientContractType
 
-  @Column()
+  @Column({ nullable: true })
   partnerName: string
 
   @Column({ default: true })
@@ -47,5 +46,5 @@ export default class ClientEntity extends EntityBase {
     () => ClientResourceEntity,
     clientResource => clientResource.client
   )
-  clientResource: ClientResourceEntity
+  clientResource: ClientResourceEntity[]
 }
