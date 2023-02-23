@@ -4,7 +4,9 @@ import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
-import { {{#each imports}}{{this}}, {{/each}} } from "models"
+import { {{#each imports}}
+{{this}},{{/each}}
+} from "models"
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
