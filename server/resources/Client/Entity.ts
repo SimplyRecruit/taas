@@ -18,13 +18,13 @@ export default class ClientEntity extends EntityBase {
   @Column()
   name: string
 
-  @Column({ nullable: true })
+  @Column()
   abbr: string
 
   @Column({ type: 'timestamptz' })
   startDate: Date
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz', nullable: true })
   contractDate: Date
 
   @Column({
@@ -33,7 +33,7 @@ export default class ClientEntity extends EntityBase {
   })
   contractType: ClientContractType
 
-  @Column()
+  @Column({ nullable: true })
   partnerName: string
 
   @Column({ default: true })

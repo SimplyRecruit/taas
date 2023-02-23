@@ -106,7 +106,6 @@ export default class UserController {
         await sendEmail(email, emailTemplate)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        console.log(error)
         if (error.code == 23505)
           throw new AlreadyExistsError('User already exists')
         throw new InternalServerError('Internal Server Error')
