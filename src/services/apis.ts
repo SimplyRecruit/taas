@@ -4,7 +4,7 @@ import cookieKeys from "@/constants/cookie-keys";
 const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
-import { Client, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, TableQueryParameters, WorkPeriod,  } from "models"
+import { Client, Resource, ResourceUpdateBody, LoginReqBody, RegisterOrganizationReqBody, ResourceCreateBody, TableQueryParameters, WorkPeriod,  } from "models"
 
 function createAxiosInstance() {
     const token = new Cookies().get(cookieKeys.COOKIE_USER_TOKEN, { doNotParse: true} )
@@ -25,7 +25,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
 export default {
     client: {
         async getAll(
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/client"
             const url = route
@@ -37,7 +37,7 @@ export default {
         async update(
             body: Client,
             params: { id: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/client/:id"
             const url = createUrl(params, route)
@@ -49,7 +49,7 @@ export default {
         },
         async create(
             body: Client,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/client"
             const url = route
@@ -61,7 +61,7 @@ export default {
         },
         async delete(
             params: { id: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/client/:id"
             const url = createUrl(params, route)
@@ -72,7 +72,7 @@ export default {
         },
         async getResourcesOf(
             params: { id: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/client/:id/resources"
             const url = createUrl(params, route)
@@ -84,7 +84,7 @@ export default {
     },
     resource: {
         async getAll(
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<Resource>>
         {
             const route = "/resource"
             const url = route
@@ -96,7 +96,7 @@ export default {
         async update(
             body: ResourceUpdateBody,
             params: { id: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
@@ -108,7 +108,7 @@ export default {
         },
         async delete(
             params: { id: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/resource/:id"
             const url = createUrl(params, route)
@@ -118,7 +118,7 @@ export default {
             })
         },
         async getClients(
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/resource/clients"
             const url = route
@@ -129,7 +129,7 @@ export default {
         },
         async getClientsOf(
             params: { id: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/resource/:id/clients"
             const url = createUrl(params, route)
@@ -140,7 +140,7 @@ export default {
         },
         async assignClientToResource(
             params: { clientId: string,resourceId: string, },
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/resource/:resourceId/clients/:clientId"
             const url = createUrl(params, route)
@@ -153,7 +153,7 @@ export default {
     user: {
         async login(
             body: LoginReqBody,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/user/login"
             const url = route
@@ -165,7 +165,7 @@ export default {
         },
         async registerOrganization(
             body: RegisterOrganizationReqBody,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/register-organization"
             const url = route
@@ -177,7 +177,7 @@ export default {
         },
         async inviteMember(
             body: ResourceCreateBody,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/invite-member"
             const url = route
@@ -188,7 +188,7 @@ export default {
             })
         },
         async resetPassword(
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/reset-password"
             const url = route
@@ -198,7 +198,7 @@ export default {
             })
         },
         async forgotPassword(
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/forgot-password"
             const url = route
@@ -208,7 +208,7 @@ export default {
             })
         },
         async me(
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/user/me"
             const url = route
@@ -221,7 +221,7 @@ export default {
     workPeriod: {
         async getAll(
             queries: TableQueryParameters,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/work-period"
             const url = route
@@ -233,7 +233,7 @@ export default {
         },
         async create(
             body: WorkPeriod,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/work-period"
             const url = route
@@ -245,7 +245,7 @@ export default {
         },
         async delete(
             body: WorkPeriod,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/work-period"
             const url = route
@@ -257,7 +257,7 @@ export default {
         },
         async toggle(
             body: WorkPeriod,
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<any>>
         {
             const route = "/work-period"
             const url = route

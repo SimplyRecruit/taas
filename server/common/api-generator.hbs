@@ -30,7 +30,7 @@ export default {
             body: {{#if this.params.body}}{ {{#each this.params.body}}{{stringify this}}: any,{{/each}}{{/if}}{{#unless this.params.body}}{{this.params.bodyClass}}{{/unless}},{{/if}}{{#if this.params.hasQueries}}
             queries: {{#if this.params.queries}}{ {{#each this.params.queries}}{{this}}: string,{{/each}} }{{/if}}{{#unless this.params.queries}}{{this.params.queriesClass}}{{/unless}},{{/if}}{{#if this.params.hasParams}}
             params: {{#if this.params.params}}{ {{#each this.params.params}}{{this}}: string,{{/each}} }{{/if}}{{#unless this.params.params}}{{this.params.paramsClass}}{{/unless}},{{/if}}
-        ) : Promise<AxiosResponse>
+        ) : Promise<AxiosResponse<{{this.promiseReturnType}}>>
         {
             const route = "{{this.route}}"
             const url = {{#if this.params.hasParams}}createUrl(params, route){{else}}route{{/if}}

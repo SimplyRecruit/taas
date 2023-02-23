@@ -3,17 +3,14 @@ import {
   Authorized,
   BadRequestError,
   CurrentUser,
-  Delete,
   ForbiddenError,
-  Get,
   HttpError,
   InternalServerError,
   JsonController,
   NotFoundError,
-  Post,
-  Put,
 } from 'routing-controllers'
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
+import { Delete, Get, Post, Put } from '~/decorators/CustomApiMethods'
 import { Body, QueryParams } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import UserEntity from '~/resources/User/Entity'

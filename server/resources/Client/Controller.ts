@@ -2,18 +2,15 @@ import { Client, UserRole } from 'models'
 import {
   Authorized,
   CurrentUser,
-  Delete,
   ForbiddenError,
-  Get,
   InternalServerError,
   JsonController,
   NotFoundError,
   Param,
-  Patch,
-  Post,
 } from 'routing-controllers'
 import { AlreadyExistsError } from 'server/errors/AlreadyExistsError'
 import { EntityNotFoundError } from 'typeorm'
+import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import ClientEntity from '~/resources/Client/Entity'
@@ -30,7 +27,7 @@ export default class ClientController {
     })
   }
 
-  @Patch('/:id')
+  @Patch(undefined, '/:id')
   async update(
     @CurrentUser() currentUser: UserEntity,
     @Param('id') clientId: string,
@@ -75,7 +72,7 @@ export default class ClientController {
     return 'Client Creation Successful'
   }
 
-  @Delete('/:id')
+  @Delete(undefined, '/:id')
   async delete(
     @Param('id') clientId: string,
     @CurrentUser() currentUser: UserEntity
@@ -98,7 +95,7 @@ export default class ClientController {
     return 'Client Deletion Successful'
   }
 
-  @Get('/:id/resources')
+  @Get(undefined, '/:id/resources')
   async getResourcesOf(
     @CurrentUser() currentUser: UserEntity,
     @Param('id') clientId: string

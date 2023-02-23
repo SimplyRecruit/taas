@@ -4,15 +4,11 @@ import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
   CurrentUser,
-  Delete,
   ForbiddenError,
-  Get,
   InternalServerError,
   JsonController,
   NotFoundError,
   Param,
-  Patch,
-  Post,
 } from 'routing-controllers'
 import { EntityNotFoundError } from 'typeorm'
 import { Body } from '~/decorators/CustomRequestParams'
@@ -23,10 +19,11 @@ import ClientResourceEntity from '~/resources/relations/ClientResource'
 import ResourceEntity from '~/resources/Resource/Entity'
 import UserEntity from '~/resources/User/Entity'
 import { mergeDeep } from '~/common/Util'
+import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 
 @JsonController('/resource')
 export default class ResourceController {
-  @Get()
+  @Get(Resource)
   @Authorized(UserRole.ADMIN)
   async getAll(@CurrentUser() currentUser: UserEntity) {
     const entityObjects = await ResourceEntity.find({
@@ -47,7 +44,7 @@ export default class ResourceController {
     )
   }
 
-  @Patch('/:id')
+  @Patch(undefined, '/:id')
   @Authorized(UserRole.ADMIN)
   async update(
     @CurrentUser() currentUser: UserEntity,
@@ -104,7 +101,7 @@ export default class ResourceController {
   //     return "Resource Creation Successful"
   // }
 
-  @Delete('/:id')
+  @Delete(undefined, '/:id')
   @Authorized(UserRole.ADMIN)
   async delete(
     @Param('id') resourceId: string,
@@ -129,7 +126,7 @@ export default class ResourceController {
     return 'Resource Deletion Successful'
   }
 
-  @Get('/clients')
+  @Get(undefined, '/clients')
   async getClients(@CurrentUser() currentUser: UserEntity) {
     try {
       const currentResource = await ResourceEntity.findOneByOrFail({
@@ -147,7 +144,7 @@ export default class ResourceController {
     }
   }
 
-  @Get('/:id/clients')
+  @Get(undefined, '/:id/clients')
   @Authorized(UserRole.ADMIN)
   async getClientsOf(@Param('id') resourceUserId: string) {
     try {
@@ -166,7 +163,7 @@ export default class ResourceController {
     }
   }
 
-  @Post('/:resourceId/clients/:clientId')
+  @Post(undefined, '/:resourceId/clients/:clientId')
   @Authorized(UserRole.ADMIN)
   async assignClientToResource(
     @CurrentUser() currentUser: UserEntity,

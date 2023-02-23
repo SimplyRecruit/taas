@@ -15,18 +15,17 @@ import {
   Authorized,
   BodyParam,
   CurrentUser,
-  Get,
   HeaderParam,
   InternalServerError,
   JsonController,
   NotFoundError,
-  Post,
   Req,
   UnauthorizedError,
 } from 'routing-controllers'
 import { EntityNotFoundError } from 'typeorm'
 import { EmailTemplate } from '~/common/DataClasses'
 import { sendEmail } from '~/common/Util'
+import { Get, Post } from '~/decorators/CustomApiMethods'
 import { Body } from '~/decorators/CustomRequestParams'
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError'
 import { dataSource } from '~/main'
@@ -41,7 +40,7 @@ import UserEntity from '~/resources/User/Entity'
 
 @JsonController('/user')
 export default class UserController {
-  @Post('/login')
+  @Post(String, '/login')
   async login(@Body() { email, password }: LoginReqBody) {
     const user = await UserEntity.findOne({
       where: { email },
@@ -72,7 +71,7 @@ export default class UserController {
     return token
   }
 
-  @Post('/register-organization')
+  @Post(undefined, '/register-organization')
   @Authorized(UserRole.SU)
   async registerOrganization(
     @Body() { email, organizationName, name }: RegisterOrganizationReqBody,
@@ -114,7 +113,7 @@ export default class UserController {
     return 'Registration Succesful'
   }
 
-  @Post('/invite-member')
+  @Post(undefined, '/invite-member')
   @Authorized(UserRole.ADMIN)
   async inviteMember(
     @Body()
@@ -156,7 +155,7 @@ export default class UserController {
     return id
   }
 
-  @Post('/reset-password')
+  @Post(undefined, '/reset-password')
   async resetPassword(
     @BodyParam('token') token: string,
     @BodyParam('email') email: string,
@@ -191,7 +190,7 @@ export default class UserController {
     return 'Reset password successfully'
   }
 
-  @Post('/forgot-password')
+  @Post(undefined, '/forgot-password')
   async forgotPassword(
     @BodyParam('email') email: string,
     @Req() req: Request,
@@ -216,7 +215,7 @@ export default class UserController {
     return 'Password reset email successfully sent'
   }
 
-  @Get('/me')
+  @Get(undefined, '/me')
   async me(@CurrentUser() user: UserEntity) {
     return User.create({
       id: user.id,

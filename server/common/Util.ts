@@ -6,6 +6,9 @@ import { getMetadataArgsStorage } from 'routing-controllers'
 import { join } from 'path'
 import Handlebars from 'handlebars'
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Class = Function
+
 export async function sendEmail(to: string, emailTemplate: EmailTemplate.Base) {
   const message = {
     to,
@@ -23,7 +26,12 @@ export async function generateApiCalls() {
   const apiMethods: {
     [key: string]: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      [key: string]: { route: string | RegExp; method: methodType; params: any }
+      [key: string]: {
+        route: string | RegExp
+        method: methodType
+        params: any
+        promiseReturnType: string
+      }
     }
   } = {}
   const storage = getMetadataArgsStorage()
@@ -105,10 +113,25 @@ export async function generateApiCalls() {
             break
         }
       }
+      const promiseReturnTypeClass = (
+        action.options as { promiseReturnType: Class }
+      ).promiseReturnType
+
+      let promiseReturnType
+      if (typeof promiseReturnTypeClass === 'function') {
+        if (primitiveTypes.includes(promiseReturnTypeClass.name)) {
+          promiseReturnType = promiseReturnTypeClass.name.toLowerCase()
+        } else {
+          promiseReturnType = promiseReturnTypeClass.name
+          imports.add(promiseReturnType)
+        }
+      } else promiseReturnType = 'any'
+
       apiMethods[controllerName][action.method] = {
         route: (controller.route ?? '/') + (action.route ?? ''),
         method: <methodType>action.type,
         params: finalParams,
+        promiseReturnType,
       }
     }
   }
