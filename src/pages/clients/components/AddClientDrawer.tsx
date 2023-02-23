@@ -31,12 +31,7 @@ export default function AddClientDrawer({
 }: RenderProps) {
   const [form] = Form.useForm<ClientCreateBody>()
   const everyoneHasAccess = Form.useWatch('everyoneHasAccess', form)
-  const { call, data, loading, error } = useApi('resource', 'getAll') as {
-    data: Resource[]
-    call: () => Promise<Resource[]>
-    loading: boolean
-    error: unknown
-  }
+  const { call, data, loading, error } = useApi('resource', 'getAll')
 
   useEffect(() => {
     call()
@@ -45,7 +40,7 @@ export default function AddClientDrawer({
   const onSubmit = () => {
     form.validateFields().then(body => {
       const resources = !body.everyoneHasAccess
-        ? data.filter(r => body.resourceIds?.includes(r.id))
+        ? data!.filter(r => body.resourceIds?.includes(r.id))
         : undefined
       delete body.resourceIds
       onAdd(
