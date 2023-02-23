@@ -2,5 +2,5 @@
     "$schema": "../schemas/login.json",
     "redirecting": "Yönlendiriliyorsunuz...",
     "invalidCredentials": "Yanlış Giriş Bilgisi",
-    "logIn": "Oturum Aç"
+    "forgotPassword": "Şifreni mi unuttun?"
 }

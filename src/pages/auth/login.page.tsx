@@ -71,7 +71,7 @@ export default function LoginPage() {
           ) : data ? (
             <span style={{ color: 'green' }}>{t('redirecting')}</span>
           ) : (
-            t('logIn')
+            t('title')
           )}
         </Typography.Title>
         <Form
@@ -102,7 +102,7 @@ export default function LoginPage() {
           </Form.Item>
           <Link passHref href={Route.ForgotPassword}>
             <Button style={{ padding: 0 }} type="ghost">
-              Forgot password?
+              {t('forgotPassword')}
             </Button>
           </Link>
         </Form>

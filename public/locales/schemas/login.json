@@ -15,7 +15,11 @@
             "type": "string",
             "minLength": 1
         },
-        "logIn": {
+        "title": {
+            "type": "string",
+            "minLength": 1
+        },
+        "forgotPassword": {
             "type": "string",
             "minLength": 1
         }
@@ -24,7 +28,8 @@
         "$schema",
         "redirecting",
         "invalidCredentials",
-        "logIn"
+        "title",
+        "forgotPassword"
     ],
     "additionalProperties": false
 }
