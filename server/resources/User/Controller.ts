@@ -14,7 +14,6 @@ import {
 } from 'models'
 import {
   Authorized,
-  BodyParam,
   CurrentUser,
   Get,
   HeaderParam,
@@ -22,6 +21,7 @@ import {
   JsonController,
   NotFoundError,
   Post,
+  QueryParam,
   Req,
   UnauthorizedError,
 } from 'routing-controllers'
@@ -193,7 +193,7 @@ export default class UserController {
 
   @Post('/forgot-password')
   async forgotPassword(
-    @BodyParam('email') email: string,
+    @QueryParam('email') email: string,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
   ) {

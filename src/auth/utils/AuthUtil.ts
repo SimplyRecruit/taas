@@ -1,7 +1,11 @@
 import { Route } from '@/constants'
 import { User } from 'models'
 
-export const authRoutes: string[] = [Route.Login, Route.ResetPassword]
+export const authRoutes: string[] = [
+  Route.Login,
+  Route.ResetPassword,
+  Route.ForgotPassword,
+]
 
 export async function checkAuthentication(
   path: string,

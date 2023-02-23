@@ -11,7 +11,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { GetStaticProps } from 'next/types'
 
 export default function ResetPasswordPage() {
-  const { t } = useTranslation(['resetPassword', 'common'])
+  const { t } = useTranslation(['reset-password', 'common'])
   const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'resetPassword')
   const [form] = Form.useForm()
@@ -71,11 +71,11 @@ export default function ResetPasswordPage() {
       <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
         <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>
           {error ? (
-            <span style={{ color: 'red' }}>{t('invalidCredentials')}</span>
+            <span style={{ color: 'red' }}>{t('error')}</span>
           ) : data ? (
-            <span style={{ color: 'green' }}>{t('resetSuccessful')}</span>
+            <span style={{ color: 'green' }}>{t('success')}</span>
           ) : (
-            t('logIn')
+            t('title')
           )}
         </Typography.Title>
         <Form
@@ -97,11 +97,6 @@ export default function ResetPasswordPage() {
               {t('common:button.submit')}
             </Button>
           </Form.Item>
-          <Link passHref href="/forgot-password">
-            <Button style={{ padding: 0 }} type="ghost">
-              Forgot password?
-            </Button>
-          </Link>
         </Form>
       </Card>
     </div>
@@ -112,7 +107,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   locale ??= 'en'
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['login', 'common'])),
+      ...(await serverSideTranslations(locale, ['reset-password', 'common'])),
     },
   }
 }
