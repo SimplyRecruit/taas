@@ -13,11 +13,11 @@ import {
 } from 'antd'
 import { Client, ClientContractType, Resource } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
-import { formatDate, momentToDate } from '@/util'
+import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import useApi from '@/services/useApi'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 interface RenderProps {
   open: boolean
@@ -37,13 +37,18 @@ export default function AddClientDrawer({
     loading: boolean
     error: unknown
   }
+  const { call: callCreate, loading: loadingCreate } = useApi(
+    'client',
+    'create'
+  )
 
   useEffect(() => {
     call()
   }, [])
 
-  const onSubmit = () => {
-    form.validateFields().then(body => {
+  const onSubmit = async () => {
+    form.validateFields().then(async body => {
+      const id = await callCreate(body)
       const resources = !body.everyoneHasAccess
         ? data.filter(r => body.resourceIds?.includes(r.id))
         : undefined
@@ -53,7 +58,7 @@ export default function AddClientDrawer({
           ...body,
           resources,
           active: true,
-          id: '3',
+          id,
         })
       )
       onClose()
@@ -75,7 +80,12 @@ export default function AddClientDrawer({
       mask={false}
       footer={
         <Space>
-          <Button onClick={onSubmit} type="primary" htmlType="submit">
+          <Button
+            onClick={onSubmit}
+            type="primary"
+            htmlType="submit"
+            loading={loadingCreate}
+          >
             Save
           </Button>
           <Button onClick={onClose}>Cancel</Button>
@@ -99,7 +109,6 @@ export default function AddClientDrawer({
         validateTrigger="onBlur"
         style={{ width: '100%' }}
         initialValues={ClientCreateBody.createPartially({
-          active: true,
           name: '',
           abbr: '',
           partnerName: '',
@@ -224,7 +233,7 @@ export default function AddClientDrawer({
               placeholder="Please select"
               options={data.map(e => ({
                 value: e.id,
-                label: `${e.id} - ${e.name}`,
+                label: `${e.abbr} - ${e.name}`,
               }))}
             />
           </Form.Item>
