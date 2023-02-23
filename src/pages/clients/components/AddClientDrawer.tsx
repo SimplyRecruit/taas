@@ -11,7 +11,7 @@ import {
   Radio,
   Select,
 } from 'antd'
-import { Client, ClientContractType, Resource } from 'models'
+import { Client, ClientContractType } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
@@ -31,12 +31,7 @@ export default function AddClientDrawer({
 }: RenderProps) {
   const [form] = Form.useForm<ClientCreateBody>()
   const everyoneHasAccess = Form.useWatch('everyoneHasAccess', form)
-  const { call, data, loading, error } = useApi('resource', 'getAll') as {
-    data: Resource[]
-    call: () => Promise<Resource[]>
-    loading: boolean
-    error: unknown
-  }
+  const { call, data, loading, error } = useApi('resource', 'getAll')
   const { call: callCreate, loading: loadingCreate } = useApi(
     'client',
     'create'
@@ -50,7 +45,7 @@ export default function AddClientDrawer({
     form.validateFields().then(async body => {
       const id = await callCreate(body)
       const resources = !body.everyoneHasAccess
-        ? data.filter(r => body.resourceIds?.includes(r.id))
+        ? data!.filter(r => body.resourceIds?.includes(r.id))
         : undefined
       delete body.resourceIds
       onAdd(

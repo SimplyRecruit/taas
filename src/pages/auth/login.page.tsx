@@ -27,7 +27,7 @@ export default function LoginPage() {
   const onFinish = async (values: LoginReqBody) => {
     console.log('Success:', values)
     try {
-      const token: string = await call(values)
+      const token = await call(values)
       new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token, { path: '/' })
       await router.replace(Route.TimeTrack)
     } catch (e) {
