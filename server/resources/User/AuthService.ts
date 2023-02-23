@@ -68,7 +68,7 @@ export function createResetPasswordLink(
     req.protocol +
     '://' +
     req.headers.host +
-    '/reset-password?token=' +
+    `/auth/reset-password?token=` +
     token +
     '&email=' +
     encodeURIComponent(email)

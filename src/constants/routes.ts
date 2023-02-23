@@ -1,6 +1,7 @@
 enum Route {
   Index = '/',
-  Login = '/login',
+  Login = '/auth/login',
+  ResetPassword = '/auth/reset-password',
   Logout = '/logout',
   TimeTrack = '/tracker',
   Periods = '/periods',
