@@ -108,6 +108,7 @@ export default class ClientController {
     @CurrentUser() currentUser: UserEntity,
     @Body() body: ClientCreateBody
   ) {
+    let id
     await dataSource.transaction(async em => {
       const { resourceIds, everyoneHasAccess, ...rest } = body
       try {
@@ -128,6 +129,7 @@ export default class ClientController {
           )
           // TODO resources are part of this organization
           await em.insert(ClientResourceEntity, clientResources)
+          id = client.id
         }
       } catch (error: any) {
         console.log(error)
@@ -136,7 +138,7 @@ export default class ClientController {
         throw new InternalServerError('Internal Server Error')
       }
     })
-    return 'Client Creation Successful'
+    return id
   }
 
   @Delete(undefined, '/:id')
