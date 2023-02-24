@@ -22,6 +22,7 @@ import { CloseOutlined } from '@ant-design/icons'
 import useApi from '@/services/useApi'
 import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
+import { useEffect } from 'react'
 
 interface RenderProps {
   open: boolean
@@ -76,6 +77,11 @@ const EditMemberDrawer = ({
     onCancel()
     form.resetFields()
   }
+
+  useEffect(() => {
+    form.resetFields()
+  }, [form, value])
+
   return (
     <Drawer
       title={value ? 'Edit Member' : 'Invite Member'}
@@ -121,6 +127,7 @@ const EditMemberDrawer = ({
             : Resource.createPartially({
                 startDate: new Date(),
                 name: '',
+                abbr: '',
                 email: '',
                 hourlyRate: 0,
                 role: UserRole.END_USER,

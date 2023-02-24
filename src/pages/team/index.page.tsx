@@ -187,7 +187,6 @@ export default function Team() {
         }}
       />
       <EditMemberDrawer
-        key={`invite-member-modal${currentRecord?.id}`}
         value={currentRecord}
         open={inviteMemberModalOpen}
         onCancel={() => {
