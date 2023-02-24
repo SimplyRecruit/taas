@@ -11,6 +11,7 @@ import {
 } from 'routing-controllers'
 import { AlreadyExistsError } from 'server/errors/AlreadyExistsError'
 import { EntityNotFoundError } from 'typeorm'
+import { ALL_UUID } from '~/common/Config'
 import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
@@ -53,22 +54,25 @@ export default class ClientController {
           contractDate,
           contractType,
           everyoneHasAccess:
-            clientResource.length && clientResource[0].resourceId === '0'
+            clientResource.length && clientResource[0].resourceId === ALL_UUID
               ? true
               : false,
-          resources: clientResource.map(
-            ({ resource: { id, user, active, startDate, hourlyRate } }) =>
-              Resource.create({
-                id,
-                abbr: user.abbr,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                active,
-                startDate,
-                hourlyRate,
-              })
-          ),
+          resources:
+            clientResource.length && clientResource[0].resourceId === ALL_UUID
+              ? undefined
+              : clientResource.map(
+                  ({ resource: { id, user, active, startDate, hourlyRate } }) =>
+                    Resource.create({
+                      id,
+                      abbr: user.abbr,
+                      name: user.name,
+                      email: user.email,
+                      role: user.role,
+                      active,
+                      startDate,
+                      hourlyRate,
+                    })
+                ),
         })
     )
   }
@@ -85,6 +89,7 @@ export default class ClientController {
           where: { id },
           relations: { organization: true },
         })
+
         if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
         await em.update(ClientEntity, id, body)
@@ -103,18 +108,24 @@ export default class ClientController {
     @Body() body: ClientCreateBody
   ) {
     await dataSource.transaction(async em => {
+      const { resourceIds, everyoneHasAccess, ...rest } = body
       try {
-        const { resourceIds, ...rest } = body
         const client = await em.save(
           ClientEntity.create({
             organization: currentUser.organization,
             ...rest,
           })
         )
-        if (resourceIds?.length) {
+        if (everyoneHasAccess) {
+          // All logic
+          await em.save(
+            ClientResourceEntity.create({ client, resourceId: ALL_UUID })
+          )
+        } else if (resourceIds?.length) {
           const clientResources = resourceIds.map(resourceId =>
             ClientResourceEntity.create({ client, resourceId })
           )
+          // TODO resources are part of this organization
           await em.insert(ClientResourceEntity, clientResources)
         }
       } catch (error: any) {
@@ -147,6 +158,38 @@ export default class ClientController {
         else throw new InternalServerError('Internal Server Error')
       }
     })
+    return 'Client Deletion Successful'
+  }
+
+  @Post(undefined, '/resource/:clientId')
+  async addResource(
+    @Param('clientId') clientId: string,
+    @CurrentUser() currentUser: UserEntity
+  ) {
+    await dataSource.transaction(async em => {
+      try {
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: { id: clientId },
+          relations: { organization: true },
+        })
+        if (client.organization.id !== currentUser.organization.id)
+          throw new ForbiddenError()
+        await em.remove(client)
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) throw new NotFoundError()
+        else if (error instanceof ForbiddenError) throw new ForbiddenError()
+        else throw new InternalServerError('Internal Server Error')
+      }
+    })
+    return 'Client Deletion Successful'
+  }
+
+  @Delete(undefined, '/:clientId/resource/:resourceId')
+  async removeResource(
+    @Param('clientId') clientId: string,
+    @Param('resourceId') resourceId: string,
+    @CurrentUser() currentUser: UserEntity
+  ) {
     return 'Client Deletion Successful'
   }
 

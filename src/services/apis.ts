@@ -83,6 +83,28 @@ export default {
                 url,
             })
         },
+        async addResource(
+            params: { clientId: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/client/resource/:clientId"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+            })
+        },
+        async removeResource(
+            params: { resourceId: string,clientId: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/client/:clientId/resource/:resourceId"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "delete",
+                url,
+            })
+        },
         async getResourcesOf(
             params: { id: string, },
         ) : Promise<AxiosResponse<any>>

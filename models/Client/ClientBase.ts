@@ -27,7 +27,4 @@ export default class ClientBase extends Model {
 
   @Length(0, 255)
   partnerName?: string
-
-  @IsBoolean()
-  everyoneHasAccess: boolean
 }
