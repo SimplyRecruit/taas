@@ -134,6 +134,7 @@ export default function Clients() {
       setData([...data])
       filterData(data)
     }
+    setCurrentRecord(record)
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {

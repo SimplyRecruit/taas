@@ -42,10 +42,38 @@ const EditClientDrawer = ({
   value,
 }: RenderProps) => {
   const [form] = Form.useForm<Client>()
-  const { call, loading } = useApi('client', 'update')
+  const { call: callUpdate, loading: loadingUpdate } = useApi(
+    'client',
+    'update'
+  )
+
+  const { call: callAddResource, loading: loadingAddResource } = useApi(
+    'client',
+    'addResource'
+  )
+
+  const { call: callRemoveResource, loading: loadingRemoveResource } = useApi(
+    'client',
+    'removeResource'
+  )
+
+  async function removeResource(id: string) {
+    try {
+      await callRemoveResource({ resourceId: id, clientId: value.id })
+      const updated = value
+      const index = updated.resources?.findIndex(e => e.id == id)
+      if (index != undefined && updated.resources && index != -1) {
+        console.log(index)
+        updated.resources.splice(index, 1)
+        onUpdate(updated)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   async function onSubmit() {
     form.validateFields().then(async e => {
-      await call(e, { id: value.id })
+      await callUpdate(e, { id: value.id })
       onUpdate({ ...value, ...e })
       onCancel()
     })
@@ -197,6 +225,14 @@ const EditClientDrawer = ({
               Add new
             </Button>
           </Popover>
+          <Button
+            onClick={onSubmit}
+            type="primary"
+            htmlType="submit"
+            loading={loadingUpdate}
+          >
+            Save
+          </Button>
           <Table
             rowKey="abbr"
             style={{ marginTop: 16 }}
@@ -212,9 +248,10 @@ const EditClientDrawer = ({
               {
                 title: '',
                 width: DEFAULT_ACTION_COLUMN_WIDTH,
-                render: () => {
+                render: (record: Client) => {
                   return (
                     <Button
+                      onClick={() => removeResource(record.id)}
                       size="small"
                       type="text"
                       icon={<DeleteOutlined></DeleteOutlined>}
@@ -244,7 +281,7 @@ const EditClientDrawer = ({
             onClick={onSubmit}
             type="primary"
             htmlType="submit"
-            loading={loading}
+            loading={loadingUpdate}
           >
             Save
           </Button>

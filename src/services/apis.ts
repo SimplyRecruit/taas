@@ -8,6 +8,7 @@ import {
 Client,
 ClientUpdateBody,
 ClientCreateBody,
+ClientAddResourceBody,
 Resource,
 ResourceUpdateBody,
 LoginReqBody,
@@ -84,6 +85,7 @@ export default {
             })
         },
         async addResource(
+            body: ClientAddResourceBody,
             params: { clientId: string, },
         ) : Promise<AxiosResponse<any>>
         {
@@ -92,6 +94,7 @@ export default {
             return await createAxiosInstance().request({
                 method: "post",
                 url,
+                data: body,
             })
         },
         async removeResource(

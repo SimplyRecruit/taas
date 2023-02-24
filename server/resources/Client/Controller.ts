@@ -1,4 +1,5 @@
 import { Client, ClientUpdateBody, Resource, UserRole } from 'models'
+import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
@@ -163,6 +164,7 @@ export default class ClientController {
 
   @Post(undefined, '/resource/:clientId')
   async addResource(
+    @Body() { everyoneHasAccess, resourceIds }: ClientAddResourceBody,
     @Param('clientId') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
@@ -174,7 +176,20 @@ export default class ClientController {
         })
         if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.remove(client)
+
+        if (everyoneHasAccess) {
+          // All logic
+          await em.delete(ClientResourceEntity, { client })
+          await em.save(
+            ClientResourceEntity.create({ client, resourceId: ALL_UUID })
+          )
+        } else if (resourceIds?.length) {
+          const clientResources = resourceIds.map(resourceId =>
+            ClientResourceEntity.create({ client, resourceId })
+          )
+          // TODO resources are part of this organization
+          await em.insert(ClientResourceEntity, clientResources)
+        }
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
@@ -190,6 +205,21 @@ export default class ClientController {
     @Param('resourceId') resourceId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
+    await dataSource.transaction(async em => {
+      try {
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: { id: clientId },
+          relations: { organization: true },
+        })
+        if (client.organization.id !== currentUser.organization.id)
+          throw new ForbiddenError()
+        await em.delete(ClientResourceEntity, { client, resourceId })
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) throw new NotFoundError()
+        else if (error instanceof ForbiddenError) throw new ForbiddenError()
+        else throw new InternalServerError('Internal Server Error')
+      }
+    })
     return 'Client Deletion Successful'
   }
 
