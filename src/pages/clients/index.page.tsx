@@ -80,7 +80,7 @@ export default function Clients() {
         >
           <div style={{ display: 'flex' }}>
             <Tag color="processing">
-              {record.everyoneHasAccess ? 'Public' : 'Restricted'}
+              {record.everyoneHasAccess ? 'Everyone' : 'Custom'}
             </Tag>
             <FaExpandAlt
               size={16}
@@ -132,13 +132,12 @@ export default function Clients() {
       data[index] = record
       setData([...data])
     }
-    setCurrentRecord({ ...record })
+    setCurrentRecord(record)
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {
-    console.log(record)
     setDrawerTabKey(tabKey)
-    setCurrentRecord({ ...record })
+    setCurrentRecord(record)
     setSelectedRowKey(record.id)
     setDrawerStatus('edit')
   }
@@ -184,7 +183,6 @@ export default function Clients() {
         <Button
           type="primary"
           onClick={() => {
-            setCurrentRecord(null)
             setDrawerStatus('create')
           }}
         >
@@ -214,7 +212,6 @@ export default function Clients() {
       />
       {currentRecord && (
         <EditClientDrawer
-          key={currentRecord?.id}
           activeTabKey={drawerTabKey}
           onActiveTabKeyChange={setDrawerTabKey}
           open={drawerStatus === 'edit'}

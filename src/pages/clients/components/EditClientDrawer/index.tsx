@@ -24,6 +24,7 @@ import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
 import useApi from '@/services/useApi'
+import { useEffect } from 'react'
 
 interface RenderProps {
   open: boolean
@@ -60,7 +61,7 @@ const EditClientDrawer = ({
   async function removeResource(id: string) {
     try {
       await callRemoveResource({ resourceId: id, clientId: value.id })
-      const updated = { ...value }
+      const updated = value
       const index = updated.resources?.findIndex(e => e.id == id)
       if (index != undefined && updated.resources && index != -1) {
         console.log(index)
@@ -195,21 +196,14 @@ const EditClientDrawer = ({
       label: `Access`,
       children: (
         <div>
-          <Form
-            layout="vertical"
-            initialValues={{ everyoneHasAccess: value.everyoneHasAccess }}
-          >
-            <Form.Item label="Accessable by" name="everyoneHasAccess">
-              <Radio.Group>
-                <Radio key="everyone" value={true}>
-                  Everyone
-                </Radio>
-                <Radio key="custom" value={false}>
-                  Custom
-                </Radio>
-              </Radio.Group>
-            </Form.Item>
-          </Form>
+          <Radio.Group value={value.everyoneHasAccess}>
+            <Radio key="everyone" value={true}>
+              Everyone
+            </Radio>
+            <Radio key="custom" value={false}>
+              Custom
+            </Radio>
+          </Radio.Group>
 
           <Popover
             showArrow={false}
@@ -234,7 +228,7 @@ const EditClientDrawer = ({
             Save
           </Button>
           <Table
-            rowKey="abbr"
+            rowKey="id"
             style={{ marginTop: 16 }}
             columns={[
               { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
@@ -266,6 +260,11 @@ const EditClientDrawer = ({
       ),
     },
   ]
+
+  useEffect(() => {
+    form.resetFields()
+  }, [form, value])
+
   return (
     <Drawer
       className={styles.wrapper}
@@ -298,6 +297,7 @@ const EditClientDrawer = ({
         />
       }
     >
+      {value.resources?.map(e => e.abbr)}
       <Tabs
         tabBarStyle={{ position: 'sticky', top: 0, zIndex: 10 }}
         type="card"
