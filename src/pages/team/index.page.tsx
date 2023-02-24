@@ -114,7 +114,7 @@ export default function Team() {
 
   const onUpdate = (record: Resource) => {
     const index = find(record)
-    if (index != 1) {
+    if (index != -1) {
       data[index] = record
       setData([...data])
       filterData(selectedStatus, searchText)
@@ -187,7 +187,6 @@ export default function Team() {
         }}
       />
       <EditMemberDrawer
-        key={`invite-member-modal${currentRecord?.id}`}
         value={currentRecord}
         open={inviteMemberModalOpen}
         onCancel={() => {

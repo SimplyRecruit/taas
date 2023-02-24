@@ -40,5 +40,5 @@ export default function useApi<
     }
   }
 
-  return { data, loading, error, call }
+  return { data, loading, error, call, setData }
 }

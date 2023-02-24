@@ -6,7 +6,9 @@ const routeParamRegex = /^:(\w+)$/;
 // Model Imports
 import { 
 Client,
+ClientUpdateBody,
 ClientCreateBody,
+ClientAddResourceBody,
 Resource,
 ResourceUpdateBody,
 LoginReqBody,
@@ -37,7 +39,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
 export default {
     client: {
         async getAll(
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<Client[]>>
         {
             const route = "/client"
             const url = route
@@ -47,7 +49,7 @@ export default {
             })
         },
         async update(
-            body: Client,
+            body: ClientUpdateBody,
             params: { id: string, },
         ) : Promise<AxiosResponse<any>>
         {
@@ -76,6 +78,30 @@ export default {
         ) : Promise<AxiosResponse<any>>
         {
             const route = "/client/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "delete",
+                url,
+            })
+        },
+        async addResource(
+            body: ClientAddResourceBody,
+            params: { clientId: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/client/resource/:clientId"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async removeResource(
+            params: { resourceId: string,clientId: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/client/:clientId/resource/:resourceId"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "delete",

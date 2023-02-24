@@ -2,11 +2,11 @@
     padding: 0;
 }
 
-.wrapper :global .ant-tabs-nav{
+.wrapper :global .ant-tabs-nav {
     padding: 24px 24px 0 24px;
     background-color: #f9fafd;
 }
+
 .wrapper :global .ant-tabs-content-holder {
     padding: 24px;
 }
-

@@ -14,7 +14,7 @@ import {
   Table,
   Popover,
 } from 'antd'
-import { Client, ClientContractType } from 'models'
+import { Client, ClientContractType, ClientUpdateBody } from 'models'
 import {
   CloseOutlined,
   PlusCircleOutlined,
@@ -23,14 +23,16 @@ import {
 import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
+import useApi from '@/services/useApi'
+import { useEffect } from 'react'
 
 interface RenderProps {
   open: boolean
-  onUpdate: (updatedMember: Client) => void
+  onUpdate: (updatedClient: Client) => void
   onActiveTabKeyChange: (tabKey: string) => void
   activeTabKey: string
   onCancel: () => void
-  value: Client | null
+  value: Client
 }
 const EditClientDrawer = ({
   open,
@@ -40,21 +42,42 @@ const EditClientDrawer = ({
   onCancel,
   value,
 }: RenderProps) => {
-  const [form] = Form.useForm()
-  const onSubmit = () => {
-    form.validateFields()
-  }
-  const onFinish = async (client: Client) => {
-    console.log(client)
-  }
+  const [form] = Form.useForm<Client>()
+  const { call: callUpdate, loading: loadingUpdate } = useApi(
+    'client',
+    'update'
+  )
 
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
-  }
+  const { call: callAddResource, loading: loadingAddResource } = useApi(
+    'client',
+    'addResource'
+  )
 
-  const onClose = () => {
-    onCancel()
-    form.resetFields()
+  const { call: callRemoveResource, loading: loadingRemoveResource } = useApi(
+    'client',
+    'removeResource'
+  )
+
+  async function removeResource(id: string) {
+    try {
+      await callRemoveResource({ resourceId: id, clientId: value.id })
+      const updated = value
+      const index = updated.resources?.findIndex(e => e.id == id)
+      if (index != undefined && updated.resources && index != -1) {
+        console.log(index)
+        updated.resources.splice(index, 1)
+        onUpdate(updated)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function onSubmit() {
+    form.validateFields().then(async e => {
+      await callUpdate(e, { id: value.id })
+      onUpdate({ ...value, ...e })
+      onCancel()
+    })
   }
 
   const items: TabsProps['items'] = [
@@ -69,25 +92,14 @@ const EditClientDrawer = ({
           layout="vertical"
           validateTrigger="onBlur"
           style={{ width: '100%' }}
-          initialValues={
-            value
-              ? Client.create({
-                  ...value,
-                })
-              : Client.createPartially({
-                  id: '',
-                  name: '',
-                  partnerName: '',
-                  startDate: new Date(),
-                })
-          }
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          initialValues={ClientUpdateBody.create({
+            ...value,
+          })}
         >
           <Form.Item
             required
-            name="id"
-            label="ID"
+            name="abbr"
+            label="Abbreviation"
             rules={[
               {
                 validator: Client.validator('id'),
@@ -164,9 +176,7 @@ const EditClientDrawer = ({
               <Form.Item
                 name="contractDate"
                 label="Contract date"
-                getValueFromEvent={date =>
-                  date ? momentToDate(date) : undefined
-                }
+                getValueFromEvent={date => (date ? momentToDate(date) : null)}
                 getValueProps={i => ({
                   value: i ? moment(i) : '',
                 })}
@@ -186,14 +196,14 @@ const EditClientDrawer = ({
       label: `Access`,
       children: (
         <div>
-          <Form layout="vertical">
-            <Form.Item label="Accessable by">
-              <Radio.Group>
-                <Radio key="everyone">Everyone</Radio>
-                <Radio key="custom">Custom</Radio>
-              </Radio.Group>
-            </Form.Item>
-          </Form>
+          <Radio.Group value={value.everyoneHasAccess}>
+            <Radio key="everyone" value={true}>
+              Everyone
+            </Radio>
+            <Radio key="custom" value={false}>
+              Custom
+            </Radio>
+          </Radio.Group>
 
           <Popover
             showArrow={false}
@@ -209,61 +219,85 @@ const EditClientDrawer = ({
               Add new
             </Button>
           </Popover>
+          <Button
+            onClick={onSubmit}
+            type="primary"
+            htmlType="submit"
+            loading={loadingUpdate}
+          >
+            Save
+          </Button>
           <Table
-            rowKey="abbr"
+            rowKey="id"
             style={{ marginTop: 16 }}
             columns={[
               { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
-              { title: 'Name' },
-              { title: 'Role' },
-              { title: 'Hourly rate' },
+              { title: 'Name', dataIndex: 'name', key: 'name' },
+              { title: 'Role', dataIndex: 'role', key: 'role' },
+              {
+                title: 'Hourly rate',
+                dataIndex: 'hourlyRate',
+                key: 'hourlyRate',
+              },
               {
                 title: '',
                 width: DEFAULT_ACTION_COLUMN_WIDTH,
-                render: () => {
+                render: (record: Client) => {
                   return (
                     <Button
+                      onClick={() => removeResource(record.id)}
                       size="small"
                       type="text"
                       icon={<DeleteOutlined></DeleteOutlined>}
-                    ></Button>
+                    />
                   )
                 },
               },
             ]}
-            dataSource={[{ abbr: 'alo' }]}
-          ></Table>
+            dataSource={value.resources}
+          />
         </div>
       ),
     },
   ]
+
+  useEffect(() => {
+    form.resetFields()
+  }, [form, value])
+
   return (
     <Drawer
       className={styles.wrapper}
       title={value ? 'Edit Client' : 'Add Client'}
       open={open}
       width={600}
-      onClose={onClose}
+      onClose={onCancel}
       closable={false}
       mask={false}
       footer={
         <Space>
-          <Button onClick={onSubmit} type="primary" htmlType="submit">
+          <Button
+            onClick={onSubmit}
+            type="primary"
+            htmlType="submit"
+            loading={loadingUpdate}
+          >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Space>
       }
       style={{ borderRadius: '16px', position: 'relative' }}
       extra={
         <Button
-          onClick={onClose}
+          onClick={onCancel}
           size="small"
           type="text"
           icon={<CloseOutlined />}
         />
       }
     >
+      {value.resources?.map(e => e.abbr)}
       <Tabs
         tabBarStyle={{ position: 'sticky', top: 0, zIndex: 10 }}
         type="card"
