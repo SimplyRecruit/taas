@@ -79,7 +79,7 @@ export default function Clients() {
           size="small"
         >
           <div style={{ display: 'flex' }}>
-            <Tag color="processing">
+            <Tag color={record.everyoneHasAccess ? 'warning' : 'processing'}>
               {record.everyoneHasAccess ? 'Everyone' : 'Custom'}
             </Tag>
             <FaExpandAlt
