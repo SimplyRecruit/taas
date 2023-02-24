@@ -1,4 +1,4 @@
-import { Client, Resource, UserRole } from 'models'
+import { Client, ClientUpdateBody, Resource, UserRole } from 'models'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
@@ -21,7 +21,7 @@ import UserEntity from '~/resources/User/Entity'
 @JsonController('/client')
 @Authorized(UserRole.ADMIN)
 export default class ClientController {
-  @Get()
+  @Get([Client])
   async getAll(@CurrentUser() currentUser: UserEntity) {
     const rows = await ClientEntity.find({
       where: {
@@ -76,18 +76,18 @@ export default class ClientController {
   @Patch(undefined, '/:id')
   async update(
     @CurrentUser() currentUser: UserEntity,
-    @Param('id') clientId: string,
-    @Body({ validate: { skipMissingProperties: true } }) body: Client
+    @Param('id') id: string,
+    @Body({ patch: true }) body: ClientUpdateBody
   ) {
     await dataSource.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {
-          where: { id: clientId },
+          where: { id },
           relations: { organization: true },
         })
         if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.update(ClientEntity, clientId, body)
+        await em.update(ClientEntity, id, body)
       } catch (error: unknown) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()

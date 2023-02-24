@@ -24,7 +24,7 @@ export default class ClientEntity extends EntityBase {
   startDate: Date
 
   @Column({ type: 'timestamptz', nullable: true })
-  contractDate: Date
+  contractDate: Date | null
 
   @Column({
     type: 'enum',

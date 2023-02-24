@@ -79,7 +79,9 @@ export default function Clients() {
           size="small"
         >
           <div style={{ display: 'flex' }}>
-            <Tag color="processing">Restricted</Tag>
+            <Tag color="processing">
+              {record.everyoneHasAccess ? 'Public' : 'Restricted'}
+            </Tag>
             <FaExpandAlt
               size={16}
               style={{ color: 'blue', marginTop: 3, marginLeft: 4 }}
@@ -105,7 +107,7 @@ export default function Clients() {
     },
   ]
 
-  const { data, call, error, loading } = useApi('client', 'getAll')
+  const { data, call, loading, setData } = useApi('client', 'getAll')
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
@@ -114,17 +116,24 @@ export default function Clients() {
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value)
+  const find = (record: Client, values: Client[]): number => {
+    return values.findIndex(x => x.id === record.id)
   }
 
-  const handleSearch = (value: string) => {
-    setSearchText(value)
-  }
-
-  const onAdd = (value: Client) => {
+  function onAdd(value: Client) {
     console.log(value)
-    setFilteredData([value, ...filteredData])
+    if (!data) setData([value])
+    else setData([value, ...data])
+  }
+
+  function onUpdate(record: Client) {
+    if (!data) return
+    const index = find(record, data)
+    if (index != -1) {
+      data[index] = record
+      setData([...data])
+      filterData(data)
+    }
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {
@@ -141,11 +150,11 @@ export default function Clients() {
 
   useEffect(() => {
     if (!data) return
-    filterData()
+    filterData(data)
   }, [data, searchText, selectedStatus])
 
-  const filterData = () => {
-    let filtered = data
+  const filterData = (values: Client[]) => {
+    let filtered = values
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(
         item => item.active === (selectedStatus == 'active')
@@ -169,8 +178,8 @@ export default function Clients() {
         }}
       >
         <ClientsFilter
-          onStatusChange={handleStatusChange}
-          onSearch={handleSearch}
+          onStatusChange={setSelectedStatus}
+          onSearch={setSearchText}
           searchText={searchText}
         />
         <Button
@@ -191,6 +200,7 @@ export default function Clients() {
           }
           return ''
         }}
+        loading={loading}
         rowKey={record => record.id}
         columns={columns}
         dataSource={filteredData}
@@ -203,18 +213,20 @@ export default function Clients() {
           showSizeChanger: false,
         }}
       />
-      <EditClientDrawer
-        key={currentRecord?.id}
-        activeTabKey={drawerTabKey}
-        onActiveTabKeyChange={setDrawerTabKey}
-        open={drawerStatus === 'edit'}
-        value={currentRecord}
-        onCancel={() => {
-          setDrawerStatus('none')
-          setSelectedRowKey(null)
-        }}
-        onUpdate={value => console.log(value)}
-      />
+      {currentRecord && (
+        <EditClientDrawer
+          key={currentRecord?.id}
+          activeTabKey={drawerTabKey}
+          onActiveTabKeyChange={setDrawerTabKey}
+          open={drawerStatus === 'edit'}
+          value={currentRecord}
+          onCancel={() => {
+            setDrawerStatus('none')
+            setSelectedRowKey(null)
+          }}
+          onUpdate={onUpdate}
+        />
+      )}
       <AddClientDrawer
         open={drawerStatus === 'create'}
         onCancel={() => {

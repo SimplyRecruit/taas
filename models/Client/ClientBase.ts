@@ -1,4 +1,10 @@
-import { IsBoolean, IsDateString, IsEnum, IsOptional, Length } from 'class-validator'
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  Length,
+} from 'class-validator'
 import Model from 'models/Model'
 import ClientContractType from './enums/ClientContractType'
 
@@ -14,7 +20,7 @@ export default class ClientBase extends Model {
 
   @IsOptional()
   @IsDateString()
-  contractDate?: Date
+  contractDate: Date | null
 
   @IsEnum(ClientContractType)
   contractType: ClientContractType

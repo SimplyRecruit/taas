@@ -6,6 +6,7 @@ const routeParamRegex = /^:(\w+)$/;
 // Model Imports
 import { 
 Client,
+ClientUpdateBody,
 ClientCreateBody,
 Resource,
 ResourceUpdateBody,
@@ -37,7 +38,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
 export default {
     client: {
         async getAll(
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<Client[]>>
         {
             const route = "/client"
             const url = route
@@ -47,7 +48,7 @@ export default {
             })
         },
         async update(
-            body: Client,
+            body: ClientUpdateBody,
             params: { id: string, },
         ) : Promise<AxiosResponse<any>>
         {

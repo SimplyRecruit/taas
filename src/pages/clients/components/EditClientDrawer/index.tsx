@@ -14,7 +14,7 @@ import {
   Table,
   Popover,
 } from 'antd'
-import { Client, ClientContractType } from 'models'
+import { Client, ClientContractType, ClientUpdateBody } from 'models'
 import {
   CloseOutlined,
   PlusCircleOutlined,
@@ -23,14 +23,15 @@ import {
 import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
+import useApi from '@/services/useApi'
 
 interface RenderProps {
   open: boolean
-  onUpdate: (updatedMember: Client) => void
+  onUpdate: (updatedClient: Client) => void
   onActiveTabKeyChange: (tabKey: string) => void
   activeTabKey: string
   onCancel: () => void
-  value: Client | null
+  value: Client
 }
 const EditClientDrawer = ({
   open,
@@ -40,21 +41,14 @@ const EditClientDrawer = ({
   onCancel,
   value,
 }: RenderProps) => {
-  const [form] = Form.useForm()
-  const onSubmit = () => {
-    form.validateFields()
-  }
-  const onFinish = async (client: Client) => {
-    console.log(client)
-  }
-
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
-  }
-
-  const onClose = () => {
-    onCancel()
-    form.resetFields()
+  const [form] = Form.useForm<Client>()
+  const { call, loading } = useApi('client', 'update')
+  async function onSubmit() {
+    form.validateFields().then(async e => {
+      await call(e, { id: value.id })
+      onUpdate({ ...value, ...e })
+      onCancel()
+    })
   }
 
   const items: TabsProps['items'] = [
@@ -69,25 +63,14 @@ const EditClientDrawer = ({
           layout="vertical"
           validateTrigger="onBlur"
           style={{ width: '100%' }}
-          initialValues={
-            value
-              ? Client.create({
-                  ...value,
-                })
-              : Client.createPartially({
-                  id: '',
-                  name: '',
-                  partnerName: '',
-                  startDate: new Date(),
-                })
-          }
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          initialValues={ClientUpdateBody.create({
+            ...value,
+          })}
         >
           <Form.Item
             required
-            name="id"
-            label="ID"
+            name="abbr"
+            label="Abbreviation"
             rules={[
               {
                 validator: Client.validator('id'),
@@ -164,9 +147,7 @@ const EditClientDrawer = ({
               <Form.Item
                 name="contractDate"
                 label="Contract date"
-                getValueFromEvent={date =>
-                  date ? momentToDate(date) : undefined
-                }
+                getValueFromEvent={date => (date ? momentToDate(date) : null)}
                 getValueProps={i => ({
                   value: i ? moment(i) : '',
                 })}
@@ -186,11 +167,18 @@ const EditClientDrawer = ({
       label: `Access`,
       children: (
         <div>
-          <Form layout="vertical">
-            <Form.Item label="Accessable by">
+          <Form
+            layout="vertical"
+            initialValues={{ everyoneHasAccess: value.everyoneHasAccess }}
+          >
+            <Form.Item label="Accessable by" name="everyoneHasAccess">
               <Radio.Group>
-                <Radio key="everyone">Everyone</Radio>
-                <Radio key="custom">Custom</Radio>
+                <Radio key="everyone" value={true}>
+                  Everyone
+                </Radio>
+                <Radio key="custom" value={false}>
+                  Custom
+                </Radio>
               </Radio.Group>
             </Form.Item>
           </Form>
@@ -214,9 +202,13 @@ const EditClientDrawer = ({
             style={{ marginTop: 16 }}
             columns={[
               { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
-              { title: 'Name' },
-              { title: 'Role' },
-              { title: 'Hourly rate' },
+              { title: 'Name', dataIndex: 'name', key: 'name' },
+              { title: 'Role', dataIndex: 'role', key: 'role' },
+              {
+                title: 'Hourly rate',
+                dataIndex: 'hourlyRate',
+                key: 'hourlyRate',
+              },
               {
                 title: '',
                 width: DEFAULT_ACTION_COLUMN_WIDTH,
@@ -226,13 +218,13 @@ const EditClientDrawer = ({
                       size="small"
                       type="text"
                       icon={<DeleteOutlined></DeleteOutlined>}
-                    ></Button>
+                    />
                   )
                 },
               },
             ]}
-            dataSource={[{ abbr: 'alo' }]}
-          ></Table>
+            dataSource={value.resources}
+          />
         </div>
       ),
     },
@@ -243,21 +235,26 @@ const EditClientDrawer = ({
       title={value ? 'Edit Client' : 'Add Client'}
       open={open}
       width={600}
-      onClose={onClose}
+      onClose={onCancel}
       closable={false}
       mask={false}
       footer={
         <Space>
-          <Button onClick={onSubmit} type="primary" htmlType="submit">
+          <Button
+            onClick={onSubmit}
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+          >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Space>
       }
       style={{ borderRadius: '16px', position: 'relative' }}
       extra={
         <Button
-          onClick={onClose}
+          onClick={onCancel}
           size="small"
           type="text"
           icon={<CloseOutlined />}
