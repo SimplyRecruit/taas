@@ -6,7 +6,7 @@ import { FiEdit } from 'react-icons/fi'
 import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
-import { Client, ClientContractType } from 'models'
+import { Client, ClientContractType, Resource } from 'models'
 import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
@@ -121,7 +121,6 @@ export default function Clients() {
   }
 
   function onAdd(value: Client) {
-    console.log(value)
     if (!data) setData([value])
     else setData([value, ...data])
   }
@@ -132,15 +131,14 @@ export default function Clients() {
     if (index != -1) {
       data[index] = record
       setData([...data])
-      filterData(data)
     }
-    setCurrentRecord(record)
+    setCurrentRecord({ ...record })
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {
     console.log(record)
     setDrawerTabKey(tabKey)
-    setCurrentRecord(record)
+    setCurrentRecord({ ...record })
     setSelectedRowKey(record.id)
     setDrawerStatus('edit')
   }

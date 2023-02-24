@@ -60,7 +60,7 @@ const EditClientDrawer = ({
   async function removeResource(id: string) {
     try {
       await callRemoveResource({ resourceId: id, clientId: value.id })
-      const updated = value
+      const updated = { ...value }
       const index = updated.resources?.findIndex(e => e.id == id)
       if (index != undefined && updated.resources && index != -1) {
         console.log(index)
