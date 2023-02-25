@@ -64,13 +64,17 @@ export default function EditProjectDrawer({
       try {
         if (value) {
           await callUpdate(body as ProjectUpdateBody, { id: value.id })
+          const client = data?.find(e => e.id == body.clientId)
+          onUpdate(Project.createPartially({ id: value.id, ...body, client }))
         } else {
           const id = await callCreate(body)
           const client = data?.find(e => e.id == body.clientId)
-          onAdd(Project.createPartially({ ...body, id, client, active: true }))
+          onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
         onClose()
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     })
   }
 

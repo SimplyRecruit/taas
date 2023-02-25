@@ -114,6 +114,20 @@ export default function ProjectsPage() {
     setFilteredData(filtered)
   }
 
+  const find = (record: Project, values: Project[]): number => {
+    return values.findIndex(x => x.id === record.id)
+  }
+
+  function onUpdate(record: Project) {
+    if (!data) return
+    const index = find(record, data)
+    if (index != -1) {
+      data[index] = record
+      setData([...data])
+    }
+    setCurrentRecord(record)
+  }
+
   useEffect(() => {
     if (!data) return
     filterData(data)
@@ -171,9 +185,7 @@ export default function ProjectsPage() {
           setData([e, ...(data ?? [])])
           setModalOpen(false)
         }}
-        onUpdate={() => {
-          return null
-        }}
+        onUpdate={onUpdate}
       />
     </div>
   )
