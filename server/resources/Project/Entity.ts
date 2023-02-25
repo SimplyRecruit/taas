@@ -12,6 +12,9 @@ export default class ProjectEntity extends EntityBase {
   @Column()
   name: string
 
+  @Column()
+  clientId: string
+
   @ManyToOne(() => ClientEntity)
   @JoinColumn()
   client: ClientEntity
