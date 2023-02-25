@@ -12,12 +12,12 @@ import {
   TabsProps,
   Radio,
   Table,
-  Popover,
+  Select,
+  Divider,
 } from 'antd'
-import { Client, ClientContractType, ClientUpdateBody } from 'models'
+import { Client, ClientContractType, ClientUpdateBody, Resource } from 'models'
 import {
   CloseOutlined,
-  PlusCircleOutlined,
   DeleteOutlined,
 } from '@ant-design/icons'
 import { momentToDate } from '@/util'
@@ -25,6 +25,7 @@ import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
+import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
 
 interface RenderProps {
   open: boolean
@@ -42,7 +43,18 @@ const EditClientDrawer = ({
   onCancel,
   value,
 }: RenderProps) => {
-  const [form] = Form.useForm<Client>()
+  const [settingsForm] = Form.useForm<ClientUpdateBody>()
+  const [accessForm] = Form.useForm<ClientAddResourceBody>()
+  const internalEveryoneHasAccess = Form.useWatch(
+    'everyoneHasAccess',
+    accessForm
+  )
+  const {
+    data: resources,
+    loading: loadingGetResources,
+    error,
+    call: callResourceGetAll,
+  } = useApi('resource', 'getAll')
   const { call: callUpdate, loading: loadingUpdate } = useApi(
     'client',
     'update'
@@ -61,24 +73,49 @@ const EditClientDrawer = ({
   async function removeResource(id: string) {
     try {
       await callRemoveResource({ resourceId: id, clientId: value.id })
-      const updated = value
-      const index = updated.resources?.findIndex(e => e.id == id)
-      if (index != undefined && updated.resources && index != -1) {
-        console.log(index)
-        updated.resources.splice(index, 1)
-        onUpdate(updated)
+      const resources = value.resources
+      const index = resources?.findIndex(e => e.id == id)
+      if (index != undefined && resources && index != -1) {
+        resources.splice(index, 1)
+        onUpdate({ ...value, resources: [...resources] })
       }
     } catch (error) {
       console.log(error)
     }
   }
-  async function onSubmit() {
-    form.validateFields().then(async e => {
+
+  async function onSubmitSettings() {
+    settingsForm.validateFields().then(async e => {
       await callUpdate(e, { id: value.id })
       onUpdate({ ...value, ...e })
       onCancel()
     })
   }
+
+  async function onSubmitAccess() {
+    accessForm.validateFields().then(async body => {
+      if (body.everyoneHasAccess) delete body.resourceIds
+      await callAddResource(body, { clientId: value.id })
+      const { everyoneHasAccess, resourceIds } = body
+      const newResources = resourceIds
+        ? resources?.filter(e => resourceIds!.includes(e.id))
+        : undefined
+      let merged: Resource[] | undefined = everyoneHasAccess
+        ? undefined
+        : [...(value.resources ?? []), ...(newResources ?? [])]
+      if (merged && merged.length == 0) merged = undefined
+      onUpdate({ ...value, everyoneHasAccess, resources: merged })
+    })
+  }
+
+  useEffect(() => {
+    settingsForm.resetFields()
+    accessForm.resetFields()
+  }, [settingsForm, accessForm, value])
+
+  useEffect(() => {
+    callResourceGetAll()
+  }, [])
 
   const items: TabsProps['items'] = [
     {
@@ -86,7 +123,7 @@ const EditClientDrawer = ({
       label: `Settings`,
       children: (
         <Form
-          form={form}
+          form={settingsForm}
           requiredMark="optional"
           name="basic"
           layout="vertical"
@@ -196,74 +233,96 @@ const EditClientDrawer = ({
       label: `Access`,
       children: (
         <div>
-          <Radio.Group value={value.everyoneHasAccess}>
-            <Radio key="everyone" value={true}>
-              Everyone
-            </Radio>
-            <Radio key="custom" value={false}>
-              Custom
-            </Radio>
-          </Radio.Group>
-
-          <Popover
-            showArrow={false}
-            placement="bottomRight"
-            content={
-              <div>
-                <p>Content</p>
-                <p>Content</p>
-              </div>
-            }
+          <Form
+            form={accessForm}
+            layout="vertical"
+            initialValues={{ everyoneHasAccess: value.everyoneHasAccess }}
           >
-            <Button type="link" icon={<PlusCircleOutlined />}>
-              Add new
-            </Button>
-          </Popover>
+            <Form.Item name="everyoneHasAccess" label="Accessable by">
+              <Radio.Group>
+                <Radio key="everyone" value={true}>
+                  Everyone
+                </Radio>
+                <Radio key="custom" value={false}>
+                  Custom
+                </Radio>
+              </Radio.Group>
+            </Form.Item>
+            {internalEveryoneHasAccess === false &&
+              !loadingGetResources &&
+              !!resources && (
+                <Form.Item name="resourceIds">
+                  <Select
+                    filterOption={(inputValue, option) =>
+                      option?.label
+                        .toLocaleLowerCase()
+                        .includes(inputValue.toLocaleLowerCase()) ?? false
+                    }
+                    mode="multiple"
+                    allowClear
+                    style={{ width: '100%' }}
+                    placeholder="Please select"
+                    options={resources
+                      .filter(e =>
+                        value.resources
+                          ? value.resources.findIndex(a => a.id == e.id) == -1
+                          : true
+                      )
+                      .map(e => ({
+                        value: e.id,
+                        label: `${e.abbr} - ${e.name}`,
+                      }))}
+                    dropdownRender={menu => <>{menu}</>}
+                  />
+                </Form.Item>
+              )}
+          </Form>
+          <Divider style={{ margin: '8px 0' }} />
           <Button
-            onClick={onSubmit}
+            onClick={onSubmitAccess}
             type="primary"
             htmlType="submit"
-            loading={loadingUpdate}
+            loading={loadingAddResource}
           >
             Save
           </Button>
-          <Table
-            rowKey="id"
-            style={{ marginTop: 16 }}
-            columns={[
-              { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
-              { title: 'Name', dataIndex: 'name', key: 'name' },
-              { title: 'Role', dataIndex: 'role', key: 'role' },
-              {
-                title: 'Hourly rate',
-                dataIndex: 'hourlyRate',
-                key: 'hourlyRate',
-              },
-              {
-                title: '',
-                width: DEFAULT_ACTION_COLUMN_WIDTH,
-                render: (record: Client) => {
-                  return (
-                    <Button
-                      onClick={() => removeResource(record.id)}
-                      size="small"
-                      type="text"
-                      icon={<DeleteOutlined></DeleteOutlined>}
-                    />
-                  )
+          {internalEveryoneHasAccess === false && (
+            <Table
+              rowKey="id"
+              style={{ marginTop: 16 }}
+              scroll={{ y: 240 }}
+              columns={[
+                { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
+                { title: 'Name', dataIndex: 'name', key: 'name' },
+                { title: 'Role', dataIndex: 'role', key: 'role' },
+                {
+                  title: 'Hourly rate',
+                  dataIndex: 'hourlyRate',
+                  key: 'hourlyRate',
                 },
-              },
-            ]}
-            dataSource={value.resources}
-          />
+                {
+                  title: '',
+                  width: DEFAULT_ACTION_COLUMN_WIDTH,
+                  render: (record: Client) => {
+                    return (
+                      <Button
+                        loading={loadingRemoveResource}
+                        onClick={() => removeResource(record.id)}
+                        size="small"
+                        type="text"
+                        icon={<DeleteOutlined></DeleteOutlined>}
+                      />
+                    )
+                  },
+                },
+              ]}
+              dataSource={value.resources}
+            />
+          )}
         </div>
       ),
     },
   ]
-
-  useEffect(() => {
-    form.resetFields()
-  }, [form, value])
 
   return (
     <Drawer
@@ -275,17 +334,19 @@ const EditClientDrawer = ({
       closable={false}
       mask={false}
       footer={
-        <Space>
-          <Button
-            onClick={onSubmit}
-            type="primary"
-            htmlType="submit"
-            loading={loadingUpdate}
-          >
-            Save
-          </Button>
-          <Button onClick={onCancel}>Cancel</Button>
-        </Space>
+        activeTabKey == '1' && (
+          <Space>
+            <Button
+              onClick={onSubmitSettings}
+              type="primary"
+              htmlType="submit"
+              loading={loadingUpdate}
+            >
+              Save
+            </Button>
+            <Button onClick={onCancel}>Cancel</Button>
+          </Space>
+        )
       }
       style={{ borderRadius: '16px', position: 'relative' }}
       extra={
@@ -297,7 +358,6 @@ const EditClientDrawer = ({
         />
       }
     >
-      {value.resources?.map(e => e.abbr)}
       <Tabs
         tabBarStyle={{ position: 'sticky', top: 0, zIndex: 10 }}
         type="card"
