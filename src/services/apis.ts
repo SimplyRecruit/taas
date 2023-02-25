@@ -18,6 +18,7 @@ ResetPasswordReqBody,
 User,
 TableQueryParameters,
 WorkPeriod,
+Project,
 } from "models"
 
 function createAxiosInstance() {
@@ -307,6 +308,18 @@ export default {
                 method: "put",
                 url,
                 data: body,
+            })
+        },
+    },
+    project: {
+        async getAll(
+        ) : Promise<AxiosResponse<Project[]>>
+        {
+            const route = "/project"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
             })
         },
     },

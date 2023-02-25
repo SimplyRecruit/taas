@@ -1,15 +1,15 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Table } from 'antd'
 import moment from 'dayjs'
-import { dummyData } from '@/pages/projects/data'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Project } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
+import useApi from '@/services/useApi'
 
 export default function ProjectsPage() {
   const columns = [
@@ -74,37 +74,44 @@ export default function ProjectsPage() {
     },
   ]
 
+  const { data, call, setData, loading } = useApi('project', 'getAll')
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState(dummyData)
-  const [data, setData] = useState(dummyData)
+  const [filteredData, setFilteredData] = useState<Project[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [currentRecord, setCurrentRecord] = useState(
-    dummyData[0] ? dummyData[0] : null
-  )
+  const [currentRecord, setCurrentRecord] = useState(null)
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
-    filterData(value, searchText)
   }
 
   const handleSearch = (value: string) => {
     setSearchText(value)
-    filterData(selectedStatus, value)
   }
 
-  const filterData = (status: string, search: string) => {
+  const filterData = (data: Project[]) => {
     let filtered = data
-    if (status !== 'all') {
-      filtered = filtered.filter(item => item.active === (status == 'active'))
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(
+        item => item.active === (selectedStatus == 'active')
+      )
     }
-    if (search) {
+    if (searchText) {
       filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
     setFilteredData(filtered)
   }
+
+  useEffect(() => {
+    if (!data) return
+    filterData(data)
+  }, [data, searchText, selectedStatus])
+
+  useEffect(() => {
+    call()
+  }, [])
 
   return (
     <div style={{ padding: 20 }}>
@@ -135,6 +142,7 @@ export default function ProjectsPage() {
       <Table
         rowKey="id"
         columns={columns}
+        loading={loading}
         dataSource={filteredData}
         pagination={{
           position: ['bottomCenter'],
@@ -146,13 +154,11 @@ export default function ProjectsPage() {
         }}
       />
       <EditProjectModal
-        key={currentRecord?.id}
         open={modalOpen}
         project={currentRecord}
         onCancel={() => setModalOpen(false)}
         onAdd={e => {
-          setData([...data, e])
-          setFilteredData([e, ...filteredData])
+          setData([e, ...data])
           setModalOpen(false)
         }}
         onUpdate={() => {

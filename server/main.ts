@@ -27,6 +27,7 @@ import ClientController from '~/resources/Client/Controller'
 import ResourceController from '~/resources/Resource/Controller'
 import UserController from '~/resources/User/Controller'
 import WorkPeriodController from '~/resources/WorkPeriod/Controller'
+import ProjectController from '~/resources/Project/Controller'
 
 // Connecting to DB
 const dataSource = new DataSource({
@@ -67,6 +68,7 @@ smtp.setApiKey(process.env.SMTP_KEY!)
         ResourceController,
         WorkPeriodController,
         ClientController,
+        ProjectController,
       ],
       routePrefix: '/api',
       validation: {
