@@ -10,7 +10,4 @@ export default class ProjectBase extends Model {
 
   @IsDateString()
   startDate: Date
-
-  @IsBoolean()
-  active: boolean
 }

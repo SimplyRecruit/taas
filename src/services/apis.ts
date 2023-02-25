@@ -19,6 +19,7 @@ User,
 TableQueryParameters,
 WorkPeriod,
 Project,
+ProjectCreateBody,
 } from "models"
 
 function createAxiosInstance() {
@@ -320,6 +321,18 @@ export default {
             return await createAxiosInstance().request({
                 method: "get",
                 url,
+            })
+        },
+        async create(
+            body: ProjectCreateBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/project"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
             })
         },
     },

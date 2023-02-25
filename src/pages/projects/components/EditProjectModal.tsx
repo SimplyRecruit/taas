@@ -11,11 +11,7 @@ import {
   Radio,
   Select,
 } from 'antd'
-import {
-  Project,
-  ProjectCreateBody,
-  ProjectUpdateBody,
-} from 'models'
+import { Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
@@ -65,7 +61,7 @@ export default function EditProjectDrawer({
           callUpdate()
         } else {
           console.log(body)
-          callCreate()
+          callCreate(body)
         }
         onClose()
       } catch (error) {}

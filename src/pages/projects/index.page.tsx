@@ -6,7 +6,7 @@ import moment from 'dayjs'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
-import { Project } from 'models'
+import { Client, Project } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
@@ -46,6 +46,9 @@ export default function ProjectsPage() {
       title: 'Client',
       dataIndex: 'client',
       key: 'client',
+      render: (value: Client) => {
+        return <div>{value?.abbr}</div>
+      },
     },
     {
       title: 'Start Date',
@@ -122,6 +125,7 @@ export default function ProjectsPage() {
   useEffect(() => {
     if (!data) return
     filterData(data)
+    console.log(data)
   }, [data, searchText, selectedStatus])
 
   useEffect(() => {
