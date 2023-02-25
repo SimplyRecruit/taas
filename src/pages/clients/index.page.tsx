@@ -191,6 +191,7 @@ export default function Clients() {
       </div>
       <Table
         size="large"
+        scroll={{ y: 'calc(100vh - 320px)' }}
         rowClassName={record => {
           if (selectedRowKey == record.id) {
             return 'ant-table-row-selected'
