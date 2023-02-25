@@ -1,21 +1,27 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
-import EntityBaseOnlyDates from '~/EntityBaseOnlyDates'
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm'
+import EntityBase from '~/EntityBase'
 import ClientEntity from '~/resources/Client/Entity'
+import OrganizationEntity from '~/resources/Organization/Entity'
 
 @Entity('project')
-export default class ProjectEntity extends EntityBaseOnlyDates {
-  @PrimaryColumn()
-  id: string
+@Index(['abbr', 'organization'], { unique: true })
+export default class ProjectEntity extends EntityBase {
+  @Column()
+  abbr: string
+
+  @Column()
+  name: string
 
   @ManyToOne(() => ClientEntity)
   @JoinColumn()
   client: ClientEntity
 
-  @Column()
-  name: string
-
   @Column({ type: 'timestamptz' })
   startDate: Date
+
+  @ManyToOne(() => OrganizationEntity)
+  @JoinColumn()
+  organization: OrganizationEntity
 
   @Column({ default: true })
   active: boolean
