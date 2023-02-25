@@ -27,8 +27,16 @@ export default class ProjectController {
       where: { organization: { id: currentUser.organization.id } },
       relations: { client: true },
     })
-    console.log(entityObjects)
-    return entityObjects
+    return entityObjects.map(({ id, abbr, active, client, name, startDate }) =>
+      Project.create({
+        id,
+        abbr,
+        name,
+        startDate,
+        client,
+        active,
+      })
+    )
   }
 
   @Post()
@@ -47,14 +55,16 @@ export default class ProjectController {
         })
         if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        if (client.organization)
-          id = await em.save(
+
+        id = (
+          await em.save(
             ProjectEntity.create({
               ...body,
               client,
               organization: currentUser.organization,
             })
           )
+        ).id
       } catch (error) {
         console.log(error)
         if (error instanceof EntityNotFoundError) throw new NotFoundError()

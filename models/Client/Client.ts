@@ -5,5 +5,5 @@ export default class Client extends ClientBase {
   id: string
   resources?: Resource[]
   active: boolean
-  everyoneHasAccess: boolean
+  everyoneHasAccess?: boolean
 }
