@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
-import { Button, Table } from 'antd'
+import { Button, Table, Tag } from 'antd'
 import moment from 'dayjs'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
@@ -46,8 +46,8 @@ export default function ProjectsPage() {
       title: 'Client',
       dataIndex: 'client',
       key: 'client',
-      render: (value: Client) => {
-        return <div>{value?.abbr}</div>
+      render: (client: Client) => {
+        return <Tag>{`${client.abbr} - ${client.name}`}</Tag>
       },
     },
     {
