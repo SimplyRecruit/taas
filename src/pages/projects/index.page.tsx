@@ -1,18 +1,33 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useState } from 'react'
-import { Button, Table } from 'antd'
-import moment from 'dayjs'
-import { dummyData } from '@/pages/projects/data'
+import { useEffect, useState } from 'react'
+import { Button, Table, Tag } from 'antd'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
-import { Project } from 'models'
+import { Client, Project } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
+import useApi from '@/services/useApi'
+import { formatDate } from '@/util'
+import { ALL_UUID } from '~/common/Config'
 
 export default function ProjectsPage() {
   const columns = [
+    {
+      title: 'Abbreviation',
+      dataIndex: 'abbr',
+      key: 'abbr',
+      render: (text: string, record: Project) => (
+        <span
+          style={{
+            textDecoration: !record.active ? 'line-through' : 'none',
+          }}
+        >
+          {text}
+        </span>
+      ),
+    },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -31,13 +46,20 @@ export default function ProjectsPage() {
       title: 'Client',
       dataIndex: 'client',
       key: 'client',
+      render: (client: Client) => {
+        return (
+          <Tag>
+            {client.id == ALL_UUID ? 'ALL' : `${client.abbr} - ${client.name}`}
+          </Tag>
+        )
+      },
     },
     {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (a: moment.Dayjs) => {
-        return <div>{a.format('DD/MM/YYYY').toString()}</div>
+      render: (date: Date) => {
+        return <div>{formatDate(date)}</div>
       },
     },
     {
@@ -53,7 +75,7 @@ export default function ProjectsPage() {
             }}
             onArchive={() => {
               record.active = false
-              setData([...data])
+              setData([...data!])
             }}
           />
         ) : (
@@ -64,7 +86,7 @@ export default function ProjectsPage() {
             }}
             onRestore={() => {
               record.active = true
-              setData([...data])
+              setData([...data!])
             }}
             onDelete={() => {
               return null
@@ -74,37 +96,50 @@ export default function ProjectsPage() {
     },
   ]
 
+  const { data, call, setData, loading } = useApi('project', 'getAll')
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState(dummyData)
-  const [data, setData] = useState(dummyData)
+  const [filteredData, setFilteredData] = useState<Project[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [currentRecord, setCurrentRecord] = useState(
-    dummyData[0] ? dummyData[0] : null
-  )
+  const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
 
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value)
-    filterData(value, searchText)
-  }
-
-  const handleSearch = (value: string) => {
-    setSearchText(value)
-    filterData(selectedStatus, value)
-  }
-
-  const filterData = (status: string, search: string) => {
+  const filterData = (data: Project[]) => {
     let filtered = data
-    if (status !== 'all') {
-      filtered = filtered.filter(item => item.active === (status == 'active'))
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(
+        item => item.active === (selectedStatus == 'active')
+      )
     }
-    if (search) {
+    if (searchText) {
       filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
     setFilteredData(filtered)
   }
+
+  const find = (record: Project, values: Project[]): number => {
+    return values.findIndex(x => x.id === record.id)
+  }
+
+  function onUpdate(record: Project) {
+    if (!data) return
+    const index = find(record, data)
+    if (index != -1) {
+      data[index] = record
+      setData([...data])
+    }
+    setCurrentRecord(record)
+  }
+
+  useEffect(() => {
+    if (!data) return
+    filterData(data)
+  }, [data, searchText, selectedStatus])
+
+  useEffect(() => {
+    call()
+  }, [])
 
   return (
     <div style={{ padding: 20 }}>
@@ -117,8 +152,8 @@ export default function ProjectsPage() {
         }}
       >
         <Filter
-          onSearch={handleSearch}
-          onStatusChange={handleStatusChange}
+          onSearch={setSearchText}
+          onStatusChange={setSelectedStatus}
           searchText={searchText}
           searchPlaceholder="Search by name"
         />
@@ -135,6 +170,7 @@ export default function ProjectsPage() {
       <Table
         rowKey="id"
         columns={columns}
+        loading={loading}
         dataSource={filteredData}
         pagination={{
           position: ['bottomCenter'],
@@ -146,18 +182,14 @@ export default function ProjectsPage() {
         }}
       />
       <EditProjectModal
-        key={currentRecord?.id}
         open={modalOpen}
-        project={currentRecord}
+        value={currentRecord}
         onCancel={() => setModalOpen(false)}
         onAdd={e => {
-          setData([...data, e])
-          setFilteredData([e, ...filteredData])
+          setData([e, ...(data ?? [])])
           setModalOpen(false)
         }}
-        onUpdate={() => {
-          return null
-        }}
+        onUpdate={onUpdate}
       />
     </div>
   )
