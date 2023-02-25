@@ -99,14 +99,6 @@ export default function ProjectsPage() {
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
 
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value)
-  }
-
-  const handleSearch = (value: string) => {
-    setSearchText(value)
-  }
-
   const filterData = (data: Project[]) => {
     let filtered = data
     if (selectedStatus !== 'all') {
@@ -125,7 +117,6 @@ export default function ProjectsPage() {
   useEffect(() => {
     if (!data) return
     filterData(data)
-    console.log(data)
   }, [data, searchText, selectedStatus])
 
   useEffect(() => {
@@ -143,8 +134,8 @@ export default function ProjectsPage() {
         }}
       >
         <Filter
-          onSearch={handleSearch}
-          onStatusChange={handleStatusChange}
+          onSearch={setSearchText}
+          onStatusChange={setSelectedStatus}
           searchText={searchText}
           searchPlaceholder="Search by name"
         />
