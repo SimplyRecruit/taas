@@ -14,6 +14,8 @@ body {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
+/* antd overrides */
+
 .ant-menu-title-content {
   margin-left: 8px !important;
 }
@@ -21,4 +23,9 @@ body {
 .ant-drawer-content-wrapper {
   border-radius: 16px;
   margin: 16px;
+}
+
+.ant-table-body {
+  /* To ensure table has overflow-y if only necessary*/
+  overflow-y: auto !important;
 }

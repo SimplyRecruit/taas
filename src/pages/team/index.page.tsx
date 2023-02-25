@@ -9,9 +9,10 @@ import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import TeamFilter from '@/pages/team/components/TeamFilter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
+import { ColumnsType } from 'antd/es/table'
 
 export default function Team() {
-  const columns = [
+  const columns: ColumnsType<Resource> = [
     {
       title: 'Abbreviation',
       dataIndex: 'abbr',
@@ -55,6 +56,10 @@ export default function Team() {
       title: 'Hourly rate',
       dataIndex: 'hourlyRate',
       key: 'hourlyRate',
+      width: 150,
+      render: (value: number) => (
+        <div style={{ textAlign: 'right' }}>{value}</div>
+      ),
     },
     {
       title: 'Start date',
@@ -65,6 +70,7 @@ export default function Team() {
     {
       title: '',
       key: 'action',
+      fixed: 'right',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Resource) => (
         <FiEdit2
@@ -167,6 +173,7 @@ export default function Team() {
         </Button>
       </div>
       <Table
+        scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
         rowKey={record => record.id}
         rowClassName={record => {
           if (selectedRowKey == record.id) {
