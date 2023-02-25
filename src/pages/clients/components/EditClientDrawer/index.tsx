@@ -16,10 +16,7 @@ import {
   Divider,
 } from 'antd'
 import { Client, ClientContractType, ClientUpdateBody, Resource } from 'models'
-import {
-  CloseOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons'
+import { CloseOutlined, DeleteOutlined } from '@ant-design/icons'
 import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
@@ -253,6 +250,7 @@ const EditClientDrawer = ({
               !!resources && (
                 <Form.Item name="resourceIds">
                   <Select
+                    placement="topRight"
                     filterOption={(inputValue, option) =>
                       option?.label
                         .toLocaleLowerCase()
