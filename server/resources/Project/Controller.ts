@@ -61,9 +61,11 @@ export default class ProjectController {
           where: { id: clientId },
           relations: { organization: true },
         })
-        if (clientId != ALL_UUID)
-          if (client.organization.id !== currentUser.organization.id)
-            throw new ForbiddenError()
+        if (
+          clientId != ALL_UUID &&
+          client.organization.id !== currentUser.organization.id
+        )
+          throw new ForbiddenError()
 
         id = (
           await em.save(
@@ -99,9 +101,11 @@ export default class ProjectController {
           where: { id: clientId },
           relations: { organization: true },
         })
-        if (clientId != ALL_UUID)
-          if (client.organization.id !== currentUser.organization.id)
-            throw new ForbiddenError()
+        if (
+          clientId != ALL_UUID &&
+          client.organization.id !== currentUser.organization.id
+        )
+          throw new ForbiddenError()
 
         await em.update(ProjectEntity, id, { client, ...body })
       } catch (error) {
