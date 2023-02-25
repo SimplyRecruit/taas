@@ -24,6 +24,7 @@ import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import ClientEntity from '~/resources/Client/Entity'
 import { EntityNotFoundError } from 'typeorm'
+import { ALL_UUID } from '~/common/Config'
 
 @JsonController('/project')
 export default class ProjectController {
@@ -60,8 +61,9 @@ export default class ProjectController {
           where: { id: clientId },
           relations: { organization: true },
         })
-        if (client.organization.id !== currentUser.organization.id)
-          throw new ForbiddenError()
+        if (clientId != ALL_UUID)
+          if (client.organization.id !== currentUser.organization.id)
+            throw new ForbiddenError()
 
         id = (
           await em.save(
@@ -97,8 +99,9 @@ export default class ProjectController {
           where: { id: clientId },
           relations: { organization: true },
         })
-        if (client.organization.id !== currentUser.organization.id)
-          throw new ForbiddenError()
+        if (clientId != ALL_UUID)
+          if (client.organization.id !== currentUser.organization.id)
+            throw new ForbiddenError()
 
         await em.update(ProjectEntity, id, { client, ...body })
       } catch (error) {

@@ -18,6 +18,7 @@ import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
+import { ALL_UUID } from '~/common/Config'
 
 interface RenderProps {
   open: boolean
@@ -64,11 +65,17 @@ export default function EditProjectDrawer({
       try {
         if (value) {
           await callUpdate(body as ProjectUpdateBody, { id: value.id })
-          const client = data?.find(e => e.id == body.clientId)
+          const client =
+            body.clientId == ALL_UUID
+              ? { id: ALL_UUID }
+              : data?.find(e => e.id == body.clientId)
           onUpdate(Project.createPartially({ id: value.id, ...body, client }))
         } else {
           const id = await callCreate(body)
-          const client = data?.find(e => e.id == body.clientId)
+          const client =
+            body.clientId == ALL_UUID
+              ? { id: ALL_UUID }
+              : data?.find(e => e.id == body.clientId)
           onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
         onClose()
@@ -171,10 +178,15 @@ export default function EditProjectDrawer({
           label="Client"
         >
           <Select
-            options={data?.map(e => ({
-              value: e.id,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={[
+              { value: ALL_UUID, label: 'ALL' },
+              ...(data
+                ? data.map(e => ({
+                    value: e.id,
+                    label: `${e.abbr} - ${e.name}`,
+                  }))
+                : []),
+            ]}
           />
         </Form.Item>
         <Row>

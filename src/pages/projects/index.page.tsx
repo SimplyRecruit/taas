@@ -2,7 +2,6 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
-import moment from 'dayjs'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
@@ -11,6 +10,7 @@ import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
+import { ALL_UUID } from '~/common/Config'
 
 export default function ProjectsPage() {
   const columns = [
@@ -47,7 +47,11 @@ export default function ProjectsPage() {
       dataIndex: 'client',
       key: 'client',
       render: (client: Client) => {
-        return <Tag>{`${client.abbr} - ${client.name}`}</Tag>
+        return (
+          <Tag>
+            {client.id == ALL_UUID ? 'ALL' : `${client.abbr} - ${client.name}`}
+          </Tag>
+        )
       },
     },
     {
