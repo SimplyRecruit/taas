@@ -189,10 +189,15 @@ export default class ClientController {
           const clientResources = resourceIds.map(resourceId =>
             ClientResourceEntity.create({ client, resourceId })
           )
+          await em.delete(ClientResourceEntity, {
+            client,
+            resourceId: ALL_UUID,
+          })
           // TODO resources are part of this organization
           await em.insert(ClientResourceEntity, clientResources)
         }
       } catch (error) {
+        console.log(error)
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
         else throw new InternalServerError('Internal Server Error')
