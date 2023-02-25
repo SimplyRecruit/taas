@@ -10,6 +10,7 @@ import {
   DatePicker,
   Radio,
   Select,
+  Switch,
 } from 'antd'
 import { Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
@@ -62,9 +63,8 @@ export default function EditProjectDrawer({
     form.validateFields().then(async body => {
       try {
         if (value) {
-          callUpdate()
+          await callUpdate(body as ProjectUpdateBody, { id: value.id })
         } else {
-          console.log(body)
           const id = await callCreate(body)
           const client = data?.find(e => e.id == body.clientId)
           onAdd(Project.createPartially({ ...body, id, client, active: true }))
@@ -186,6 +186,9 @@ export default function EditProjectDrawer({
                 format={DEFAULT_DATE_FORMAT}
                 style={{ width: '100%' }}
               />
+            </Form.Item>
+            <Form.Item valuePropName="checked" name="active" label="Active">
+              <Switch />
             </Form.Item>
           </Col>
         </Row>

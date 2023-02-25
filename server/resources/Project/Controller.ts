@@ -1,4 +1,10 @@
-import { Client, Project, ProjectCreateBody, UserRole } from 'models'
+import {
+  Client,
+  Project,
+  ProjectCreateBody,
+  ProjectUpdateBody,
+  UserRole,
+} from 'models'
 
 import {
   Authorized,
@@ -7,11 +13,12 @@ import {
   InternalServerError,
   JsonController,
   NotFoundError,
+  Param,
 } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
 
-import { Get, Post } from '~/decorators/CustomApiMethods'
+import { Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import ProjectEntity from '~/resources/Project/Entity'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
@@ -74,5 +81,34 @@ export default class ProjectController {
     })
 
     return id
+  }
+
+  @Patch(undefined, '/:id')
+  @Authorized(UserRole.ADMIN)
+  async update(
+    @Param('id') id: string,
+    @Body({ patch: true }) { clientId, ...body }: ProjectUpdateBody,
+    @CurrentUser() currentUser: UserEntity
+  ) {
+    console.log(clientId, body)
+    await dataSource.transaction(async em => {
+      try {
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: { id: clientId },
+          relations: { organization: true },
+        })
+        if (client.organization.id !== currentUser.organization.id)
+          throw new ForbiddenError()
+
+        await em.update(ProjectEntity, id, { client, ...body })
+      } catch (error) {
+        console.log(error)
+        if (error instanceof EntityNotFoundError) throw new NotFoundError()
+        else if (error instanceof ForbiddenError) throw new ForbiddenError()
+        else throw new InternalServerError('Internal Server Error')
+      }
+    })
+
+    return 'Updated'
   }
 }

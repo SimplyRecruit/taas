@@ -20,6 +20,7 @@ TableQueryParameters,
 WorkPeriod,
 Project,
 ProjectCreateBody,
+ProjectUpdateBody,
 } from "models"
 
 function createAxiosInstance() {
@@ -331,6 +332,19 @@ export default {
             const url = route
             return await createAxiosInstance().request({
                 method: "post",
+                url,
+                data: body,
+            })
+        },
+        async update(
+            body: ProjectUpdateBody,
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/project/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "patch",
                 url,
                 data: body,
             })
