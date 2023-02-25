@@ -49,6 +49,10 @@ export default function EditProjectDrawer({
   )
 
   useEffect(() => {
+    form.resetFields()
+  }, [form, value])
+
+  useEffect(() => {
     call()
   }, [])
 
