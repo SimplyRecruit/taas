@@ -10,9 +10,24 @@ import { Project } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
+import { formatDate } from '@/util'
 
 export default function ProjectsPage() {
   const columns = [
+    {
+      title: 'Abbreviation',
+      dataIndex: 'abbr',
+      key: 'abbr',
+      render: (text: string, record: Project) => (
+        <span
+          style={{
+            textDecoration: !record.active ? 'line-through' : 'none',
+          }}
+        >
+          {text}
+        </span>
+      ),
+    },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -36,8 +51,8 @@ export default function ProjectsPage() {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (a: moment.Dayjs) => {
-        return <div>{a.format('DD/MM/YYYY').toString()}</div>
+      render: (date: Date) => {
+        return <div>{formatDate(date)}</div>
       },
     },
     {
@@ -53,7 +68,7 @@ export default function ProjectsPage() {
             }}
             onArchive={() => {
               record.active = false
-              setData([...data])
+              setData([...data!])
             }}
           />
         ) : (
@@ -64,7 +79,7 @@ export default function ProjectsPage() {
             }}
             onRestore={() => {
               record.active = true
-              setData([...data])
+              setData([...data!])
             }}
             onDelete={() => {
               return null
@@ -79,7 +94,7 @@ export default function ProjectsPage() {
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Project[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [currentRecord, setCurrentRecord] = useState(null)
+  const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value)
@@ -155,10 +170,10 @@ export default function ProjectsPage() {
       />
       <EditProjectModal
         open={modalOpen}
-        project={currentRecord}
+        value={currentRecord}
         onCancel={() => setModalOpen(false)}
         onAdd={e => {
-          setData([e, ...data])
+          setData([e, ...(data ?? [])])
           setModalOpen(false)
         }}
         onUpdate={() => {
