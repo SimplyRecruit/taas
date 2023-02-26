@@ -1,6 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import TrackerGroup from '@/pages/tracker/components/TrackerGroup'
+import AddTT from '@/pages/tracker/components/AddTT'
 
 export default function Tracker() {
   const data = [
@@ -13,6 +14,7 @@ export default function Tracker() {
   return (
     <>
       <div style={{ padding: 24 }}>
+        <AddTT></AddTT>
         <TrackerGroup data={data} />
         <TrackerGroup data={data} />
       </div>
