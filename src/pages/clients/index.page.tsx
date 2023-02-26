@@ -94,6 +94,7 @@ export default function Clients() {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
+      fixed: 'right',
       render: (record: Client) => (
         <span>
           <FiEdit
@@ -191,7 +192,7 @@ export default function Clients() {
       </div>
       <Table
         size="large"
-        scroll={{ y: 'calc(100vh - 320px)' }}
+        scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
         rowClassName={record => {
           if (selectedRowKey == record.id) {
             return 'ant-table-row-selected'
