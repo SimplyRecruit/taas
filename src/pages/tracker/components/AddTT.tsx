@@ -21,10 +21,10 @@ import {
   TTCreateBody,
 } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
-import { momentToDate } from '@/util'
+import { momentToDate, stringToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ALL_UUID } from '~/common/Config'
 
 interface RenderProps {
@@ -40,6 +40,7 @@ export default function AddTT({
   onCancel,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
+  const [batch, setBatch] = useState('')
   const { call, data } = useApi('client', 'getAll')
   const { data: dataProject, call: callProject } = useApi('project', 'getAll')
   const { call: callCreate, loading: loadingCreate } = useApi(
@@ -66,111 +67,140 @@ export default function AddTT({
   }
 
   return (
-    <Form
-      form={form}
-      name="basic"
-      requiredMark={false}
-      layout="inline"
-      validateTrigger="onBlur"
-      style={{ width: '100%' }}
-      onFinish={onFinish}
-      initialValues={TTCreateBody.createPartially({
-        date: new Date(),
-        description: '',
-        billable: false,
-        ticketNo: '',
-      })}
-    >
-      <Form.Item
-        name="date"
-        getValueFromEvent={date => momentToDate(date)}
-        getValueProps={i => ({ value: moment(i) })}
+    <>
+      <Form
+        form={form}
+        name="basic"
+        requiredMark={false}
+        layout="inline"
+        validateTrigger="onBlur"
+        style={{ width: '100%' }}
+        onFinish={onFinish}
+        initialValues={TTCreateBody.createPartially({
+          date: new Date(),
+          description: '',
+          billable: false,
+          ticketNo: '',
+        })}
       >
-        <DatePicker
-          allowClear={false}
-          format={DEFAULT_DATE_FORMAT}
-          style={{ width: '100%' }}
-        />
-      </Form.Item>
-      <Form.Item
-        rules={[
-          {
-            required: true,
-            message: 'Please select a client',
-          },
-        ]}
-        name="clientAbbr"
-      >
-        <Select
-          placeholder="Select a client"
-          options={data?.map(e => ({
-            value: e.abbr,
-            label: `${e.abbr} - ${e.name}`,
-          }))}
-        />
-      </Form.Item>
-      <Form.Item
-        name="hour"
-        rules={[
-          {
-            required: true,
-            message: 'Please enter a value',
-          },
-        ]}
-      >
-        <InputNumber
-          style={{ width: '12ch' }}
-          type="number"
-          placeholder="Hours"
-        />
-      </Form.Item>
-      <Form.Item
-        name="description"
-        rules={[
-          {
-            validator: Project.validator('name'),
-            message: 'Please enter a value',
-          },
-        ]}
-        style={{ flex: 1 }}
-      >
-        <Input placeholder="Description" style={{ width: '100%' }} />
-      </Form.Item>
-      <Form.Item valuePropName="checked" name="billable" label="Billable">
-        <Checkbox />
-      </Form.Item>
-      <Form.Item
-        name="ticketNo"
-        rules={[
-          {
-            validator: Project.validator('name'),
-            message: 'Please enter a value',
-          },
-        ]}
-      >
-        <Input placeholder="Ticket no" />
-      </Form.Item>
+        <Form.Item
+          name="date"
+          getValueFromEvent={date => momentToDate(date)}
+          getValueProps={i => ({ value: moment(i) })}
+        >
+          <DatePicker
+            allowClear={false}
+            format={DEFAULT_DATE_FORMAT}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
+        <Form.Item
+          rules={[
+            {
+              required: true,
+              message: 'Please select a client',
+            },
+          ]}
+          name="clientAbbr"
+        >
+          <Select
+            placeholder="Select a client"
+            options={data?.map(e => ({
+              value: e.abbr,
+              label: `${e.abbr} - ${e.name}`,
+            }))}
+          />
+        </Form.Item>
+        <Form.Item
+          name="hour"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a value',
+            },
+          ]}
+        >
+          <InputNumber
+            style={{ width: '12ch' }}
+            type="number"
+            placeholder="Hours"
+          />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          rules={[
+            {
+              validator: Project.validator('name'),
+              message: 'Please enter a value',
+            },
+          ]}
+          style={{ flex: 1 }}
+        >
+          <Input placeholder="Description" style={{ width: '100%' }} />
+        </Form.Item>
+        <Form.Item valuePropName="checked" name="billable" label="Billable">
+          <Checkbox />
+        </Form.Item>
+        <Form.Item
+          name="ticketNo"
+          rules={[
+            {
+              validator: Project.validator('name'),
+              message: 'Please enter a value',
+            },
+          ]}
+        >
+          <Input placeholder="Ticket no" />
+        </Form.Item>
+        <Form.Item
+          rules={[
+            {
+              required: true,
+              message: 'Please select a project',
+            },
+          ]}
+          name="projectAbbr"
+        >
+          <Select
+            placeholder="Select a project"
+            options={dataProject?.map(e => ({
+              value: e.abbr,
+              label: `${e.abbr} - ${e.name}`,
+            }))}
+          />
+        </Form.Item>
+        <Button type="primary" htmlType="submit" loading={loading()}>
+          Add
+        </Button>
+      </Form>
+      <Input.TextArea
+        rows={4}
+        value={batch}
+        onChange={e => setBatch(e.target.value)}
+      />
+      <Button
+        type="primary"
+        onClick={() => {
+          const rows = batch.trim().split('\n')
 
-      <Form.Item
-        rules={[
-          {
-            required: true,
-            message: 'Please select a project',
-          },
-        ]}
-        name="projectAbbr"
+          rows.forEach(e => {
+            const values = e.split('\t')
+            callCreate(
+              TTCreateBody.create({
+                date: stringToDate(values[0]),
+                clientAbbr: values[1],
+                hour: Number(values[2]),
+                description: values[3],
+                ticketNo: values[4],
+                projectAbbr: values[5],
+                billable: true,
+              })
+            )
+          })
+        }}
       >
-        <Select
-          placeholder="Select a project"
-          options={dataProject?.map(e => ({
-            value: e.abbr,
-            label: `${e.abbr} - ${e.name}`,
-          }))}
-        />
-      </Form.Item>
-      <Button type="primary" htmlType="submit" loading={loading()}>
-        Add
+        Batch Add
       </Button>
-    </Form>
+    </>
   )
 }

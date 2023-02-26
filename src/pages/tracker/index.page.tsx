@@ -1,6 +1,5 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import TrackerGroup from '@/pages/tracker/components/TrackerGroup'
 import AddTT from '@/pages/tracker/components/AddTT'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
