@@ -28,14 +28,12 @@ import { useEffect } from 'react'
 import { ALL_UUID } from '~/common/Config'
 
 interface RenderProps {
-  open: boolean
   value: Project | null
   onAdd: (newProject: Project) => void
   onUpdate: (updatedProject: Project) => void
   onCancel: () => void
 }
 export default function AddTT({
-  open,
   onAdd,
   value,
   onUpdate,
@@ -101,12 +99,12 @@ export default function AddTT({
             message: 'Please select a client',
           },
         ]}
-        name="clientId"
+        name="clientAbbr"
       >
         <Select
           placeholder="Select a client"
           options={data?.map(e => ({
-            value: e.id,
+            value: e.abbr,
             label: `${e.abbr} - ${e.name}`,
           }))}
         />
@@ -160,12 +158,12 @@ export default function AddTT({
             message: 'Please select a project',
           },
         ]}
-        name="projectId"
+        name="projectAbbr"
       >
         <Select
           placeholder="Select a project"
           options={dataProject?.map(e => ({
-            value: e.id,
+            value: e.abbr,
             label: `${e.abbr} - ${e.name}`,
           }))}
         />

@@ -21,6 +21,7 @@ import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ClientResourceEntity from '~/resources/relations/ClientResource'
 import ResourceEntity from '~/resources/Resource/Entity'
+import ClientEntity from '~/resources/Client/Entity'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
@@ -56,11 +57,11 @@ export default class TimeTrackController {
   @Post()
   @Authorized(UserRole.ADMIN)
   async create(
-    @Body() { clientId, projectId, ...body }: TTCreateBody,
+    @Body() { clientAbbr, projectAbbr, ...body }: TTCreateBody,
     @CurrentUser() currentUser: UserEntity
   ) {
     let id
-    console.log(clientId, body)
+    console.log(clientAbbr, body)
     await dataSource.transaction(async em => {
       try {
         /*
@@ -72,13 +73,22 @@ export default class TimeTrackController {
           where: { userId: currentUser.id },
         })
 
-        const { client } = await em.findOneOrFail(ClientResourceEntity, {
+        const client = await em.findOneOrFail(ClientEntity, {
           where: [
-            { clientId, resourceId: resource.id },
-            { clientId, resourceId: ALL_UUID },
+            {
+              abbr: clientAbbr,
+              organization: { id: currentUser.organization.id },
+              clientResource: { resourceId: resource.id },
+            },
+            {
+              abbr: clientAbbr,
+              organization: { id: currentUser.organization.id },
+              clientResource: { resourceId: ALL_UUID },
+            },
           ],
-          relations: { client: { organization: true } },
+          relations: { organization: true },
         })
+
         if (
           client.id != ALL_UUID &&
           client.organization.id != currentUser.organization.id
@@ -92,8 +102,16 @@ export default class TimeTrackController {
         */
         const project = await em.findOneOrFail(ProjectEntity, {
           where: [
-            { id: projectId, clientId },
-            { id: projectId, clientId: ALL_UUID },
+            {
+              abbr: projectAbbr,
+              organization: { id: currentUser.organization.id },
+              clientId: client.id,
+            },
+            {
+              abbr: projectAbbr,
+              organization: { id: currentUser.organization.id },
+              clientId: ALL_UUID,
+            },
           ],
           relations: { organization: true },
         })

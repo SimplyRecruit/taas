@@ -3,8 +3,8 @@ import TTBase from 'models/TimeTrack/TTBase'
 
 export default class TTCreateBody extends TTBase {
   @Allow()
-  clientId: string
+  clientAbbr: string
 
   @Allow()
-  projectId: string
+  projectAbbr: string
 }
