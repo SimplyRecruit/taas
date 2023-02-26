@@ -11,11 +11,12 @@ import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
+import { ColumnsType } from 'antd/es/table'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
-  const columns = [
+  const columns: ColumnsType<Client> = [
     {
       title: 'Abbreviation',
       dataIndex: 'abbr',
