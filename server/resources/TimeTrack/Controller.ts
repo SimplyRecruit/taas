@@ -1,11 +1,4 @@
-import {
-  Client,
-  TT,
-  ProjectCreateBody,
-  ProjectUpdateBody,
-  UserRole,
-  TTCreateBody,
-} from 'models'
+import { TT, UserRole, TTCreateBody } from 'models'
 
 import {
   Authorized,
@@ -23,7 +16,6 @@ import { Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import ClientEntity from '~/resources/Client/Entity'
 import { EntityNotFoundError } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
@@ -102,6 +94,7 @@ export default class ProjectController {
               ...body,
               resource: currentUser.resource,
               client,
+              project,
             })
           )
         ).id
