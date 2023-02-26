@@ -21,6 +21,8 @@ WorkPeriod,
 Project,
 ProjectCreateBody,
 ProjectUpdateBody,
+TT,
+TTCreateBody,
 } from "models"
 
 function createAxiosInstance() {
@@ -345,6 +347,30 @@ export default {
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "patch",
+                url,
+                data: body,
+            })
+        },
+    },
+    timeTrack: {
+        async getAll(
+        ) : Promise<AxiosResponse<TT[]>>
+        {
+            const route = "/time-track"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+            })
+        },
+        async create(
+            body: TTCreateBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/time-track"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
                 url,
                 data: body,
             })

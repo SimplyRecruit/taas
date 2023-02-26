@@ -21,8 +21,8 @@ import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ClientResourceEntity from '~/resources/relations/ClientResource'
 
-@JsonController('/project')
-export default class ProjectController {
+@JsonController('/time-track')
+export default class TimeTrackController {
   @Get([TT])
   @Authorized(UserRole.ADMIN)
   async getAll(@CurrentUser() currentUser: UserEntity) {
