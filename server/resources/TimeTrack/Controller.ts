@@ -20,6 +20,7 @@ import { EntityNotFoundError } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ClientResourceEntity from '~/resources/relations/ClientResource'
+import ResourceEntity from '~/resources/Resource/Entity'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
@@ -60,15 +61,19 @@ export default class TimeTrackController {
           - Not owned by currentUser's organization
           - Not accessable by the resource
         */
+        const resource = await em.findOneOrFail(ResourceEntity, {
+          where: { userId: currentUser.id },
+        })
+
         const { client } = await em.findOneOrFail(ClientResourceEntity, {
           where: [
-            { clientId, resourceId: currentUser.resource.id },
+            { clientId, resourceId: resource.id },
             { clientId, resourceId: ALL_UUID },
           ],
           relations: { client: { organization: true } },
         })
         if (
-          client.id != ALL_UUID ||
+          client.id != ALL_UUID &&
           client.organization.id != currentUser.organization.id
         )
           throw new ForbiddenError()
@@ -92,7 +97,7 @@ export default class TimeTrackController {
           await em.save(
             TTEntity.create({
               ...body,
-              resource: currentUser.resource,
+              resource,
               client,
               project,
             })

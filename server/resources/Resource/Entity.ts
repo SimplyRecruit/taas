@@ -21,6 +21,9 @@ export default class ResourceEntity extends EntityBase {
   @Column({ default: true })
   active: boolean
 
+  @Column({ nullable: true })
+  userId: string
+
   @OneToOne(() => UserEntity, { onDelete: 'CASCADE', cascade: true })
   @JoinColumn()
   user: UserEntity
