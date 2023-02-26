@@ -89,10 +89,7 @@ export default class TimeTrackController {
           relations: { organization: true },
         })
 
-        if (
-          client.id != ALL_UUID &&
-          client.organization.id != currentUser.organization.id
-        )
+        if (client.organization.id != currentUser.organization.id)
           throw new ForbiddenError()
 
         /*
