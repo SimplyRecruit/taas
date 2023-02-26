@@ -9,7 +9,7 @@ export default class TTBase extends Model {
   date: Date
 
   @IsPositive()
-  hours: number
+  hour: number
 
   @IsBoolean()
   billable: boolean
