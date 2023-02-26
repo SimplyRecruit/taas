@@ -27,10 +27,17 @@ export default class TimeTrackController {
   @Get([TT])
   @Authorized(UserRole.ADMIN)
   async getAll(@CurrentUser() currentUser: UserEntity) {
-    const entityObjects = await TTEntity.find({
-      where: { resource: { id: currentUser.resource.id } },
-      relations: { client: true, project: true },
+    let entityObjects: TTEntity[] = []
+    await dataSource.transaction(async em => {
+      const resource = await em.findOneOrFail(ResourceEntity, {
+        where: { userId: currentUser.id },
+      })
+      entityObjects = await TTEntity.find({
+        where: { resource: { id: resource.id } },
+        relations: { client: true, project: true },
+      })
     })
+
     return entityObjects.map(
       ({ id, client, description, date, billable, hour, project, ticketNo }) =>
         TT.create({
