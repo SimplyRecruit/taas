@@ -21,7 +21,7 @@ export default class TimeTrackEntity extends EntityBase {
   @Column({ type: 'timestamptz' })
   date: Date
 
-  @Column({ type: 'decimal', precision: 1 })
+  @Column()
   hour: number
 
   @Column()
