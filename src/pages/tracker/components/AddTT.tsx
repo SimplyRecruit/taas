@@ -29,10 +29,10 @@ import { useEffect, useState } from 'react'
 import { ALL_UUID } from '~/common/Config'
 
 interface RenderProps {
-  value: Project | null
-  onAdd: (newProject: Project) => void
-  onUpdate: (updatedProject: Project) => void
-  onCancel: () => void
+  value?: Project | null
+  onAdd?: (newProject: Project) => void
+  onUpdate?: (updatedProject: Project) => void
+  onCancel?: () => void
 }
 export default function AddTT({
   onAdd,
