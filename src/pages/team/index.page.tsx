@@ -92,6 +92,7 @@ export default function Team() {
   }, [])
 
   useEffect(() => {
+    if (!resources) return
     setData(resources)
     filterData(selectedStatus, searchText)
   }, [resources])

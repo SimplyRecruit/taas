@@ -12,7 +12,7 @@ import {
   Select,
   Switch,
 } from 'antd'
-import { Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
+import { Client, Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
@@ -67,14 +67,14 @@ export default function EditProjectDrawer({
           await callUpdate(body as ProjectUpdateBody, { id: value.id })
           const client =
             body.clientId == ALL_UUID
-              ? { id: ALL_UUID }
+              ? Client.createPartially({ id: ALL_UUID })
               : data?.find(e => e.id == body.clientId)
           onUpdate(Project.createPartially({ id: value.id, ...body, client }))
         } else {
           const id = await callCreate(body)
           const client =
             body.clientId == ALL_UUID
-              ? { id: ALL_UUID }
+              ? Client.createPartially({ id: ALL_UUID })
               : data?.find(e => e.id == body.clientId)
           onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
