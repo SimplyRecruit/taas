@@ -7,21 +7,21 @@ import {
   InternalServerError,
   JsonController,
   NotFoundError,
-  Param,
 } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
 
-import { Get, Patch, Post } from '~/decorators/CustomApiMethods'
+import { Get, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import { EntityNotFoundError } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
-import ClientResourceEntity from '~/resources/relations/ClientResource'
 import ResourceEntity from '~/resources/Resource/Entity'
 import ClientEntity from '~/resources/Client/Entity'
+import TTCreateResBody from 'models/TimeTrack/res-bodies/TTCreateResBody'
+import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
@@ -54,13 +54,13 @@ export default class TimeTrackController {
     )
   }
 
-  @Post()
+  @Post(TTCreateResBody)
   @Authorized(UserRole.ADMIN)
   async create(
     @Body() { clientAbbr, projectAbbr, ...body }: TTCreateBody,
     @CurrentUser() currentUser: UserEntity
   ) {
-    let id
+    let id = ''
     console.log(clientAbbr, body)
     await dataSource.transaction(async em => {
       try {
@@ -89,9 +89,6 @@ export default class TimeTrackController {
           relations: { organization: true },
         })
 
-        if (client.organization.id != currentUser.organization.id)
-          throw new ForbiddenError()
-
         /*
           Throws ForbiddenEror if this project is:
           - Not owned by currentUser's organization
@@ -112,8 +109,6 @@ export default class TimeTrackController {
           ],
           relations: { organization: true },
         })
-        if (project.organization.id !== currentUser.organization.id)
-          throw new ForbiddenError()
 
         id = (
           await em.save(
@@ -133,6 +128,70 @@ export default class TimeTrackController {
       }
     })
 
-    return id
+    return new TTCreateResBody({ id })
+  }
+
+  @Post([TTCreateResBody], '/batch')
+  @Authorized(UserRole.ADMIN)
+  async batchCreate(
+    @Body() { bodies }: TTBatchCreateBody,
+    @CurrentUser() currentUser: UserEntity
+  ) {
+    const resBodies: TTCreateResBody[] = []
+    await dataSource.transaction(async em => {
+      try {
+        const resource = await em.findOneOrFail(ResourceEntity, {
+          where: { userId: currentUser.id },
+        })
+        for (const body of bodies) {
+          // Checking client
+          const client = await em.findOne(ClientEntity, {
+            where: [
+              {
+                abbr: body.clientAbbr,
+                organization: { id: currentUser.organization.id },
+                clientResource: { resourceId: resource.id },
+              },
+              {
+                abbr: body.clientAbbr,
+                organization: { id: currentUser.organization.id },
+                clientResource: { resourceId: ALL_UUID },
+              },
+            ],
+            relations: { organization: true },
+          })
+          if (!client) {
+            resBodies.push(new TTCreateResBody({ error: 'invalid-client' }))
+            continue
+          }
+          // Checking project
+          const project = await em.findOne(ProjectEntity, {
+            where: [
+              {
+                abbr: body.projectAbbr,
+                organization: { id: currentUser.organization.id },
+                clientId: client.id,
+              },
+              {
+                abbr: body.projectAbbr,
+                organization: { id: currentUser.organization.id },
+                clientId: ALL_UUID,
+              },
+            ],
+            relations: { organization: true },
+          })
+          if (!project) {
+            resBodies.push(new TTCreateResBody({ error: 'invalid-project' }))
+            continue
+          }
+          // Inserting to table
+          // TODO: Insert
+          resBodies.push(new TTCreateResBody({ id: 'oluştu' }))
+        }
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) throw new NotFoundError()
+      }
+    })
+    return resBodies
   }
 }

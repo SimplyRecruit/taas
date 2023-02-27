@@ -18,6 +18,7 @@ import {
   Project,
   ProjectCreateBody,
   ProjectUpdateBody,
+  TTBatchCreateBody,
   TTCreateBody,
 } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
@@ -40,12 +41,17 @@ export default function AddTT({
   onCancel,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
+  const [batchForm] = Form.useForm<TTBatchCreateBody>()
   const [batch, setBatch] = useState('')
-  const { call, data } = useApi('client', 'getAll')
+  const { call: callClient, data: dataClient } = useApi('client', 'getAll')
   const { data: dataProject, call: callProject } = useApi('project', 'getAll')
   const { call: callCreate, loading: loadingCreate } = useApi(
     'timeTrack',
     'create'
+  )
+  const { call: callBatchCreate, loading: loadingBatchCreate } = useApi(
+    'timeTrack',
+    'batchCreate'
   )
 
   useEffect(() => {
@@ -53,7 +59,7 @@ export default function AddTT({
   }, [form, value])
 
   useEffect(() => {
-    call()
+    callClient()
     callProject()
   }, [])
 
@@ -63,7 +69,9 @@ export default function AddTT({
     try {
       await callCreate(body)
       form.resetFields()
-    } catch (error) {}
+    } catch (error) {
+      /* empty */
+    }
   }
 
   return (
@@ -105,7 +113,7 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a client"
-            options={data?.map(e => ({
+            options={dataClient?.map(e => ({
               value: e.abbr,
               label: `${e.abbr} - ${e.name}`,
             }))}
@@ -173,34 +181,29 @@ export default function AddTT({
           Add
         </Button>
       </Form>
-      <Input.TextArea
-        rows={4}
-        value={batch}
-        onChange={e => setBatch(e.target.value)}
-      />
-      <Button
-        type="primary"
-        onClick={() => {
-          const rows = batch.trim().split('\n')
-
-          rows.forEach(e => {
-            const values = e.split('\t')
-            callCreate(
-              TTCreateBody.create({
-                date: stringToDate(values[0]),
-                clientAbbr: values[1],
-                hour: Number(values[2]),
-                description: values[3],
-                billable: values[4] == 'yes',
-                ticketNo: values[5],
-                projectAbbr: values[6],
-              })
-            )
-          })
-        }}
-      >
-        Batch Add
-      </Button>
+      <Form form={batchForm}>
+        <Input.TextArea
+          rows={4}
+          value={batch}
+          onChange={e => setBatch(e.target.value)}
+        />
+        <Button
+          type="primary"
+          onClick={async () => {
+            try {
+              const returned = await callBatchCreate(
+                await TTBatchCreateBody.parse(batch)
+              )
+              console.log(returned)
+            } catch (error) {
+              console.log(error)
+            }
+            return
+          }}
+        >
+          Batch Add
+        </Button>
+      </Form>
     </>
   )
 }
