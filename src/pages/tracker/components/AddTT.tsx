@@ -191,9 +191,9 @@ export default function AddTT({
                 clientAbbr: values[1],
                 hour: Number(values[2]),
                 description: values[3],
-                ticketNo: values[4],
-                projectAbbr: values[5],
-                billable: true,
+                billable: values[4] == 'yes',
+                ticketNo: values[5],
+                projectAbbr: values[6],
               })
             )
           })
