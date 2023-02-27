@@ -25,7 +25,8 @@ body {
   margin: 16px;
 }
 
+/* 
+ To ensure table has overflow-y if only necessary
 .ant-table-body {
-  /* To ensure table has overflow-y if only necessary*/
   overflow-y: auto !important;
-}
+}*/

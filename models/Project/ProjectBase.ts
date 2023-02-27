@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, Length } from 'class-validator'
+import { IsDateString, Length } from 'class-validator'
 import Model from 'models/Model'
 
 export default class ProjectBase extends Model {

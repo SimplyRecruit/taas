@@ -1,20 +1,80 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import TrackerGroup from '@/pages/tracker/components/TrackerGroup'
+import AddTT from '@/pages/tracker/components/AddTT'
+import useApi from '@/services/useApi'
+import { useEffect } from 'react'
+import { formatDate } from '@/util'
+import { Table } from 'antd'
+import { ClientRelation, Project } from 'models'
 
 export default function Tracker() {
-  const data = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
+  const columns = [
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      render: (value: Date) => <span>{formatDate(value)}</span>,
+    },
+    {
+      title: 'Client',
+      dataIndex: 'client',
+      key: 'client',
+      render: (value: ClientRelation) => <span>{value.abbr}</span>,
+    },
+    {
+      title: 'Hour',
+      dataIndex: 'hour',
+      key: 'hour',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: 'Billabe',
+      dataIndex: 'billable',
+      key: 'billable',
+      render: (value: boolean) => <span>{value ? 'yes' : 'no'}</span>,
+    },
+    {
+      title: 'Ticket no',
+      dataIndex: 'ticketNo',
+      key: 'ticketNo',
+    },
+    {
+      title: 'Project',
+      dataIndex: 'project',
+      key: 'project',
+      render: (value: Project) => <span>{value.abbr}</span>,
+    },
   ]
+  const { data, setData, call, loading, error } = useApi('timeTrack', 'getAll')
+
+  useEffect(() => {
+    call()
+  }, [])
   return (
     <>
       <div style={{ padding: 24 }}>
-        <TrackerGroup data={data} />
-        <TrackerGroup data={data} />
+        <AddTT />
+
+        <Table
+          size="large"
+          scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
+          loading={loading}
+          rowKey={record => record.id}
+          columns={columns}
+          dataSource={data ?? []}
+          pagination={{
+            position: ['bottomCenter'],
+            responsive: true,
+            showQuickJumper: false,
+            showLessItems: true,
+            showTotal: total => `Total ${total} clients`,
+            showSizeChanger: false,
+          }}
+        />
       </div>
     </>
   )

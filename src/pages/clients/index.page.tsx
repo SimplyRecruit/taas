@@ -11,11 +11,12 @@ import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
+import { ColumnsType } from 'antd/es/table'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
-  const columns = [
+  const columns: ColumnsType<Client> = [
     {
       title: 'Abbreviation',
       dataIndex: 'abbr',
@@ -94,6 +95,7 @@ export default function Clients() {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
+      fixed: 'right',
       render: (record: Client) => (
         <span>
           <FiEdit
@@ -191,7 +193,7 @@ export default function Clients() {
       </div>
       <Table
         size="large"
-        scroll={{ y: 'calc(100vh - 320px)' }}
+        scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
         rowClassName={record => {
           if (selectedRowKey == record.id) {
             return 'ant-table-row-selected'
