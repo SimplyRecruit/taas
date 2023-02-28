@@ -2,31 +2,19 @@ import moment from 'dayjs'
 import {
   Input,
   Form,
-  Row,
-  Col,
-  Drawer,
   Button,
-  Space,
   DatePicker,
-  Radio,
   Select,
-  Switch,
   Checkbox,
   InputNumber,
+  Collapse,
 } from 'antd'
-import {
-  Project,
-  ProjectCreateBody,
-  ProjectUpdateBody,
-  TTBatchCreateBody,
-  TTCreateBody,
-} from 'models'
-import { CloseOutlined } from '@ant-design/icons'
-import { momentToDate, stringToDate } from '@/util'
+import { Project, TTBatchCreateBody, TTCreateBody } from 'models'
+import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
-import { ALL_UUID } from '~/common/Config'
+import SpreadSheet from '@/pages/tracker/components/SpreadSheet'
 
 interface RenderProps {
   value?: Project | null
@@ -41,7 +29,6 @@ export default function AddTT({
   onCancel,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
-  const [batchForm] = Form.useForm<TTBatchCreateBody>()
   const [batch, setBatch] = useState('')
   const { call: callClient, data: dataClient } = useApi('client', 'getAll')
   const { data: dataProject, call: callProject } = useApi('project', 'getAll')
@@ -181,29 +168,32 @@ export default function AddTT({
           Add
         </Button>
       </Form>
-      <Form form={batchForm}>
-        <Input.TextArea
-          rows={4}
-          value={batch}
-          onChange={e => setBatch(e.target.value)}
-        />
-        <Button
-          type="primary"
-          onClick={async () => {
-            try {
-              const returned = await callBatchCreate(
-                await TTBatchCreateBody.parse(batch)
-              )
-              console.log(returned)
-            } catch (error) {
-              console.log(error)
-            }
-            return
-          }}
-        >
-          Batch Add
-        </Button>
-      </Form>
+      <Collapse>
+        <Collapse.Panel header="Batch Addition" key="1">
+          {/* <Input.TextArea
+            rows={4}
+            value={batch}
+            onChange={e => setBatch(e.target.value)}
+          /> */}
+          <SpreadSheet />
+          <Button
+            type="primary"
+            onClick={async () => {
+              try {
+                const returned = await callBatchCreate(
+                  await TTBatchCreateBody.parse(batch)
+                )
+                console.log(returned)
+              } catch (error) {
+                console.log(error)
+              }
+              return
+            }}
+          >
+            Batch Add
+          </Button>
+        </Collapse.Panel>
+      </Collapse>
     </>
   )
 }
