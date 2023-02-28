@@ -185,8 +185,15 @@ export default class TimeTrackController {
             continue
           }
           // Inserting to table
-          // TODO: Insert
-          resBodies.push(new TTCreateResBody({ id: 'oluştu' }))
+          const { id } = await em.save(
+            TTEntity.create({
+              ...body,
+              resource,
+              client,
+              project,
+            })
+          )
+          resBodies.push(new TTCreateResBody({ id }))
         }
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
