@@ -178,6 +178,9 @@ export default function AddTT({
           {dataClient && dataProject && (
             <>
               <BatchSpreadSheet
+                onChange={body => {
+                  console.log(body)
+                }}
                 clientAbbrs={dataClient.map(e => e.abbr)}
                 projectAbbrs={dataProject.map(e => e.abbr)}
               />
