@@ -13,7 +13,7 @@ interface Props {
   projectAbbrs: string[]
 }
 
-export default function SpreadSheet({ clientAbbrs, projectAbbrs }: Props) {
+export default function BatchSpreadSheet({ clientAbbrs, projectAbbrs }: Props) {
   const ref = useRef(null as unknown as JspreadsheetInstanceElement)
   const spreadSheetLoaded = useRef(false)
   useEffect(() => {
@@ -76,15 +76,14 @@ export default function SpreadSheet({ clientAbbrs, projectAbbrs }: Props) {
         console.log(data)
       },
     }
-    async function name() {
+    ;(async () => {
       if (!spreadSheetLoaded.current) {
         spreadSheetLoaded.current = true
         const jspreadsheet = (await import('jspreadsheet-ce')).default
         const instance = jspreadsheet(ref.current, options)
         // instance.hideIndex()
       }
-    }
-    name()
+    })()
   }, [])
 
   return (

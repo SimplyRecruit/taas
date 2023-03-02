@@ -14,7 +14,7 @@ import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
-import SpreadSheet from '@/pages/tracker/components/SpreadSheet'
+import BatchSpreadSheet from '@/pages/tracker/components/BatchSpreadSheet'
 
 interface RenderProps {
   value?: Project | null
@@ -177,9 +177,9 @@ export default function AddTT({
           /> */}
           {dataClient && dataProject && (
             <>
-              <SpreadSheet
-                clientAbbrs={dataClient?.map(e => e.abbr) || []}
-                projectAbbrs={dataProject?.map(e => e.abbr) || []}
+              <BatchSpreadSheet
+                clientAbbrs={dataClient.map(e => e.abbr)}
+                projectAbbrs={dataProject.map(e => e.abbr)}
               />
               <Button
                 type="primary"
