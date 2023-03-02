@@ -38,7 +38,7 @@ export default function SpreadSheet() {
             { id: 'falan', name: 'İstanbul' },
           ],
         },
-        { title: 'Hour', type: 'numeric', mask: '#.##' },
+        { title: 'Hour', type: 'numeric', mask: '000' },
         { title: 'Description', type: 'text' },
         { title: 'Billable', type: 'checkbox' },
         { title: 'Ticket No', type: 'text' },
