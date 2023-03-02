@@ -175,23 +175,30 @@ export default function AddTT({
             value={batch}
             onChange={e => setBatch(e.target.value)}
           /> */}
-          <SpreadSheet />
-          <Button
-            type="primary"
-            onClick={async () => {
-              try {
-                const returned = await callBatchCreate(
-                  await TTBatchCreateBody.parse(batch)
-                )
-                console.log(returned)
-              } catch (error) {
-                console.log(error)
-              }
-              return
-            }}
-          >
-            Batch Add
-          </Button>
+          {dataClient && dataProject && (
+            <>
+              <SpreadSheet
+                clientAbbrs={dataClient?.map(e => e.abbr) || []}
+                projectAbbrs={dataProject?.map(e => e.abbr) || []}
+              />
+              <Button
+                type="primary"
+                onClick={async () => {
+                  try {
+                    const returned = await callBatchCreate(
+                      await TTBatchCreateBody.parse(batch)
+                    )
+                    console.log(returned)
+                  } catch (error) {
+                    console.log(error)
+                  }
+                  return
+                }}
+              >
+                Batch Add
+              </Button>
+            </>
+          )}
         </Collapse.Panel>
       </Collapse>
     </>

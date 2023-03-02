@@ -8,15 +8,16 @@ import 'jsuites/dist/jsuites.css'
 import styles from './index.module.css'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 
-export default function SpreadSheet() {
+interface Props {
+  clientAbbrs: string[]
+  projectAbbrs: string[]
+}
+
+export default function SpreadSheet({ clientAbbrs, projectAbbrs }: Props) {
   const ref = useRef(null as unknown as JspreadsheetInstanceElement)
   const spreadSheetLoaded = useRef(false)
   useEffect(() => {
     const options: JSpreadsheetOptions = {
-      // onevent: e => {
-      //   console.log(e)
-      //   return true
-      // },
       tableOverflow: true,
       columnResize: false,
       sorting: false as any,
@@ -33,10 +34,7 @@ export default function SpreadSheet() {
         {
           title: 'Client',
           type: 'autocomplete',
-          source: [
-            { id: 'a2', name: 'a2' },
-            { id: 'falan', name: 'İstanbul' },
-          ],
+          source: clientAbbrs.map(e => ({ id: e, name: e })),
         },
         { title: 'Hour', type: 'numeric', mask: '000' },
         { title: 'Description', type: 'text' },
@@ -45,7 +43,7 @@ export default function SpreadSheet() {
         {
           title: 'Project',
           type: 'autocomplete',
-          source: [{ id: 'A101', name: 'A101' }],
+          source: projectAbbrs.map(e => ({ id: e, name: e })),
         },
       ],
       allowManualInsertColumn: false,
