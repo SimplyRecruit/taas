@@ -317,7 +317,7 @@ export default function AddTT({
             pagination={false}
           />
         )}
-        {errorBatchCreate && <div>Hata</div>}
+        {errorBatchCreate && !loadingBatchCreate && <div>Hata</div>}
       </Modal>
     </>
   )
