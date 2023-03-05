@@ -232,19 +232,13 @@ export default function AddTT({
         onCancel={() => {
           setShowResultsModal(false)
         }}
-        footer={[
-          <Button
-            key="close"
-            onClick={() => {
-              setShowResultsModal(false)
-            }}
-          >
-            Close
-          </Button>,
-          <Button key="retry" type="primary" onClick={retryFailedRows}>
-            Retry Failed Rows
-          </Button>,
-        ]}
+        footer={
+          dataBatchCreate &&
+          !loadingBatchCreate &&
+          dataBatchCreate.some(e => !e.succeeded)
+            ? [<CloseButton key="close" />, <RetryButton key="retry" />]
+            : [<CloseButton key="close" />]
+        }
       >
         {loadingBatchCreate && (
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -327,4 +321,24 @@ export default function AddTT({
       </Modal>
     </>
   )
+
+  function CloseButton() {
+    return (
+      <Button
+        onClick={() => {
+          setShowResultsModal(false)
+        }}
+      >
+        Close
+      </Button>
+    )
+  }
+
+  function RetryButton() {
+    return (
+      <Button type="primary" onClick={retryFailedRows}>
+        Retry Failed Rows
+      </Button>
+    )
+  }
 }
