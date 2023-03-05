@@ -10,24 +10,53 @@ import { DEFAULT_DATE_FORMAT } from '@/constants'
 import { TTBatchCreateBody, TTCreateBody } from 'models'
 
 interface Props {
+  ssData: any[][]
   clientAbbrs: string[]
   projectAbbrs: string[]
   onChange: (body: TTBatchCreateBody) => void
 }
 
 export default function BatchSpreadSheet({
+  ssData,
   clientAbbrs,
   projectAbbrs,
   onChange,
 }: Props) {
   const ref = useRef(null as unknown as JspreadsheetInstanceElement)
   const spreadSheetLoaded = useRef(false)
+  function onSsDataChange() {
+    console.log('hmm')
+    if (!ref.current.jspreadsheet) return
+    const data = ref.current.jspreadsheet.getData()
+    if (data[data.length - 1].every(e => !e)) data.pop()
+    const body = TTBatchCreateBody.create({
+      bodies: data.map(e =>
+        TTCreateBody.create({
+          date: new Date(e[0] as string),
+          clientAbbr: e[1] as string,
+          hour: Number(e[2]),
+          description: e[3] as string,
+          billable: e[4] as boolean,
+          ticketNo: e[5] as string,
+          projectAbbr: e[6] as string,
+        })
+      ),
+    })
+    onChange(body)
+  }
+  useEffect(() => {
+    if (spreadSheetLoaded.current && ref.current.jspreadsheet) {
+      ref.current.jspreadsheet.setData(ssData)
+      onSsDataChange()
+    }
+  }, [ssData])
   useEffect(() => {
     const options: JSpreadsheetOptions = {
+      rowDrag: false,
       tableOverflow: true,
       columnResize: false,
       columnSorting: false,
-      data: [[]],
+      data: ssData,
       columns: [
         {
           title: 'Date',
@@ -42,7 +71,7 @@ export default function BatchSpreadSheet({
           type: 'autocomplete',
           source: clientAbbrs.map(e => ({ id: e, name: e })),
         },
-        { title: 'Hour', type: 'numeric', mask: '000', width: 20 },
+        { title: 'Hour', type: 'numeric', mask: '000' },
         { title: 'Description', type: 'text' },
         { title: 'Billable', type: 'checkbox' },
         { title: 'Ticket No', type: 'text' },
@@ -76,32 +105,13 @@ export default function BatchSpreadSheet({
         }
         return copiedText
       },
-      onchange: e => {
-        if (!e.jspreadsheet) return
-        const data = e.jspreadsheet.getData()
-        if (data[data.length - 1].every(e => !e)) data.pop()
-        const body = TTBatchCreateBody.create({
-          bodies: data.map(e =>
-            TTCreateBody.create({
-              date: new Date(e[0] as string),
-              clientAbbr: e[1] as string,
-              hour: Number(e[2]),
-              description: e[3] as string,
-              billable: e[4] as boolean,
-              ticketNo: e[5] as string,
-              projectAbbr: e[6] as string,
-            })
-          ),
-        })
-        onChange(body)
-      },
+      onchange: onSsDataChange,
     }
     ;(async () => {
       if (!spreadSheetLoaded.current) {
         spreadSheetLoaded.current = true
         const jspreadsheet = (await import('jspreadsheet-ce')).default
-        const instance = jspreadsheet(ref.current, options)
-        // Setting index column width
+        jspreadsheet(ref.current, options)
         ref.current
           .querySelector('table>colgroup>col')
           ?.setAttribute('width', '15')

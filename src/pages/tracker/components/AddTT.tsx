@@ -8,9 +8,14 @@ import {
   Checkbox,
   InputNumber,
   Collapse,
+  Modal,
+  Spin,
+  Table,
+  Tooltip,
 } from 'antd'
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { Project, TTBatchCreateBody, TTCreateBody } from 'models'
-import { momentToDate } from '@/util'
+import { formatDate, momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
@@ -29,17 +34,21 @@ export default function AddTT({
   onCancel,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
-  const [batch, setBatch] = useState('')
+  const [showResultsModal, setShowResultsModal] = useState(false)
+  const [batch, setBatch] = useState<TTBatchCreateBody | null>(null)
+  const [batchData, setBatchData] = useState<any[][]>([[]])
   const { call: callClient, data: dataClient } = useApi('client', 'getAll')
   const { data: dataProject, call: callProject } = useApi('project', 'getAll')
   const { call: callCreate, loading: loadingCreate } = useApi(
     'timeTrack',
     'create'
   )
-  const { call: callBatchCreate, loading: loadingBatchCreate } = useApi(
-    'timeTrack',
-    'batchCreate'
-  )
+  const {
+    call: callBatchCreate,
+    data: dataBatchCreate,
+    loading: loadingBatchCreate,
+    error: errorBatchCreate,
+  } = useApi('timeTrack', 'batchCreate')
 
   useEffect(() => {
     form.resetFields()
@@ -59,6 +68,27 @@ export default function AddTT({
     } catch (error) {
       /* empty */
     }
+  }
+
+  async function performBatchCreation() {
+    try {
+      if (batch === null) return
+      setShowResultsModal(true)
+      await callBatchCreate(batch)
+    } catch (error) {
+      console.log(error)
+    }
+    return
+  }
+
+  function retryFailedRows() {
+    const indicesOfFailedRows =
+      dataBatchCreate?.reduce<number[]>(
+        (p, c, i) => (c.error ? [...p, i] : p),
+        []
+      ) ?? []
+    setBatchData(batchData.filter((e, i) => indicesOfFailedRows.includes(i)))
+    setShowResultsModal(false)
   }
 
   return (
@@ -168,35 +198,21 @@ export default function AddTT({
           Add
         </Button>
       </Form>
-      <Collapse>
+      <Collapse style={{ marginTop: 10, marginBottom: 10 }}>
         <Collapse.Panel header="Batch Addition" key="1">
-          {/* <Input.TextArea
-            rows={4}
-            value={batch}
-            onChange={e => setBatch(e.target.value)}
-          /> */}
           {dataClient && dataProject && (
             <>
               <BatchSpreadSheet
-                onChange={body => {
-                  console.log(body)
-                }}
+                ssData={batchData}
+                onChange={setBatch}
                 clientAbbrs={dataClient.map(e => e.abbr)}
                 projectAbbrs={dataProject.map(e => e.abbr)}
               />
               <Button
+                style={{ marginTop: 10 }}
                 type="primary"
-                onClick={async () => {
-                  try {
-                    const returned = await callBatchCreate(
-                      await TTBatchCreateBody.parse(batch)
-                    )
-                    console.log(returned)
-                  } catch (error) {
-                    console.log(error)
-                  }
-                  return
-                }}
+                disabled={batch === null}
+                onClick={performBatchCreation}
               >
                 Batch Add
               </Button>
@@ -204,6 +220,111 @@ export default function AddTT({
           )}
         </Collapse.Panel>
       </Collapse>
+      <Modal
+        width={1000}
+        closable={false}
+        maskClosable={false}
+        open={showResultsModal}
+        title="Batch Creation"
+        onOk={() => {
+          setShowResultsModal(false)
+        }}
+        onCancel={() => {
+          setShowResultsModal(false)
+        }}
+        footer={[
+          <Button
+            key="close"
+            onClick={() => {
+              setShowResultsModal(false)
+            }}
+          >
+            Close
+          </Button>,
+          <Button key="retry" type="primary" onClick={retryFailedRows}>
+            Retry Failed Rows
+          </Button>,
+        ]}
+      >
+        {loadingBatchCreate && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Spin tip="Performing Batch Creation" />
+          </div>
+        )}
+        {dataBatchCreate && !loadingBatchCreate && (
+          <Table
+            dataSource={
+              dataBatchCreate?.map((e, i) => ({ ...e, ...batchData[i] })) ?? []
+            }
+            rowKey={(r, i) => `${i}`}
+            columns={[
+              {
+                title: '#',
+                key: 'index',
+                render: (text, record, index) => index + 1,
+              },
+              {
+                title: 'Date',
+                dataIndex: '0',
+                key: 'date',
+                render: (value: Date) => <span>{formatDate(value)}</span>,
+              },
+              {
+                title: 'Client',
+                dataIndex: '1',
+                key: 'client',
+              },
+              {
+                title: 'Hour',
+                dataIndex: '2',
+                key: 'hour',
+              },
+              {
+                title: 'Description',
+                dataIndex: '3',
+                key: 'description',
+              },
+              {
+                title: 'Billabe',
+                dataIndex: '4',
+                key: 'billable',
+                render: value => (value ? 'YES' : 'NO'),
+              },
+              {
+                title: 'Ticket no',
+                dataIndex: '5',
+                key: 'ticketNo',
+              },
+              {
+                title: 'Project',
+                dataIndex: '6',
+                key: 'project',
+              },
+              {
+                title: 'Result',
+                key: 'succeeded',
+                dataIndex: 'succeeded',
+                render: (value, record) =>
+                  value ? (
+                    <Tooltip placement="right" title="Success">
+                      <CheckCircleOutlined
+                        style={{ fontSize: 18, color: '#0a0' }}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip placement="right" title={record.error}>
+                      <CloseCircleOutlined
+                        style={{ fontSize: 18, color: '#a00' }}
+                      />
+                    </Tooltip>
+                  ),
+              },
+            ]}
+            pagination={false}
+          />
+        )}
+        {errorBatchCreate && <div>Hata</div>}
+      </Modal>
     </>
   )
 }
