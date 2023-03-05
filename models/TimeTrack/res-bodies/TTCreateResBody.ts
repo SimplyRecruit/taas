@@ -1,6 +1,7 @@
 export default class TTCreateResBody {
   id: string | null = null
   error: string | null = null
+  succeeded: boolean
   constructor({
     id = null,
     error = null,
@@ -10,5 +11,7 @@ export default class TTCreateResBody {
   }) {
     this.id = id
     this.error = error
+    if (this.error) this.succeeded = false
+    else this.succeeded = true
   }
 }
