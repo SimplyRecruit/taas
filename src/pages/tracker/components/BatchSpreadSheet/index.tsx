@@ -55,6 +55,7 @@ export default function BatchSpreadSheet({
       tableOverflow: true,
       columnResize: false,
       columnSorting: false,
+      allowInsertColumn: false,
       data: ssData,
       columns: [
         {
