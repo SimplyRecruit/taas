@@ -35,7 +35,7 @@ export default function AddBatchTT({
     data: dataBatchCreate,
     loading: loadingBatchCreate,
     error: errorBatchCreate,
-  } = useApi('timeTrack', 'batchCreate')
+  } = useApi('timeTrack', 'batchCreate', [])
 
   async function performBatchCreation() {
     try {
@@ -49,11 +49,10 @@ export default function AddBatchTT({
   }
 
   function retryFailedRows() {
-    const indicesOfFailedRows =
-      dataBatchCreate?.reduce<number[]>(
-        (p, c, i) => (c.error ? [...p, i] : p),
-        []
-      ) ?? []
+    const indicesOfFailedRows = dataBatchCreate.reduce<number[]>(
+      (p, c, i) => (c.error ? [...p, i] : p),
+      []
+    )
     setSsData(ssData.filter((_e, i) => indicesOfFailedRows.includes(i)))
     setShowResultsModal(false)
   }
@@ -163,20 +162,17 @@ export default function AddBatchTT({
         open={showResultsModal}
         title="Batch Creation"
         footer={
-          dataBatchCreate &&
-          !loadingBatchCreate &&
-          dataBatchCreate.some(e => !e.succeeded)
+          !loadingBatchCreate && dataBatchCreate.some(e => !e.succeeded)
             ? [<CloseButton key="close" />, <RetryButton key="retry" />]
             : [<CloseButton key="close" />]
         }
       >
         {loadingBatchCreate ? (
           <LoadingComponent />
+        ) : errorBatchCreate ? (
+          <ErrorComponent />
         ) : (
-          <>
-            {dataBatchCreate && <ResultsTable />}
-            {errorBatchCreate && <ErrorComponent />}
-          </>
+          <ResultsTable />
         )}
       </Modal>
     </>
@@ -190,7 +186,7 @@ export default function AddBatchTT({
     return (
       <Table
         dataSource={
-          dataBatchCreate?.map((e, i) => ({ ...e, ...ssData[i] })) ?? []
+          dataBatchCreate.map((e, i) => ({ ...e, ...ssData[i] })) ?? []
         }
         rowKey={(_r, i) => `result-${i}`}
         columns={columns}
