@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { formatDate } from '@/util'
 import { Table } from 'antd'
 import { ClientRelation, Project } from 'models'
+import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 
 export default function Tracker() {
   const columns = [
@@ -49,23 +50,38 @@ export default function Tracker() {
       render: (value: Project) => <span>{value.abbr}</span>,
     },
   ]
-  const { data, setData, call, loading, error } = useApi('timeTrack', 'getAll')
+  const {
+    data: dataTT,
+    call: callTT,
+    loading: loadingTT,
+  } = useApi('timeTrack', 'getAll')
+  const { data: dataClient, call: callClient } = useApi('client', 'getAll')
+  const { data: dataProject, call: callProject } = useApi('project', 'getAll')
 
   useEffect(() => {
-    call()
+    callTT()
+    callClient()
+    callProject()
   }, [])
   return (
     <>
       <div style={{ padding: 24 }}>
-        <AddTT />
+        <AddTT
+          clientOptions={dataClient ?? []}
+          projectOptions={dataProject ?? []}
+        />
+        <AddBatchTT
+          clientOptions={dataClient ?? []}
+          projectOptions={dataProject ?? []}
+        />
 
         <Table
           size="large"
           scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
-          loading={loading}
+          loading={loadingTT}
           rowKey={record => record.id}
           columns={columns}
-          dataSource={data ?? []}
+          dataSource={dataTT ?? []}
           pagination={{
             position: ['bottomCenter'],
             responsive: true,
