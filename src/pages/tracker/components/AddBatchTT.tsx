@@ -223,7 +223,11 @@ export default function AddBatchTT({
             (p, c, i) => (c.error ? [...p, i] : p),
             []
           )
-          setSsData(ssData.filter((_e, i) => indicesOfFailedRows.includes(i)))
+          const newSsData = ssData.filter((_e, i) =>
+            indicesOfFailedRows.includes(i)
+          )
+          if (!newSsData.length) newSsData.push([])
+          setSsData(newSsData)
           setShowResultsModal(false)
         }}
       >
