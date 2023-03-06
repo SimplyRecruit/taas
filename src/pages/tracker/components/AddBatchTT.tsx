@@ -48,15 +48,6 @@ export default function AddBatchTT({
     return
   }
 
-  function retryFailedRows() {
-    const indicesOfFailedRows = dataBatchCreate.reduce<number[]>(
-      (p, c, i) => (c.error ? [...p, i] : p),
-      []
-    )
-    setSsData(ssData.filter((_e, i) => indicesOfFailedRows.includes(i)))
-    setShowResultsModal(false)
-  }
-
   const columns: any = [
     {
       title: '#',
@@ -146,7 +137,7 @@ export default function AddBatchTT({
               <Button
                 style={{ marginTop: 10 }}
                 type="primary"
-                disabled={batch === null}
+                disabled={batch === null || !batch.bodies.length}
                 onClick={performBatchCreation}
               >
                 Batch Add
@@ -162,9 +153,10 @@ export default function AddBatchTT({
         open={showResultsModal}
         title="Batch Creation"
         footer={
-          !loadingBatchCreate && dataBatchCreate.some(e => !e.succeeded)
-            ? [<CloseButton key="close" />, <RetryButton key="retry" />]
-            : [<CloseButton reset key="close" />]
+          !loadingBatchCreate && [
+            <CloseButton key="close" />,
+            <ClearAndCloseButton key="clear" />,
+          ]
         }
       >
         {loadingBatchCreate ? (
@@ -216,10 +208,21 @@ export default function AddBatchTT({
     )
   }
 
-  function RetryButton() {
+  function ClearAndCloseButton() {
+    if (errorBatchCreate) return null
     return (
-      <Button type="primary" onClick={retryFailedRows}>
-        Retry Failed Rows
+      <Button
+        type="primary"
+        onClick={() => {
+          const indicesOfFailedRows = dataBatchCreate.reduce<number[]>(
+            (p, c, i) => (c.error ? [...p, i] : p),
+            []
+          )
+          setSsData(ssData.filter((_e, i) => indicesOfFailedRows.includes(i)))
+          setShowResultsModal(false)
+        }}
+      >
+        Clear Processed and Close
       </Button>
     )
   }
