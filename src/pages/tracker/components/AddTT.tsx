@@ -18,11 +18,13 @@ interface RenderProps {
   projectOptions: Project[]
   clientOptions: Client[]
   onAdd: (newTT: TT) => void
+  onError: (err: unknown) => void
 }
 export default function AddTT({
   projectOptions,
   clientOptions,
   onAdd,
+  onError,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
   const { call: callCreate, loading: loadingCreate } = useApi(
@@ -42,7 +44,7 @@ export default function AddTT({
       form.resetFields()
       onAdd(TT.create({ id: newTTId, ...body }))
     } catch (error) {
-      /* empty */
+      onError(error)
     }
   }
 

@@ -4,7 +4,7 @@ import AddTT from '@/pages/tracker/components/AddTT'
 import useApi from '@/services/useApi'
 import { useCallback, useEffect, useState } from 'react'
 import { formatDate } from '@/util'
-import { Table } from 'antd'
+import { message, Table } from 'antd'
 import { TableQueryParameters } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 
@@ -48,6 +48,7 @@ export default function Tracker() {
       key: 'projectAbbr',
     },
   ]
+  const [messageApi, contextHolder] = message.useMessage()
   const {
     data: dataTT,
     call: callTT,
@@ -85,11 +86,18 @@ export default function Tracker() {
 
   function onAdd() {
     getTTs()
+    messageApi.success('Timetrack added')
+  }
+
+  function onError() {
+    messageApi.error('Invalid timetrack')
   }
   return (
     <>
+      {contextHolder}
       <div style={{ padding: 24 }}>
         <AddTT
+          onError={onError}
           onAdd={onAdd}
           clientOptions={dataClient}
           projectOptions={dataProject}
