@@ -164,7 +164,7 @@ export default function AddBatchTT({
         footer={
           !loadingBatchCreate && dataBatchCreate.some(e => !e.succeeded)
             ? [<CloseButton key="close" />, <RetryButton key="retry" />]
-            : [<CloseButton key="close" />]
+            : [<CloseButton reset key="close" />]
         }
       >
         {loadingBatchCreate ? (
@@ -203,10 +203,11 @@ export default function AddBatchTT({
     )
   }
 
-  function CloseButton() {
+  function CloseButton({ reset = false }: { reset?: boolean }) {
     return (
       <Button
         onClick={() => {
+          if (reset) setSsData([[]])
           setShowResultsModal(false)
         }}
       >
