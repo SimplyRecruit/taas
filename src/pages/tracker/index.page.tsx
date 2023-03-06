@@ -103,7 +103,9 @@ export default function Tracker() {
           projectOptions={dataProject}
         />
         <AddBatchTT
-          onAdd={onAdd}
+          onAdd={() => {
+            getTTs()
+          }}
           clientOptions={dataClient}
           projectOptions={dataProject}
         />
