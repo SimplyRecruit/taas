@@ -36,6 +36,7 @@ export default class TimeTrackController {
       entityObjects = await TTEntity.find({
         where: { resource: { id: resource.id } },
         relations: { client: true, project: true },
+        order: { date: 'DESC' },
       })
     })
 
