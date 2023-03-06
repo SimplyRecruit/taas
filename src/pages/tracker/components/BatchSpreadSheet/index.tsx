@@ -25,7 +25,6 @@ export default function BatchSpreadSheet({
   const ref = useRef(null as unknown as JspreadsheetInstanceElement)
   const spreadSheetLoaded = useRef(false)
   function onSsDataChange() {
-    console.log('hmm')
     if (!ref.current.jspreadsheet) return
     const data = ref.current.jspreadsheet.getData()
     if (data[data.length - 1].every(e => !e)) data.pop()

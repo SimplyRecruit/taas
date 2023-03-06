@@ -5,7 +5,7 @@ import useApi from '@/services/useApi'
 import { useEffect } from 'react'
 import { formatDate } from '@/util'
 import { Table } from 'antd'
-import { ClientRelation, Project, TT } from 'models'
+import { TT } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 
 export default function Tracker() {
@@ -18,9 +18,8 @@ export default function Tracker() {
     },
     {
       title: 'Client',
-      dataIndex: 'client',
-      key: 'client',
-      render: (value: ClientRelation) => <span>{value.abbr}</span>,
+      dataIndex: 'clientAbbr',
+      key: 'clientAbbr',
     },
     {
       title: 'Hour',
@@ -36,7 +35,7 @@ export default function Tracker() {
       title: 'Billabe',
       dataIndex: 'billable',
       key: 'billable',
-      render: (value: boolean) => <span>{value ? 'yes' : 'no'}</span>,
+      render: (value: boolean) => (value ? 'YES' : 'NO'),
     },
     {
       title: 'Ticket no',
@@ -45,9 +44,8 @@ export default function Tracker() {
     },
     {
       title: 'Project',
-      dataIndex: 'project',
-      key: 'project',
-      render: (value: Project) => <span>{value.abbr}</span>,
+      dataIndex: 'projectAbbr',
+      key: 'projectAbbr',
     },
   ]
   const {
@@ -88,7 +86,7 @@ export default function Tracker() {
           loading={loadingTT}
           rowKey={record => record.id}
           columns={columns}
-          dataSource={dataTT ?? []}
+          dataSource={dataTT}
           pagination={{
             position: ['bottomCenter'],
             responsive: true,

@@ -45,10 +45,10 @@ export default class TimeTrackController {
           id,
           description,
           date,
-          client: { id: client.id, abbr: client.abbr, name: client.name },
+          clientAbbr: client.abbr,
           billable,
           hour,
-          project,
+          projectAbbr: project.abbr,
           ticketNo,
         })
     )

@@ -40,25 +40,7 @@ export default function AddTT({
     try {
       const newTTId = await callCreate(body)
       form.resetFields()
-      const client = clientOptions.find(c => c.abbr === body.clientAbbr)!
-      const clientRelation = ClientRelation.create({
-        abbr: client.abbr,
-        id: client.id,
-        name: client.name,
-      })
-      const project = projectOptions.find(c => c.abbr === body.clientAbbr)!
-      onAdd(
-        TT.create({
-          id: newTTId,
-          billable: body.billable,
-          description: body.description,
-          hour: body.hour,
-          ticketNo: body.ticketNo,
-          date: body.date,
-          client: clientRelation,
-          project,
-        })
-      )
+      onAdd(TT.create({ id: newTTId, ...body }))
     } catch (error) {
       /* empty */
     }
