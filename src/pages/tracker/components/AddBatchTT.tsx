@@ -16,7 +16,7 @@ import { RenderFunction } from 'antd/es/tooltip'
 interface Props {
   projectOptions: Project[]
   clientOptions: Client[]
-  onAdd?: (newProject: Project) => void
+  onAdd: () => void
   onUpdate?: (updatedProject: Project) => void
   onCancel?: () => void
 }
@@ -42,6 +42,7 @@ export default function AddBatchTT({
       if (batch === null) return
       setShowResultsModal(true)
       await callBatchCreate(batch)
+      onAdd()
     } catch (error) {
       /* empty */
     }
@@ -134,14 +135,7 @@ export default function AddBatchTT({
                 clientAbbrs={clientOptions.map(e => e.abbr)}
                 projectAbbrs={projectOptions.map(e => e.abbr)}
               />
-              <Button
-                style={{ marginTop: 10 }}
-                type="primary"
-                disabled={batch === null || !batch.bodies.length}
-                onClick={performBatchCreation}
-              >
-                Batch Add
-              </Button>
+              <AddButton />
             </>
           )}
         </Collapse.Panel>
@@ -170,6 +164,19 @@ export default function AddBatchTT({
     </>
   )
 
+  function AddButton() {
+    return (
+      <Button
+        style={{ marginTop: 10 }}
+        type="primary"
+        disabled={batch === null || !batch.bodies.length}
+        onClick={performBatchCreation}
+      >
+        Batch Add
+      </Button>
+    )
+  }
+
   function ErrorComponent() {
     return <div>Hata</div>
   }
@@ -177,9 +184,7 @@ export default function AddBatchTT({
   function ResultsTable() {
     return (
       <Table
-        dataSource={
-          dataBatchCreate.map((e, i) => ({ ...e, ...ssData[i] })) ?? []
-        }
+        dataSource={dataBatchCreate.map((e, i) => ({ ...e, ...ssData[i] }))}
         rowKey={(_r, i) => `result-${i}`}
         columns={columns}
         pagination={false}

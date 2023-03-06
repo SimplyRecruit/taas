@@ -78,7 +78,13 @@ export default function Tracker() {
           clientOptions={dataClient}
           projectOptions={dataProject}
         />
-        <AddBatchTT clientOptions={dataClient} projectOptions={dataProject} />
+        <AddBatchTT
+          onAdd={() => {
+            callTT()
+          }}
+          clientOptions={dataClient}
+          projectOptions={dataProject}
+        />
 
         <Table
           size="large"
