@@ -75,9 +75,12 @@ export default function Tracker() {
   )
 
   useEffect(() => {
-    getTTs()
     callClient()
     callProject()
+  }, [])
+
+  useEffect(() => {
+    getTTs()
   }, [page, pageSize])
 
   function onAdd() {
