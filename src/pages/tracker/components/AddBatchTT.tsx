@@ -178,7 +178,11 @@ export default function AddBatchTT({
   }
 
   function ErrorComponent() {
-    return <div>Hata</div>
+    return (
+      <div>
+        Wrong data format. Check if all requirements of columns are satisfied
+      </div>
+    )
   }
 
   function ResultsTable() {
