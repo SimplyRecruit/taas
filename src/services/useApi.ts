@@ -17,7 +17,7 @@ export default function useApi<
   U extends keyof (typeof apis)[T],
   D extends ApiReturnType<T, U> | null
 >(api: T, method: U, defaultValue?: D) {
-  type StateType = D extends null
+  type StateType = D extends null | undefined
     ? ApiReturnType<T, U> | null
     : ApiReturnType<T, U>
   const [data, setData] = useState<StateType>(defaultValue ?? (null as any))
