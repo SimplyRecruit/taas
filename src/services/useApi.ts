@@ -14,9 +14,13 @@ type ApiReturnType<
 
 export default function useApi<
   T extends keyof typeof apis,
-  U extends keyof (typeof apis)[T]
->(api: T, method: U) {
-  const [data, setData] = useState<ApiReturnType<T, U> | null>(null)
+  U extends keyof (typeof apis)[T],
+  D extends ApiReturnType<T, U> | null
+>(api: T, method: U, defaultValue?: D) {
+  type StateType = D extends null | undefined
+    ? ApiReturnType<T, U> | null
+    : ApiReturnType<T, U>
+  const [data, setData] = useState<StateType>(defaultValue ?? (null as any))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 
@@ -28,11 +32,11 @@ export default function useApi<
           ...args: ApiFunctionType<(typeof apis)[T][U]>
         ) => Promise<AxiosResponse<ApiReturnType<T, U>>>
       )(...args)
-      setData(data)
+      setData(data as StateType)
       setError(null)
       return data
     } catch (e: any) {
-      setData(null)
+      setData(defaultValue as StateType)
       setError(e)
       throw e
     } finally {

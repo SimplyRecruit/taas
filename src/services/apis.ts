@@ -9,22 +9,22 @@ Client,
 ClientUpdateBody,
 ClientCreateBody,
 ClientAddResourceBody,
+Project,
+ProjectCreateBody,
+ProjectUpdateBody,
 Resource,
 ResourceUpdateBody,
+TableQueryParameters,
+TTGetAllResBody,
+TTCreateBody,
+TTBatchCreateBody,
+TTBatchCreateResBody,
 LoginReqBody,
 RegisterOrganizationReqBody,
 ResourceCreateBody,
 ResetPasswordReqBody,
 User,
-TableQueryParameters,
 WorkPeriod,
-Project,
-ProjectCreateBody,
-ProjectUpdateBody,
-TT,
-TTCreateBody,
-TTCreateResBody,
-TTBatchCreateBody,
 } from "models"
 
 function createAxiosInstance() {
@@ -127,6 +127,43 @@ export default {
             })
         },
     },
+    project: {
+        async getAll(
+        ) : Promise<AxiosResponse<Project[]>>
+        {
+            const route = "/project"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+            })
+        },
+        async create(
+            body: ProjectCreateBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/project"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async update(
+            body: ProjectUpdateBody,
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/project/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "patch",
+                url,
+                data: body,
+            })
+        },
+    },
     resource: {
         async getAll(
         ) : Promise<AxiosResponse<Resource[]>>
@@ -192,6 +229,44 @@ export default {
             return await createAxiosInstance().request({
                 method: "post",
                 url,
+            })
+        },
+    },
+    timeTrack: {
+        async getAll(
+            queries: TableQueryParameters,
+        ) : Promise<AxiosResponse<TTGetAllResBody>>
+        {
+            const route = "/time-track"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+                params: queries,
+            })
+        },
+        async create(
+            body: TTCreateBody,
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/time-track"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async batchCreate(
+            body: TTBatchCreateBody,
+        ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
+        {
+            const route = "/time-track/batch"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
             })
         },
     },
@@ -312,79 +387,6 @@ export default {
             const url = route
             return await createAxiosInstance().request({
                 method: "put",
-                url,
-                data: body,
-            })
-        },
-    },
-    project: {
-        async getAll(
-        ) : Promise<AxiosResponse<Project[]>>
-        {
-            const route = "/project"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-            })
-        },
-        async create(
-            body: ProjectCreateBody,
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/project"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async update(
-            body: ProjectUpdateBody,
-            params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/project/:id"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "patch",
-                url,
-                data: body,
-            })
-        },
-    },
-    timeTrack: {
-        async getAll(
-        ) : Promise<AxiosResponse<TT[]>>
-        {
-            const route = "/time-track"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-            })
-        },
-        async create(
-            body: TTCreateBody,
-        ) : Promise<AxiosResponse<TTCreateResBody>>
-        {
-            const route = "/time-track"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async batchCreate(
-            body: TTBatchCreateBody,
-        ) : Promise<AxiosResponse<TTCreateResBody[]>>
-        {
-            const route = "/time-track/batch"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
                 url,
                 data: body,
             })

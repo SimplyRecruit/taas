@@ -22,14 +22,6 @@ const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 console.log('ENV VAR TEST:', hostname, port)
 
-// Controllers
-import ClientController from '~/resources/Client/Controller'
-import ResourceController from '~/resources/Resource/Controller'
-import UserController from '~/resources/User/Controller'
-import WorkPeriodController from '~/resources/WorkPeriod/Controller'
-import ProjectController from '~/resources/Project/Controller'
-import TimeTrackController from '~/resources/TimeTrack/Controller'
-
 // Connecting to DB
 const dataSource = new DataSource({
   type: 'postgres',
@@ -64,14 +56,7 @@ smtp.setApiKey(process.env.SMTP_KEY!)
     useExpressServer(server, {
       authorizationChecker: authorizationChecker,
       currentUserChecker: currentUserChecker,
-      controllers: [
-        UserController,
-        ResourceController,
-        WorkPeriodController,
-        ClientController,
-        ProjectController,
-        TimeTrackController,
-      ],
+      controllers: [join(__dirname, './resources/**/*Controller.{ts,js}')],
       routePrefix: '/api',
       validation: {
         validationError: { target: false, value: false },

@@ -2,75 +2,49 @@ import moment from 'dayjs'
 import {
   Input,
   Form,
-  Row,
-  Col,
-  Drawer,
   Button,
-  Space,
   DatePicker,
-  Radio,
   Select,
-  Switch,
   Checkbox,
   InputNumber,
 } from 'antd'
-import {
-  Project,
-  ProjectCreateBody,
-  ProjectUpdateBody,
-  TTBatchCreateBody,
-  TTCreateBody,
-} from 'models'
-import { CloseOutlined } from '@ant-design/icons'
-import { momentToDate, stringToDate } from '@/util'
+import { Client, ClientRelation, Project, TT, TTCreateBody } from 'models'
+import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
-import { useEffect, useState } from 'react'
-import { ALL_UUID } from '~/common/Config'
+import { useEffect } from 'react'
 
 interface RenderProps {
-  value?: Project | null
-  onAdd?: (newProject: Project) => void
-  onUpdate?: (updatedProject: Project) => void
-  onCancel?: () => void
+  projectOptions: Project[]
+  clientOptions: Client[]
+  onAdd: (newTT: TT) => void
+  onError: (err: unknown) => void
 }
 export default function AddTT({
+  projectOptions,
+  clientOptions,
   onAdd,
-  value,
-  onUpdate,
-  onCancel,
+  onError,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
-  const [batchForm] = Form.useForm<TTBatchCreateBody>()
-  const [batch, setBatch] = useState('')
-  const { call: callClient, data: dataClient } = useApi('client', 'getAll')
-  const { data: dataProject, call: callProject } = useApi('project', 'getAll')
   const { call: callCreate, loading: loadingCreate } = useApi(
     'timeTrack',
     'create'
   )
-  const { call: callBatchCreate, loading: loadingBatchCreate } = useApi(
-    'timeTrack',
-    'batchCreate'
-  )
 
   useEffect(() => {
     form.resetFields()
-  }, [form, value])
-
-  useEffect(() => {
-    callClient()
-    callProject()
-  }, [])
+  }, [form])
 
   const loading = () => loadingCreate
 
   async function onFinish(body: TTCreateBody) {
     try {
-      await callCreate(body)
+      const newTTId = await callCreate(body)
       form.resetFields()
+      onAdd(TT.create({ id: newTTId, ...body }))
     } catch (error) {
-      /* empty */
+      onError(error)
     }
   }
 
@@ -113,7 +87,7 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a client"
-            options={dataClient?.map(e => ({
+            options={clientOptions?.map(e => ({
               value: e.abbr,
               label: `${e.abbr} - ${e.name}`,
             }))}
@@ -171,7 +145,7 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a project"
-            options={dataProject?.map(e => ({
+            options={projectOptions?.map(e => ({
               value: e.abbr,
               label: `${e.abbr} - ${e.name}`,
             }))}
@@ -179,29 +153,6 @@ export default function AddTT({
         </Form.Item>
         <Button type="primary" htmlType="submit" loading={loading()}>
           Add
-        </Button>
-      </Form>
-      <Form form={batchForm}>
-        <Input.TextArea
-          rows={4}
-          value={batch}
-          onChange={e => setBatch(e.target.value)}
-        />
-        <Button
-          type="primary"
-          onClick={async () => {
-            try {
-              const returned = await callBatchCreate(
-                await TTBatchCreateBody.parse(batch)
-              )
-              console.log(returned)
-            } catch (error) {
-              console.log(error)
-            }
-            return
-          }}
-        >
-          Batch Add
         </Button>
       </Form>
     </>

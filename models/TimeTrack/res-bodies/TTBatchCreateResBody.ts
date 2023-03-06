@@ -1,4 +1,4 @@
-export default class TTCreateResBody {
+export default class TTBatchCreateResBody {
   id: string | null = null
   error: string | null = null
   succeeded: boolean

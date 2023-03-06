@@ -9,6 +9,18 @@ export default class TableQueryParameters {
     this.offset = offset
   }
 
+  public static create({
+    sortBy,
+    pageSize,
+    page,
+  }: {
+    sortBy?: string[]
+    pageSize: number
+    page: number
+  }) {
+    return new this(sortBy, pageSize, (page - 1) * pageSize)
+  }
+
   @IsOptional()
   @Matches(sortByRegex, { each: true })
   private sortBy?: string[]
