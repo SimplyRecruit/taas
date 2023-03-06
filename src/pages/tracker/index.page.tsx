@@ -5,7 +5,7 @@ import useApi from '@/services/useApi'
 import { useEffect } from 'react'
 import { formatDate } from '@/util'
 import { Table } from 'antd'
-import { ClientRelation, Project } from 'models'
+import { ClientRelation, Project, TT } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 
 export default function Tracker() {
@@ -52,28 +52,35 @@ export default function Tracker() {
   ]
   const {
     data: dataTT,
+    setData: setDataTT,
     call: callTT,
     loading: loadingTT,
-  } = useApi('timeTrack', 'getAll')
-  const { data: dataClient, call: callClient } = useApi('client', 'getAll')
-  const { data: dataProject, call: callProject } = useApi('project', 'getAll')
+  } = useApi('timeTrack', 'getAll', [])
+  const { data: dataClient, call: callClient } = useApi('client', 'getAll', [])
+  const { data: dataProject, call: callProject } = useApi(
+    'project',
+    'getAll',
+    []
+  )
 
   useEffect(() => {
     callTT()
     callClient()
     callProject()
   }, [])
+
+  function onAdd(newTT: TT) {
+    setDataTT([...dataTT, newTT])
+  }
   return (
     <>
       <div style={{ padding: 24 }}>
         <AddTT
-          clientOptions={dataClient ?? []}
-          projectOptions={dataProject ?? []}
+          onAdd={onAdd}
+          clientOptions={dataClient}
+          projectOptions={dataProject}
         />
-        <AddBatchTT
-          clientOptions={dataClient ?? []}
-          projectOptions={dataProject ?? []}
-        />
+        <AddBatchTT clientOptions={dataClient} projectOptions={dataProject} />
 
         <Table
           size="large"

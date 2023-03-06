@@ -8,7 +8,7 @@ import {
   Checkbox,
   InputNumber,
 } from 'antd'
-import { Client, Project, TTCreateBody } from 'models'
+import { Client, ClientRelation, Project, TT, TTCreateBody } from 'models'
 import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
@@ -17,18 +17,12 @@ import { useEffect } from 'react'
 interface RenderProps {
   projectOptions: Project[]
   clientOptions: Client[]
-  value?: Project | null
-  onAdd?: (newProject: Project) => void
-  onUpdate?: (updatedProject: Project) => void
-  onCancel?: () => void
+  onAdd: (newTT: TT) => void
 }
 export default function AddTT({
   projectOptions,
   clientOptions,
   onAdd,
-  value,
-  onUpdate,
-  onCancel,
 }: RenderProps) {
   const [form] = Form.useForm<TTCreateBody>()
   const { call: callCreate, loading: loadingCreate } = useApi(
@@ -38,14 +32,33 @@ export default function AddTT({
 
   useEffect(() => {
     form.resetFields()
-  }, [form, value])
+  }, [form])
 
   const loading = () => loadingCreate
 
   async function onFinish(body: TTCreateBody) {
     try {
-      await callCreate(body)
+      const newTTId = await callCreate(body)
       form.resetFields()
+      const client = clientOptions.find(c => c.abbr === body.clientAbbr)!
+      const clientRelation = ClientRelation.create({
+        abbr: client.abbr,
+        id: client.id,
+        name: client.name,
+      })
+      const project = projectOptions.find(c => c.abbr === body.clientAbbr)!
+      onAdd(
+        TT.create({
+          id: newTTId,
+          billable: body.billable,
+          description: body.description,
+          hour: body.hour,
+          ticketNo: body.ticketNo,
+          date: body.date,
+          client: clientRelation,
+          project,
+        })
+      )
     } catch (error) {
       /* empty */
     }

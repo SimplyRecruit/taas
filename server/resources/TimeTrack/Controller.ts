@@ -20,7 +20,7 @@ import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ResourceEntity from '~/resources/Resource/Entity'
 import ClientEntity from '~/resources/Client/Entity'
-import TTCreateResBody from 'models/TimeTrack/res-bodies/TTCreateResBody'
+import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBody'
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 
 @JsonController('/time-track')
@@ -54,7 +54,7 @@ export default class TimeTrackController {
     )
   }
 
-  @Post(TTCreateResBody)
+  @Post(String)
   @Authorized(UserRole.ADMIN)
   async create(
     @Body() { clientAbbr, projectAbbr, ...body }: TTCreateBody,
@@ -128,16 +128,16 @@ export default class TimeTrackController {
       }
     })
 
-    return new TTCreateResBody({ id })
+    return id
   }
 
-  @Post([TTCreateResBody], '/batch')
+  @Post([TTBatchCreateResBody], '/batch')
   @Authorized(UserRole.ADMIN)
   async batchCreate(
     @Body() { bodies }: TTBatchCreateBody,
     @CurrentUser() currentUser: UserEntity
   ) {
-    const resBodies: TTCreateResBody[] = []
+    const resBodies: TTBatchCreateResBody[] = []
     await dataSource.transaction(async em => {
       try {
         const resource = await em.findOneOrFail(ResourceEntity, {
@@ -161,7 +161,9 @@ export default class TimeTrackController {
             relations: { organization: true },
           })
           if (!client) {
-            resBodies.push(new TTCreateResBody({ error: 'invalid-client' }))
+            resBodies.push(
+              new TTBatchCreateResBody({ error: 'invalid-client' })
+            )
             continue
           }
           // Checking project
@@ -181,7 +183,9 @@ export default class TimeTrackController {
             relations: { organization: true },
           })
           if (!project) {
-            resBodies.push(new TTCreateResBody({ error: 'invalid-project' }))
+            resBodies.push(
+              new TTBatchCreateResBody({ error: 'invalid-project' })
+            )
             continue
           }
           // Inserting to table
@@ -193,7 +197,7 @@ export default class TimeTrackController {
               project,
             })
           )
-          resBodies.push(new TTCreateResBody({ id }))
+          resBodies.push(new TTBatchCreateResBody({ id }))
         }
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()

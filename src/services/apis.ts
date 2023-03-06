@@ -23,8 +23,8 @@ ProjectCreateBody,
 ProjectUpdateBody,
 TT,
 TTCreateBody,
-TTCreateResBody,
 TTBatchCreateBody,
+TTBatchCreateResBody,
 } from "models"
 
 function createAxiosInstance() {
@@ -367,7 +367,7 @@ export default {
         },
         async create(
             body: TTCreateBody,
-        ) : Promise<AxiosResponse<TTCreateResBody>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/time-track"
             const url = route
@@ -379,7 +379,7 @@ export default {
         },
         async batchCreate(
             body: TTBatchCreateBody,
-        ) : Promise<AxiosResponse<TTCreateResBody[]>>
+        ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
         {
             const route = "/time-track/batch"
             const url = route
