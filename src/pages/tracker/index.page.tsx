@@ -2,10 +2,10 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import AddTT from '@/pages/tracker/components/AddTT'
 import useApi from '@/services/useApi'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { Table } from 'antd'
-import { TT } from 'models'
+import { TableQueryParameters } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 
 export default function Tracker() {
@@ -50,25 +50,38 @@ export default function Tracker() {
   ]
   const {
     data: dataTT,
-    setData: setDataTT,
     call: callTT,
     loading: loadingTT,
-  } = useApi('timeTrack', 'getAll', [])
+  } = useApi('timeTrack', 'getAll')
   const { data: dataClient, call: callClient } = useApi('client', 'getAll', [])
   const { data: dataProject, call: callProject } = useApi(
     'project',
     'getAll',
     []
   )
+  const [pageSize, setPageSize] = useState(10)
+  const [page, setPage] = useState(1)
+  const getTTs = useCallback(
+    (pageParam?: number, pageSizeParam?: number) => {
+      callTT(
+        TableQueryParameters.create({
+          sortBy: ['-date'],
+          page: pageParam ?? page,
+          pageSize: pageSizeParam ?? pageSize,
+        })
+      )
+    },
+    [callTT, page, pageSize]
+  )
 
   useEffect(() => {
-    callTT()
+    getTTs()
     callClient()
     callProject()
-  }, [])
+  }, [page, pageSize])
 
-  function onAdd(newTT: TT) {
-    setDataTT([...dataTT, newTT])
+  function onAdd() {
+    getTTs()
   }
   return (
     <>
@@ -79,9 +92,7 @@ export default function Tracker() {
           projectOptions={dataProject}
         />
         <AddBatchTT
-          onAdd={() => {
-            callTT()
-          }}
+          onAdd={onAdd}
           clientOptions={dataClient}
           projectOptions={dataProject}
         />
@@ -92,7 +103,7 @@ export default function Tracker() {
           loading={loadingTT}
           rowKey={record => record.id}
           columns={columns}
-          dataSource={dataTT}
+          dataSource={dataTT?.data}
           pagination={{
             position: ['bottomCenter'],
             responsive: true,
@@ -100,6 +111,13 @@ export default function Tracker() {
             showLessItems: true,
             showTotal: total => `Total ${total} clients`,
             showSizeChanger: false,
+            total: dataTT?.count,
+            pageSize,
+            onChange(page, pageSize) {
+              setPageSize(pageSize)
+              setPage(page)
+            },
+            current: page,
           }}
         />
       </div>

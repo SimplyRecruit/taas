@@ -1,7 +1,8 @@
-import { TT, UserRole, TTCreateBody } from 'models'
+import { TT, UserRole, TTCreateBody, TableQueryParameters } from 'models'
 
 import {
   Authorized,
+  BadRequestError,
   CurrentUser,
   ForbiddenError,
   InternalServerError,
@@ -13,34 +14,48 @@ import UserEntity from '~/resources/User/Entity'
 
 import { Get, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
-import { Body } from '~/decorators/CustomRequestParams'
+import { Body, QueryParams } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import { EntityNotFoundError } from 'typeorm'
+import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ResourceEntity from '~/resources/Resource/Entity'
 import ClientEntity from '~/resources/Client/Entity'
 import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBody'
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
+import TTGetAllResBody from 'models/TimeTrack/res-bodies/TTGetAllResBody'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
-  @Get([TT])
+  @Get(TTGetAllResBody)
   @Authorized(UserRole.ADMIN)
-  async getAll(@CurrentUser() currentUser: UserEntity) {
+  async getAll(
+    @CurrentUser() currentUser: UserEntity,
+    @QueryParams() { order, take, skip }: TableQueryParameters
+  ) {
     let entityObjects: TTEntity[] = []
+    let count = 0
     await dataSource.transaction(async em => {
-      const resource = await em.findOneOrFail(ResourceEntity, {
-        where: { userId: currentUser.id },
-      })
-      entityObjects = await TTEntity.find({
-        where: { resource: { id: resource.id } },
-        relations: { client: true, project: true },
-        order: { date: 'DESC' },
-      })
+      try {
+        const resource = await em.findOneOrFail(ResourceEntity, {
+          where: { userId: currentUser.id },
+        })
+        ;[entityObjects, count] = await TTEntity.findAndCount({
+          where: { resource: { id: resource.id } },
+          relations: { client: true, project: true },
+          order,
+          take,
+          skip,
+        })
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) throw new ForbiddenError()
+        else if (error instanceof EntityPropertyNotFoundError) {
+          throw new BadRequestError('Invalid column name for sorting')
+        } else throw new InternalServerError('Internal Server Error')
+      }
     })
 
-    return entityObjects.map(
+    const data = entityObjects.map(
       ({ id, client, description, date, billable, hour, project, ticketNo }) =>
         TT.create({
           id,
@@ -53,6 +68,7 @@ export default class TimeTrackController {
           ticketNo,
         })
     )
+    return TTGetAllResBody.create({ data, count })
   }
 
   @Post(String)
