@@ -25,7 +25,6 @@ export default function useApi<
   const [error, setError] = useState<Error | null>(null)
 
   const call = async (...args: ApiFunctionType<(typeof apis)[T][U]>) => {
-    console.log(data)
     setLoading(true)
     try {
       const { data } = await (
