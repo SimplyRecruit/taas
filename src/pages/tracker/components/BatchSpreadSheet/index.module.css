@@ -1,3 +1,7 @@
 .spreadsheet :global .jexcel.jexcel_overflow {
     width: 100%!important;
 }
+
+.spreadsheet :global .invalid-cell {
+    background-color: #faa;
+}

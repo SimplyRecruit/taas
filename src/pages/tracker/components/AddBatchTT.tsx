@@ -24,12 +24,11 @@ export default function AddBatchTT({
   projectOptions,
   clientOptions,
   onAdd,
-  onUpdate,
-  onCancel,
 }: Props) {
   const [showResultsModal, setShowResultsModal] = useState(false)
   const [batch, setBatch] = useState<TTBatchCreateBody | null>(null)
   const [ssData, setSsData] = useState<any[][]>([[]])
+  const [errorExists, setErrorExists] = useState(false)
   const {
     call: callBatchCreate,
     data: dataBatchCreate,
@@ -131,7 +130,10 @@ export default function AddBatchTT({
             <>
               <BatchSpreadSheet
                 ssData={ssData}
-                onChange={setBatch}
+                onChange={(body, error) => {
+                  setBatch(body)
+                  setErrorExists(error)
+                }}
                 clientAbbrs={clientOptions.map(e => e.abbr)}
                 projectAbbrs={projectOptions.map(e => e.abbr)}
               />
@@ -169,7 +171,7 @@ export default function AddBatchTT({
       <Button
         style={{ marginTop: 10 }}
         type="primary"
-        disabled={batch === null || !batch.bodies.length}
+        disabled={batch === null || !batch.bodies.length || errorExists}
         onClick={performBatchCreation}
       >
         Batch Add
