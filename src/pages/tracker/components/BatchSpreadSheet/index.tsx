@@ -8,12 +8,24 @@ import 'jsuites/dist/jsuites.css'
 import styles from './index.module.css'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import { TTBatchCreateBody, TTCreateBody } from 'models'
+import { plainToClass } from 'class-transformer'
+import { validate } from 'class-validator'
 
 interface Props {
   ssData: any[][]
   clientAbbrs: string[]
   projectAbbrs: string[]
-  onChange: (body: TTBatchCreateBody) => void
+  onChange: (body: TTBatchCreateBody, error: boolean) => void
+}
+
+const propToIndexMap: { [key: string]: number } = {
+  date: 0,
+  clientAbbr: 1,
+  hour: 2,
+  description: 3,
+  billable: 4,
+  ticketNo: 5,
+  projectAbbr: 6,
 }
 
 export default function BatchSpreadSheet({
@@ -24,10 +36,16 @@ export default function BatchSpreadSheet({
 }: Props) {
   const ref = useRef(null as unknown as JspreadsheetInstanceElement)
   const spreadSheetLoaded = useRef(false)
-  function onSsDataChange() {
+
+  async function onSsDataChange() {
     if (!ref.current.jspreadsheet) return
     const data = ref.current.jspreadsheet.getData()
+    for (let r = data.length - 1; r > 0; r--) {
+      if (data[r].every(e => !e)) data.pop()
+      else break
+    }
     if (data[data.length - 1].every(e => !e)) data.pop()
+    // Constructing the batch create body and validating
     const body = TTBatchCreateBody.create({
       bodies: data.map(e =>
         TTCreateBody.create({
@@ -41,14 +59,48 @@ export default function BatchSpreadSheet({
         })
       ),
     })
-    onChange(body)
+    const bodyToValidate = plainToClass(
+      TTBatchCreateBody,
+      JSON.parse(JSON.stringify(body))
+    )
+    const validationErrors = await validate(bodyToValidate)
+    // Clearing invalid-cell class from all cells
+    for (const row in ssData) {
+      for (const col in ssData[row]) {
+        ref.current.jspreadsheet
+          .getCell([col, row] as unknown as [number, number])
+          .classList.remove('invalid-cell')
+      }
+    }
+    // Adding invalid-cell class to invalid cells
+    let error = false
+    if (validationErrors.length) {
+      error = true
+      const invalidRows = validationErrors[0].children!
+      const invalidCells: [number, number][] = []
+      for (const row of invalidRows) {
+        for (const col of row.children!) {
+          invalidCells.push([
+            propToIndexMap[col.property],
+            Number.parseInt(row.property),
+          ])
+        }
+      }
+      for (const cell of invalidCells) {
+        ref.current.jspreadsheet.getCell(cell).classList.add('invalid-cell')
+      }
+    }
+    // Emitting the body
+    onChange(body, error)
   }
+
   useEffect(() => {
     if (spreadSheetLoaded.current && ref.current.jspreadsheet) {
       ref.current.jspreadsheet.setData(ssData)
       onSsDataChange()
     }
   }, [ssData])
+
   useEffect(() => {
     const options: JSpreadsheetOptions = {
       rowDrag: false,
@@ -115,7 +167,6 @@ export default function BatchSpreadSheet({
         ref.current
           .querySelector('table>colgroup>col')
           ?.setAttribute('width', '15')
-        console.log(ref.current)
       }
     })()
   }, [])

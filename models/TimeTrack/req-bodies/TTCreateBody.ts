@@ -1,10 +1,10 @@
-import { Allow } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 import TTBase from 'models/TimeTrack/TTBase'
 
 export default class TTCreateBody extends TTBase {
-  @Allow()
+  @IsNotEmpty()
   clientAbbr: string
 
-  @Allow()
+  @IsNotEmpty()
   projectAbbr: string
 }
