@@ -18,6 +18,16 @@ interface Props {
   onChange: (body: TTBatchCreateBody, error: boolean) => void
 }
 
+const propToIndexMap: { [key: string]: number } = {
+  date: 0,
+  clientAbbr: 1,
+  hour: 2,
+  description: 3,
+  billable: 4,
+  ticketNo: 5,
+  projectAbbr: 6,
+}
+
 export default function BatchSpreadSheet({
   ssData,
   clientAbbrs,
@@ -26,10 +36,16 @@ export default function BatchSpreadSheet({
 }: Props) {
   const ref = useRef(null as unknown as JspreadsheetInstanceElement)
   const spreadSheetLoaded = useRef(false)
+
   async function onSsDataChange() {
     if (!ref.current.jspreadsheet) return
     const data = ref.current.jspreadsheet.getData()
+    for (let r = data.length - 1; r > 0; r--) {
+      if (data[r].every(e => !e)) data.pop()
+      else break
+    }
     if (data[data.length - 1].every(e => !e)) data.pop()
+    // Constructing the batch create body and validating
     const body = TTBatchCreateBody.create({
       bodies: data.map(e =>
         TTCreateBody.create({
@@ -48,15 +64,7 @@ export default function BatchSpreadSheet({
       JSON.parse(JSON.stringify(body))
     )
     const validationErrors = await validate(bodyToValidate)
-    const propToIndexMap: { [key: string]: number } = {
-      date: 0,
-      clientAbbr: 1,
-      hour: 2,
-      description: 3,
-      billable: 4,
-      ticketNo: 5,
-      projectAbbr: 6,
-    }
+    // Clearing invalid-cell class from all cells
     for (const row in ssData) {
       for (const col in ssData[row]) {
         ref.current.jspreadsheet
@@ -64,6 +72,7 @@ export default function BatchSpreadSheet({
           .classList.remove('invalid-cell')
       }
     }
+    // Adding invalid-cell class to invalid cells
     let error = false
     if (validationErrors.length) {
       error = true
@@ -81,14 +90,17 @@ export default function BatchSpreadSheet({
         ref.current.jspreadsheet.getCell(cell).classList.add('invalid-cell')
       }
     }
+    // Emitting the body
     onChange(body, error)
   }
+
   useEffect(() => {
     if (spreadSheetLoaded.current && ref.current.jspreadsheet) {
       ref.current.jspreadsheet.setData(ssData)
       onSsDataChange()
     }
   }, [ssData])
+
   useEffect(() => {
     const options: JSpreadsheetOptions = {
       rowDrag: false,
