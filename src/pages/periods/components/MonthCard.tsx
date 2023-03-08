@@ -1,32 +1,15 @@
-import moment from 'dayjs'
-import {
-  Input,
-  Form,
-  Row,
-  Col,
-  Drawer,
-  Button,
-  Space,
-  DatePicker,
-  Radio,
-  Select,
-  Tag,
-  Card,
-} from 'antd'
-import { Client, ClientContractType } from 'models'
-import { CloseOutlined } from '@ant-design/icons'
-import { momentToDate } from '@/util'
-import { DEFAULT_DATE_FORMAT } from '@/constants'
-import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
-import useApi from '@/services/useApi'
-import { useEffect } from 'react'
+import { Button, Space, Tag, Card } from 'antd'
 
 interface RenderProps {
   active: boolean
   date: Date
-  onCancel?: () => void
+  onToggleStatus?: () => void
 }
-export default function MonthCard({ active, date, onCancel }: RenderProps) {
+export default function MonthCard({
+  active,
+  date,
+  onToggleStatus,
+}: RenderProps) {
   return (
     <Card
       title={date.toLocaleString('default', {
@@ -34,19 +17,15 @@ export default function MonthCard({ active, date, onCancel }: RenderProps) {
       })}
       extra={
         <Space>
-          {active ? (
-            <Tag color="success">Active</Tag>
-          ) : (
-            <Tag color="warning">Inactive</Tag>
-          )}
+          {active ? <Tag color="success">Active</Tag> : <Tag>Inactive</Tag>}
         </Space>
       }
       actions={[
         <Button key="details" type="link" size="small">
           See details
         </Button>,
-        <Button key="active" type="link" size="small">
-          Activate
+        <Button onClick={onToggleStatus} key="active" type="link" size="small">
+          {active ? 'Deactivate' : 'Activate'}
         </Button>,
       ]}
     >
