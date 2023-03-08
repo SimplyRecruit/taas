@@ -158,6 +158,7 @@ export default function BatchSpreadSheet({
         return copiedText
       },
       onchange: onSsDataChange,
+      ondeleterow: onSsDataChange,
     }
     ;(async () => {
       if (!spreadSheetLoaded.current) {
