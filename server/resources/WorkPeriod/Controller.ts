@@ -18,28 +18,13 @@ import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 @JsonController('/work-period')
 @Authorized(UserRole.ADMIN)
 export default class WorkPeriodController {
-  @Get()
-  async getAll(
-    @CurrentUser() currentUser: UserEntity,
-    @QueryParams() { order, take, skip }: TableQueryParameters
-  ) {
+  @Get([WorkPeriod])
+  async getAll(@CurrentUser() currentUser: UserEntity) {
     try {
-      const [workPeriods, count] = await WorkPeriodEntity.findAndCount({
+      const workPeriods = await WorkPeriodEntity.find({
         where: { organization: { id: currentUser.organization.id } },
-        order,
-        take,
-        skip,
       })
-      console.log(workPeriods)
-      return {
-        workPeriods: workPeriods.map(wp => ({
-          closed: wp.closed,
-          period:
-            `${wp.period.getUTCMonth()}`.padStart(2, '0') +
-            `/${wp.period.getUTCFullYear()}`,
-        })),
-        count,
-      }
+      return workPeriods.map(e => WorkPeriod.fromDate(e.period))
     } catch (error) {
       if (error instanceof EntityPropertyNotFoundError)
         throw new BadRequestError('Invalid column name for sorting')

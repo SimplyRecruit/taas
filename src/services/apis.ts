@@ -344,15 +344,13 @@ export default {
     },
     workPeriod: {
         async getAll(
-            queries: TableQueryParameters,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<WorkPeriod[]>>
         {
             const route = "/work-period"
             const url = route
             return await createAxiosInstance().request({
                 method: "get",
                 url,
-                params: queries,
             })
         },
         async create(
