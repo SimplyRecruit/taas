@@ -34,8 +34,7 @@ export default function MonthCard({
         </Button>,
       ]}
     >
-      {date.toISOString()}
-      Total 100 time tracks
+      Total 74 time tracks
     </Card>
   )
 }
