@@ -1,6 +1,8 @@
 import { IsInt, IsOptional, IsPositive, Matches, Min } from 'class-validator'
 
 const sortByRegex = /^(~|-)([a-zA-Z0-9_]*)$/
+const ASC_OPERATOR = '~'
+const DESC_OPERATOR = '-'
 
 export default class TableQueryParameters {
   constructor(sortBy?: string[], limit?: number, offset?: number) {
@@ -14,11 +16,17 @@ export default class TableQueryParameters {
     pageSize,
     page,
   }: {
-    sortBy?: string[]
+    sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
     pageSize: number
     page: number
   }) {
-    return new this(sortBy, pageSize, (page - 1) * pageSize)
+    return new this(
+      sortBy?.map(
+        e => (e.direction === 'ASC' ? ASC_OPERATOR : DESC_OPERATOR) + e.column
+      ),
+      pageSize,
+      (page - 1) * pageSize
+    )
   }
 
   @IsOptional()
@@ -36,12 +44,12 @@ export default class TableQueryParameters {
   private offset?: number
 
   get order() {
-    const order: { [column: string]: 'asc' | 'desc' } = {}
+    const order: { [column: string]: 'ASC' | 'DESC' } = {}
     if (this.sortBy == null) return order
     for (const sort of this.sortBy) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-non-null-assertion
       const [_, direction, column] = sort.match(sortByRegex)!
-      order[column] = direction === '~' ? 'asc' : 'desc'
+      order[column] = direction === ASC_OPERATOR ? 'ASC' : 'DESC'
     }
     return order
   }

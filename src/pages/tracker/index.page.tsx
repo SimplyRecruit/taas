@@ -66,7 +66,7 @@ export default function Tracker() {
     (pageParam?: number, pageSizeParam?: number) => {
       callTT(
         TableQueryParameters.create({
-          sortBy: ['-date'],
+          sortBy: [{ column: 'date', direction: 'DESC' }],
           page: pageParam ?? page,
           pageSize: pageSizeParam ?? pageSize,
         })
