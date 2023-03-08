@@ -133,7 +133,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </div>
           </Layout.Sider>
           {/* To put scrollbar inside the content */}
-          <Layout.Content style={{ overflowY: 'auto' }}>
+          <Layout.Content style={{ overflowY: 'auto', padding: 20 }}>
             {children}
           </Layout.Content>
         </Layout>
