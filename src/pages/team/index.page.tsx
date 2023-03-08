@@ -85,22 +85,11 @@ export default function Team() {
     },
   ]
 
-  const { data: resources, loading, error, call } = useApi('resource', 'getAll')
-
-  useEffect(() => {
-    call()
-  }, [])
-
-  useEffect(() => {
-    if (!resources) return
-    setData(resources)
-    filterData(selectedStatus, searchText)
-  }, [resources])
+  const { data, loading, call, setData } = useApi('resource', 'getAll', [])
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Resource[]>([])
-  const [data, setData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
@@ -109,22 +98,11 @@ export default function Team() {
     return data.findIndex(x => x.id === record.id)
   }
 
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value)
-    filterData(value, searchText)
-  }
-
-  const handleSearch = (value: string) => {
-    setSearchText(value)
-    filterData(selectedStatus, value)
-  }
-
   const onUpdate = (record: Resource) => {
     const index = find(record)
     if (index != -1) {
       data[index] = record
       setData([...data])
-      filterData(selectedStatus, searchText)
     }
     setInviteMemberModalOpen(false)
     setSelectedRowKey(null)
@@ -135,18 +113,27 @@ export default function Team() {
     setInviteMemberModalOpen(false)
   }
 
-  const filterData = (status: string, search: string) => {
+  const filterData = (data: Resource[]) => {
     let filtered = data
-    if (status !== 'all') {
-      filtered = filtered.filter(item => item.active === (status === 'active'))
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(
+        item => item.active === (selectedStatus === 'active')
+      )
     }
-    if (search) {
+    if (searchText) {
       filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
     setFilteredData(filtered)
   }
+  useEffect(() => {
+    filterData(data)
+  }, [data, setSearchText, selectedStatus])
+
+  useEffect(() => {
+    call()
+  }, [])
 
   return (
     <>
@@ -159,8 +146,8 @@ export default function Team() {
         }}
       >
         <TeamFilter
-          onStatusChange={handleStatusChange}
-          onSearch={handleSearch}
+          onStatusChange={setSelectedStatus}
+          onSearch={setSearchText}
           searchText={searchText}
         />
         <Button
