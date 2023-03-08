@@ -149,7 +149,7 @@ export default function Team() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
+    <>
       <div
         style={{
           display: 'flex',
@@ -204,7 +204,7 @@ export default function Team() {
         onUpdate={onUpdate}
         onAdd={onAdd}
       />
-    </div>
+    </>
   )
 }
 

@@ -168,7 +168,7 @@ export default function Clients() {
     setFilteredData(filtered)
   }
   return (
-    <div style={{ padding: 20 }}>
+    <>
       <div
         style={{
           display: 'flex',
@@ -234,7 +234,7 @@ export default function Clients() {
         }}
         onAdd={onAdd}
       />
-    </div>
+    </>
   )
 }
 

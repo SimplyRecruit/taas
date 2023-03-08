@@ -3,6 +3,13 @@ body {
   overflow-y: hidden;
 }
 
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .center-column {
   display: flex;
   align-items: center;

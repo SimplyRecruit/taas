@@ -142,7 +142,7 @@ export default function ProjectsPage() {
   }, [])
 
   return (
-    <div style={{ padding: 20 }}>
+    <>
       <div
         style={{
           display: 'flex',
@@ -191,7 +191,7 @@ export default function ProjectsPage() {
         }}
         onUpdate={onUpdate}
       />
-    </div>
+    </>
   )
 }
 

@@ -95,45 +95,44 @@ export default function Tracker() {
   return (
     <>
       {contextHolder}
-      <div style={{ padding: 24 }}>
-        <AddTT
-          onError={onError}
-          onAdd={onAdd}
-          clientOptions={dataClient}
-          projectOptions={dataProject}
-        />
-        <AddBatchTT
-          onAdd={() => {
-            getTTs()
-          }}
-          clientOptions={dataClient}
-          projectOptions={dataProject}
-        />
 
-        <Table
-          size="large"
-          scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
-          loading={loadingTT}
-          rowKey={record => record.id}
-          columns={columns}
-          dataSource={dataTT?.data}
-          pagination={{
-            position: ['bottomCenter'],
-            responsive: true,
-            showQuickJumper: false,
-            showLessItems: true,
-            showTotal: total => `Total ${total} clients`,
-            showSizeChanger: false,
-            total: dataTT?.count,
-            pageSize,
-            onChange(page, pageSize) {
-              setPageSize(pageSize)
-              setPage(page)
-            },
-            current: page,
-          }}
-        />
-      </div>
+      <AddTT
+        onError={onError}
+        onAdd={onAdd}
+        clientOptions={dataClient}
+        projectOptions={dataProject}
+      />
+      <AddBatchTT
+        onAdd={() => {
+          getTTs()
+        }}
+        clientOptions={dataClient}
+        projectOptions={dataProject}
+      />
+
+      <Table
+        size="large"
+        scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
+        loading={loadingTT}
+        rowKey={record => record.id}
+        columns={columns}
+        dataSource={dataTT?.data}
+        pagination={{
+          position: ['bottomCenter'],
+          responsive: true,
+          showQuickJumper: false,
+          showLessItems: true,
+          showTotal: total => `Total ${total} clients`,
+          showSizeChanger: false,
+          total: dataTT?.count,
+          pageSize,
+          onChange(page, pageSize) {
+            setPageSize(pageSize)
+            setPage(page)
+          },
+          current: page,
+        }}
+      />
     </>
   )
 }
