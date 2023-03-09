@@ -26,21 +26,21 @@ export default function ReportsPage() {
     )
   }, [])
 
-  // const annotations: any = []
-  // each(groupBy(data, 'year'), (values, k) => {
-  //   const value = values.reduce((a: any, b: any) => a + b.value, 0)
-  //   annotations.push({
-  //     type: 'text',
-  //     position: [k, value],
-  //     content: `${value}`,
-  //     style: {
-  //       textAlign: 'center',
-  //       fontSize: 14,
-  //       fill: 'rgba(0,0,0,0.85)',
-  //     },
-  //     offsetY: -10,
-  //   })
-  // })
+  const annotations: any = []
+  each(groupBy(data, 'date'), (values, k) => {
+    const value = values.reduce((a: any, b: any) => a + b.totalHours, 0)
+    annotations.push({
+      type: 'text',
+      position: [k, value],
+      content: `${value}`,
+      style: {
+        textAlign: 'center',
+        fontSize: 14,
+        fill: 'rgba(0,0,0,0.85)',
+      },
+      offsetY: -10,
+    })
+  })
   const config: ColumnConfig = {
     data,
     isStack: true,
@@ -48,23 +48,30 @@ export default function ReportsPage() {
     yField: 'totalHours',
     seriesField: 'billable',
     loading,
+    xAxis: {
+      label: {
+        formatter(text) {
+          return new Date(text).toDateString()
+        },
+      },
+    },
+    legend: {
+      slidable: false,
+    },
     label: {
       layout: [
         {
           type: 'interval-adjust-position',
-        }, // 数据标签防遮挡
+        },
         {
           type: 'interval-hide-overlap',
-        }, // 数据标签文颜色自动调整
+        },
         {
           type: 'adjust-color',
         },
       ],
     },
-    slider: {
-      start: 0,
-      end: 1,
-    },
+    annotations,
   }
   function getReport(values: any) {
     if (values) {
