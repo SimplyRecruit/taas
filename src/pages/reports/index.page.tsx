@@ -43,9 +43,10 @@ export default function ReportsPage() {
   // })
   const config: ColumnConfig = {
     data,
-    isStack: false,
+    isStack: true,
     xField: 'date',
     yField: 'totalHours',
+    seriesField: 'billable',
     loading,
     label: {
       layout: [

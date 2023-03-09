@@ -38,6 +38,7 @@ export default class ReportController {
       t = await em
         .createQueryBuilder()
         .select(`DATE_TRUNC('day', tt.date)`, 'date')
+        .addSelect('BOOL_OR(tt.billable)', 'billable')
         .addSelect('SUM(tt.hour)', 'totalHours')
         .from(TimeTrackEntity, 'tt')
         .innerJoin(ResourceEntity, 'resource', 'resource.id = tt.resource_id')
@@ -45,7 +46,8 @@ export default class ReportController {
           resourceId: currentResource.id,
         })
         .andWhere('tt.date BETWEEN :from AND :to ', { from, to })
-        .groupBy('date')
+        .groupBy(`DATE_TRUNC('day', tt.date)`)
+        .addGroupBy('tt.billable')
         .orderBy('date')
         .printSql()
         .getRawMany()
