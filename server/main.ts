@@ -30,6 +30,7 @@ const dataSource = new DataSource({
     join(__dirname, './resources/**/*Entity.{ts,js}'),
     join(__dirname, './resources/relations/**/*.{ts,js}'),
   ],
+  parseInt8: true,
   logging: false,
   synchronize: dev && true,
   namingStrategy: new SnakeNamingStrategy(),
