@@ -12,6 +12,7 @@ interface RenderProps {
   onChange?: (value: string) => void
   options?: OptionType[]
   title: string
+  searchable?: boolean
 }
 
 export default function DropdownAutocomplete(props: RenderProps) {

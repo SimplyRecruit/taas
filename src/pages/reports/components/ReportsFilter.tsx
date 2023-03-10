@@ -37,17 +37,14 @@ export default function ReportsFilter({ getReport }: RenderProps) {
           />
           <DropdownAutocomplete title="Client" />
           <DropdownAutocomplete title="Project" />
-          <Popover
-            trigger="click"
-            content={
-              <Space direction="vertical">
-                <Checkbox>Billable</Checkbox>
-                <Checkbox>Not billable</Checkbox>
-              </Space>
-            }
-          >
-            <DropdownActivator title="Status" />
-          </Popover>
+          <DropdownAutocomplete
+            searchable={false}
+            title="Billable"
+            options={[
+              { label: 'Billable', value: 'billable' },
+              { label: 'Not billable', value: 'notBillable' },
+            ]}
+          ></DropdownAutocomplete>
         </Space>
       </div>
       <DatePicker.RangePicker
