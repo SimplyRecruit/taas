@@ -1,6 +1,7 @@
-import { AutoComplete, Popover } from 'antd'
+import { Popover, Select } from 'antd'
 
 import DropdownActivator from '@/components/DropdownActivator'
+import PopoverContent from '@/pages/reports/components/PopoverContent'
 
 type OptionType = {
   value: string
@@ -13,25 +14,15 @@ interface RenderProps {
   title: string
 }
 
-export default function DropdownAutocomplete({
-  onChange,
-  options,
-  title,
-}: RenderProps) {
+export default function DropdownAutocomplete(props: RenderProps) {
   return (
     <Popover
+      arrow={false}
       placement="bottomLeft"
       trigger="click"
-      content={
-        <AutoComplete
-          onChange={onChange}
-          placeholder={'Search ' + title.toLocaleLowerCase()}
-          style={{ width: 200 }}
-          options={options}
-        />
-      }
+      content={<PopoverContent {...props} />}
     >
-      <DropdownActivator title={title} />
+      <DropdownActivator title={props.title} />
     </Popover>
   )
 }

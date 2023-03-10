@@ -27,7 +27,14 @@ export default function ReportsFilter({ getReport }: RenderProps) {
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <div>
         <Space split={<Divider type="vertical" />}>
-          <DropdownAutocomplete title="Team" />
+          <DropdownAutocomplete
+            options={[
+              { label: 'Apple', value: 'Apple' },
+              { label: 'Pear', value: 'Pear' },
+              { label: 'Orange', value: 'Orange' },
+            ]}
+            title="Team"
+          />
           <DropdownAutocomplete title="Client" />
           <DropdownAutocomplete title="Project" />
           <Popover
