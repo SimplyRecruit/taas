@@ -1,6 +1,6 @@
 import { AutoComplete, Popover } from 'antd'
 
-import DropdownButton from '@/components/DropdownButton'
+import DropdownActivator from '@/components/DropdownActivator'
 
 type OptionType = {
   value: string
@@ -31,7 +31,7 @@ export default function DropdownAutocomplete({
         />
       }
     >
-      <DropdownButton title={title} />
+      <DropdownActivator title={title} />
     </Popover>
   )
 }

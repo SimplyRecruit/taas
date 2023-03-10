@@ -1,10 +1,8 @@
-import { Button, Checkbox, DatePicker, Divider, Popover, Space } from 'antd'
+import { Checkbox, DatePicker, Divider, Popover, Space } from 'antd'
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import DropdownAutocomplete from '@/pages/reports/components/DropdownAutocomplete'
-import { FiChevronDown } from 'react-icons/fi'
-import { ICON_TOP_MARGIN_FIX } from '@/constants'
-import DropdownButton from '@/components/DropdownButton'
+import DropdownActivator from '@/components/DropdownActivator'
 
 interface RenderProps {
   getReport: (values: any) => void
@@ -41,7 +39,7 @@ export default function ReportsFilter({ getReport }: RenderProps) {
               </Space>
             }
           >
-            <DropdownButton title="Status" />
+            <DropdownActivator title="Status" />
           </Popover>
         </Space>
       </div>

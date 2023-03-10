@@ -4,7 +4,7 @@ import { Button } from 'antd'
 interface RenderProps {
   title: string
 }
-export default function DropdownButton({ title, ...props }: RenderProps) {
+export default function DropdownActivator({ title, ...props }: RenderProps) {
   return (
     <Button
       {...props}
