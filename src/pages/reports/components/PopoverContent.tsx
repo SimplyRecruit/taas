@@ -1,4 +1,4 @@
-import { Checkbox, Input } from 'antd'
+import { Checkbox, Input, Space } from 'antd'
 import { useState } from 'react'
 
 import styles from './index.module.css'
@@ -24,7 +24,7 @@ export default function PopoverContent({
     (option?.label ?? '').toLowerCase().includes(searchText.toLowerCase())
   )
   return (
-    <div className={styles.wrapper}>
+    <Space className={styles.wrapper} direction="vertical">
       <Input
         value={searchText}
         onChange={e => setSearchText(e.target.value)}
@@ -36,6 +36,6 @@ export default function PopoverContent({
           console.log(e)
         }}
       ></Checkbox.Group>
-    </div>
+    </Space>
   )
 }

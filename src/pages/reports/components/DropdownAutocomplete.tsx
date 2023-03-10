@@ -1,4 +1,4 @@
-import { Popover, Select } from 'antd'
+import { Popover } from 'antd'
 
 import DropdownActivator from '@/components/DropdownActivator'
 import PopoverContent from '@/pages/reports/components/PopoverContent'
