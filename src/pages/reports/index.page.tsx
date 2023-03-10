@@ -1,15 +1,13 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useEffect, useState } from 'react'
-import dayjs from 'dayjs'
-import type { Dayjs } from 'dayjs'
+import { useEffect } from 'react'
 import { each, groupBy } from '@antv/util'
 import dynamic from 'next/dynamic'
 import { ColumnConfig } from '@ant-design/plots/es/components/column'
 import useApi from '@/services/useApi'
 import { ReportReqBody } from 'models'
-import { DatePicker } from 'antd'
 import { momentToDate } from '@/util'
+import ReportsFilter from '@/pages/reports/components/ReportsFilter'
 const ColumnChart = dynamic(
   () => import('@ant-design/plots').then(({ Column }) => Column),
   { ssr: false }
@@ -83,24 +81,11 @@ export default function ReportsPage() {
       )
     }
   }
-  const rangePresets: {
-    label: string
-    value: [Dayjs, Dayjs]
-  }[] = [
-    { label: 'Today', value: [dayjs(), dayjs()] },
-    { label: 'Yesterday', value: [dayjs().add(-1, 'd'), dayjs()] },
-    { label: 'This week', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: 'Last week', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: 'Past 2 weeks', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: 'This month', value: [dayjs().add(-14, 'd'), dayjs()] },
-    { label: 'Last month', value: [dayjs().add(-30, 'd'), dayjs()] },
-    { label: 'This year', value: [dayjs().add(-90, 'd'), dayjs()] },
-    { label: 'Last year', value: [dayjs().add(-90, 'd'), dayjs()] },
-  ]
+
   return (
     <>
-      <DatePicker.RangePicker presets={rangePresets} onChange={getReport} />
-      <ColumnChart {...config} />
+      <ReportsFilter getReport={getReport}></ReportsFilter>
+      <ColumnChart {...config} style={{ margin: 20 }} />
     </>
   )
 }
