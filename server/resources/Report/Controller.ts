@@ -27,7 +27,7 @@ export default class ReportController {
   @Post(undefined)
   @Authorized(UserRole.ADMIN)
   async get(
-    @Body() { from, to }: ReportReqBody,
+    @Body({ patch: true }) { from, to, billable }: ReportReqBody,
     @CurrentUser() currentUser: UserEntity
   ) {
     let t
@@ -35,7 +35,7 @@ export default class ReportController {
       const currentResource = await em.findOneByOrFail(ResourceEntity, {
         user: { id: currentUser.id },
       })
-      t = await em
+      let query = em
         .createQueryBuilder()
         .select(`DATE_TRUNC('day', tt.date)`, 'date')
         .addSelect('BOOL_OR(tt.billable)', 'billable')
@@ -49,8 +49,12 @@ export default class ReportController {
         .groupBy(`DATE_TRUNC('day', tt.date)`)
         .addGroupBy('tt.billable')
         .orderBy('date')
-        .printSql()
-        .getRawMany()
+      if (typeof billable === 'boolean') {
+        query = query.andWhere('tt.billable = :billable', {
+          billable: billable,
+        })
+      }
+      t = await query.printSql().getRawMany()
       console.log(t)
     })
 

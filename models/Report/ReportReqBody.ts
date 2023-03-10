@@ -1,4 +1,4 @@
-import { IsDateString } from 'class-validator'
+import { IsBoolean, IsDateString } from 'class-validator'
 import Model from 'models/Model'
 
 export default class ReportReqBody extends Model {
@@ -7,4 +7,7 @@ export default class ReportReqBody extends Model {
 
   @IsDateString()
   to: Date
+
+  @IsBoolean()
+  billable?: boolean
 }
