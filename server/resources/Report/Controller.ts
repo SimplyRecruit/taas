@@ -1,24 +1,14 @@
 import { ReportReqBody, UserRole } from 'models'
 
-import {
-  Authorized,
-  CurrentUser,
-  ForbiddenError,
-  InternalServerError,
-  JsonController,
-  NotFoundError,
-  Param,
-} from 'routing-controllers'
+import { Authorized, CurrentUser, JsonController } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
 
-import { Get, Patch, Post } from '~/decorators/CustomApiMethods'
-import ProjectEntity from '~/resources/Project/Entity'
+import { Post } from '~/decorators/CustomApiMethods'
+
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import ClientEntity from '~/resources/Client/Entity'
-import { EntityNotFoundError } from 'typeorm'
-import { ALL_UUID } from '~/common/Config'
+
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
 import ResourceEntity from '~/resources/Resource/Entity'
 
