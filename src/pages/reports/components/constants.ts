@@ -16,4 +16,6 @@ const rangePresets: {
   { label: 'Last year', value: [dayjs().add(-90, 'd'), dayjs()] },
 ]
 
-export default rangePresets
+const defaultRangePreset = rangePresets[3].value
+
+export { rangePresets, defaultRangePreset }
