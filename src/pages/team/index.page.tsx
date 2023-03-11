@@ -10,6 +10,7 @@ import { formatDate } from '@/util'
 import TeamFilter from '@/pages/team/components/TeamFilter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
+import TableActionColumn from '@/components/TableActionColumn'
 
 export default function Team() {
   const columns: ColumnsType<Resource> = [
@@ -73,13 +74,16 @@ export default function Team() {
       fixed: 'right',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Resource) => (
-        <FiEdit2
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
+        <TableActionColumn
+          isActive={record.active}
+          onEdit={() => {
             setCurrentRecord(record)
             setSelectedRowKey(record.id)
             setInviteMemberModalOpen(true)
           }}
+          onArchive={() => null}
+          onRestore={() => null}
+          onDelete={() => null}
         />
       ),
     },
