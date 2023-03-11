@@ -80,7 +80,7 @@ export default function ReportsPage() {
 
   return (
     <>
-      <ReportsFilter onChange={getReport}></ReportsFilter>
+      <ReportsFilter onFilter={getReport}></ReportsFilter>
       <ColumnChart {...config} style={{ margin: 20 }} />
     </>
   )

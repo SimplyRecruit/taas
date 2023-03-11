@@ -10,27 +10,25 @@ type OptionType = {
 }
 
 interface RenderProps {
-  onChange: (value: string[]) => void
-  onSave: () => void
+  onSave: (value: string[]) => void
   options?: OptionType[]
   title: string
   searchable?: boolean
-  badgeCount: number
 }
 
 export default function DropdownAutocomplete({
-  badgeCount,
   onSave,
   ...props
 }: RenderProps) {
   const [open, setOpen] = useState(false)
+  const [selected, setSelected] = useState<string[]>([])
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen)
-    if (!newOpen) onSave() // save on focus out
+    if (!newOpen) onSave(selected) // save on focus out
   }
-  const hide = () => {
+  const saveAndHide = () => {
     setOpen(false)
-    onSave()
+    onSave(selected)
   }
 
   return (
@@ -40,9 +38,15 @@ export default function DropdownAutocomplete({
       trigger="click"
       open={open}
       onOpenChange={handleOpenChange}
-      content={<PopoverContent onSave={hide} {...props} />}
+      content={
+        <PopoverContent
+          onChange={setSelected}
+          onSave={saveAndHide}
+          {...props}
+        />
+      }
     >
-      <Badge count={badgeCount} overflowCount={9}>
+      <Badge count={selected.length} overflowCount={9}>
         <DropdownActivator title={props.title} />
       </Badge>
     </Popover>
