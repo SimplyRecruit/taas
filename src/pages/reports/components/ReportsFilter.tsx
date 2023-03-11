@@ -1,4 +1,4 @@
-import { Checkbox, DatePicker, Divider, Popover, Space } from 'antd'
+import { Badge, Checkbox, DatePicker, Divider, Popover, Space } from 'antd'
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
 import DropdownAutocomplete from '@/pages/reports/components/DropdownAutocomplete'
@@ -48,16 +48,20 @@ export default function ReportsFilter({ onChange }: RenderProps) {
             onChange={e => setSelectedResources(e)}
             title="Team"
             options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
+            badgeCount={selectedResources.length}
           />
+
           <DropdownAutocomplete
             onChange={e => setSelectedClients(e)}
             title="Client"
             options={clients?.map(e => ({ value: e.id, label: e.abbr }))}
+            badgeCount={selectedClients.length}
           />
           <DropdownAutocomplete
             onChange={e => setSelectedProjects(e)}
             title="Project"
             options={projects?.map(e => ({ value: e.id, label: e.abbr }))}
+            badgeCount={selectedProjects.length}
           />
           <DropdownAutocomplete
             onChange={e => setSelectedStatus(e)}
@@ -67,6 +71,7 @@ export default function ReportsFilter({ onChange }: RenderProps) {
               { label: 'Billable', value: 'billable' },
               { label: 'Not billable', value: 'notBillable' },
             ]}
+            badgeCount={selectedStatus.length}
           ></DropdownAutocomplete>
         </Space>
       </div>

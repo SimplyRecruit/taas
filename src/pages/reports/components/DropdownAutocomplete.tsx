@@ -1,4 +1,4 @@
-import { Popover } from 'antd'
+import { Badge, Popover } from 'antd'
 
 import DropdownActivator from '@/components/DropdownActivator'
 import PopoverContent from '@/pages/reports/components/PopoverContent'
@@ -13,9 +13,13 @@ interface RenderProps {
   options?: OptionType[]
   title: string
   searchable?: boolean
+  badgeCount: number
 }
 
-export default function DropdownAutocomplete(props: RenderProps) {
+export default function DropdownAutocomplete({
+  badgeCount,
+  ...props
+}: RenderProps) {
   return (
     <Popover
       arrow={false}
@@ -23,7 +27,9 @@ export default function DropdownAutocomplete(props: RenderProps) {
       trigger="click"
       content={<PopoverContent {...props} />}
     >
-      <DropdownActivator title={props.title} />
+      <Badge count={badgeCount} overflowCount={9}>
+        <DropdownActivator title={props.title} />
+      </Badge>
     </Popover>
   )
 }
