@@ -2,8 +2,6 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
 import { Button, Space, Table, Tag } from 'antd'
-import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
-import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Client, Project } from 'models'
 import Filter from '@/components/Filter'
@@ -12,6 +10,7 @@ import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import { ALL_UUID } from '~/common/Config'
 import { FiEdit2 } from 'react-icons/fi'
+import TableActionColumn from '@/components/TableActionColumn'
 
 export default function ProjectsPage() {
   const columns = [
@@ -68,33 +67,24 @@ export default function ProjectsPage() {
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: Project) => (
-        <Space>
-          <FiEdit2
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              setCurrentRecord(record)
-              setModalOpen(true)
-            }}
-          />
-          {record.active ? (
-            <ActiveActionMenu
-              onArchive={() => {
-                record.active = false
-                setData([...data!])
-              }}
-            />
-          ) : (
-            <ArchivedActionMenu
-              onRestore={() => {
-                record.active = true
-                setData([...data!])
-              }}
-              onDelete={() => {
-                return null
-              }}
-            />
-          )}
-        </Space>
+        <TableActionColumn
+          isActive={record.active}
+          onEdit={() => {
+            setCurrentRecord(record)
+            setModalOpen(true)
+          }}
+          onArchive={() => {
+            record.active = false
+            setData([...data!])
+          }}
+          onRestore={() => {
+            record.active = true
+            setData([...data!])
+          }}
+          onDelete={() => {
+            return null
+          }}
+        />
       ),
     },
   ]
