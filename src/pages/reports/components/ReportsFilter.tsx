@@ -1,5 +1,5 @@
 import { DatePicker, Divider, Space } from 'antd'
-import DropdownAutocomplete from '@/components/DropdownAutocomplete.tsx'
+import DropdownAutocomplete from '@/components/DropdownAutocomplete'
 import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import {
