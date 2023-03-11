@@ -1,8 +1,5 @@
-import { Badge, Checkbox, DatePicker, Divider, Popover, Space } from 'antd'
-import dayjs from 'dayjs'
-import type { Dayjs } from 'dayjs'
-import DropdownAutocomplete from '@/pages/reports/components/DropdownAutocomplete'
-import DropdownActivator from '@/components/DropdownActivator'
+import { DatePicker, Divider, Space } from 'antd'
+import DropdownAutocomplete from '@/components/DropdownAutocomplete.tsx'
 import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import {
