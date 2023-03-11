@@ -3,7 +3,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
-import { Client, Project } from 'models'
+import { Client, Project, ProjectUpdateBody } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
@@ -72,14 +72,8 @@ export default function ProjectsPage() {
             setCurrentRecord(record)
             setModalOpen(true)
           }}
-          onArchive={() => {
-            record.active = false
-            setData([...data!])
-          }}
-          onRestore={() => {
-            record.active = true
-            setData([...data!])
-          }}
+          onArchive={() => setProjectStatus(false, record)}
+          onRestore={() => setProjectStatus(true, record)}
           onDelete={() => {
             return null
           }}
@@ -89,6 +83,7 @@ export default function ProjectsPage() {
   ]
 
   const { data, call, setData, loading } = useApi('project', 'getAll')
+  const { call: update, loading: loadingUpdate } = useApi('project', 'update')
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Project[]>([])
@@ -122,6 +117,17 @@ export default function ProjectsPage() {
       setData([...data])
     }
     setCurrentRecord(record)
+  }
+  async function setProjectStatus(isActive: boolean, record: Project) {
+    try {
+      await update(ProjectUpdateBody.createPartially({ active: isActive }), {
+        id: record.id,
+      })
+      record.active = isActive
+      setData([...data!])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
