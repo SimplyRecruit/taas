@@ -28,6 +28,17 @@ const propToIndexMap: { [key: string]: number } = {
   projectAbbr: 6,
 }
 
+function convertBillableCell(yesNoString: string) {
+  switch (yesNoString.toUpperCase()) {
+    case 'YES':
+      return 'true'
+    case 'NO':
+      return 'false'
+    default:
+      return 'false'
+  }
+}
+
 export default function BatchSpreadSheet({
   ssData,
   clientAbbrs,
@@ -102,6 +113,30 @@ export default function BatchSpreadSheet({
   }, [ssData])
 
   useEffect(() => {
+    const columns: jspreadsheet.Column[] = [
+      {
+        title: 'Date',
+        type: 'calendar',
+        options: {
+          format: DEFAULT_DATE_FORMAT,
+          today: true,
+        },
+      },
+      {
+        title: 'Client',
+        type: 'autocomplete',
+        source: clientAbbrs.map(e => ({ id: e, name: e })),
+      },
+      { title: 'Hour', type: 'numeric', mask: '000' },
+      { title: 'Description', type: 'text' },
+      { title: 'Billable', type: 'checkbox' },
+      { title: 'Ticket No', type: 'text' },
+      {
+        title: 'Project',
+        type: 'autocomplete',
+        source: projectAbbrs.map(e => ({ id: e, name: e })),
+      },
+    ]
     const options: JSpreadsheetOptions = {
       rowDrag: false,
       tableOverflow: true,
@@ -109,53 +144,32 @@ export default function BatchSpreadSheet({
       columnSorting: false,
       allowInsertColumn: false,
       data: ssData,
-      columns: [
-        {
-          title: 'Date',
-          type: 'calendar',
-          options: {
-            format: DEFAULT_DATE_FORMAT,
-            today: true,
-          },
-        },
-        {
-          title: 'Client',
-          type: 'autocomplete',
-          source: clientAbbrs.map(e => ({ id: e, name: e })),
-        },
-        { title: 'Hour', type: 'numeric', mask: '000' },
-        { title: 'Description', type: 'text' },
-        { title: 'Billable', type: 'checkbox' },
-        { title: 'Ticket No', type: 'text' },
-        {
-          title: 'Project',
-          type: 'autocomplete',
-          source: projectAbbrs.map(e => ({ id: e, name: e })),
-        },
-      ],
+      columns,
       allowManualInsertColumn: false,
       allowManualInsertRow: false,
       minSpareRows: 1,
       allowDeleteColumn: false,
       contextMenu: false as any,
-      onbeforepaste: (e, copiedText, col, row) => {
-        const pastingCell = e.jspreadsheet.getValueFromCoords(
-          Number(col),
-          Number(row)
+      onbeforepaste: (e, copiedText, col) => {
+        if (copiedText[0] === '\t') copiedText = copiedText.substring(1)
+        if (copiedText[copiedText.length - 1] === '\t')
+          copiedText = copiedText.substring(0, copiedText.length - 1)
+        const billableColIndex = 4 - Number(col)
+        console.log(billableColIndex)
+        console.log(copiedText.split('\r\n')[0].length)
+        console.log(copiedText.split('\r\n')[0].split('\t'))
+        if (
+          billableColIndex < 0 ||
+          billableColIndex >= copiedText.split('\r\n')[0].split('\t').length
         )
-        if (typeof pastingCell === 'boolean') {
-          switch (copiedText.toUpperCase()) {
-            case 'YES':
-              copiedText = 'true'
-              break
-            case 'NO':
-              copiedText = 'false'
-              break
-            default:
-              return false
-          }
-        }
-        return copiedText
+          return copiedText
+        const pastedRows = copiedText.split('\r\n').map(r => {
+          const split = r.split('\t')
+          console.log({ split })
+          split[billableColIndex] = convertBillableCell(split[billableColIndex])
+          return split.join('\t')
+        })
+        return pastedRows.join('\n')
       },
       onchange: onSsDataChange,
       ondeleterow: onSsDataChange,
