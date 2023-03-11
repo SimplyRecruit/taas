@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-} from 'typeorm'
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import ClientResourceEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'

@@ -12,6 +12,7 @@ ClientAddResourceBody,
 Project,
 ProjectCreateBody,
 ProjectUpdateBody,
+ReportReqBody,
 Resource,
 ResourceUpdateBody,
 TableQueryParameters,
@@ -159,6 +160,20 @@ export default {
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "patch",
+                url,
+                data: body,
+            })
+        },
+    },
+    report: {
+        async get(
+            body: ReportReqBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/report"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
                 url,
                 data: body,
             })

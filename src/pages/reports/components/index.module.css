@@ -1,0 +1,13 @@
+.wrapper :global .ant-checkbox-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper :global .ant-checkbox-group-item {
+    margin: 0px;
+}
+
+.wrapper :global .ant-checkbox-group-item  span:nth-child(2) {
+    margin-top: auto;
+    margin-bottom: auto;
+}

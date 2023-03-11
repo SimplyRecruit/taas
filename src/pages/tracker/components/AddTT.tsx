@@ -8,7 +8,7 @@ import {
   Checkbox,
   InputNumber,
 } from 'antd'
-import { Client, ClientRelation, Project, TT, TTCreateBody } from 'models'
+import { Client, Project, TT, TTCreateBody } from 'models'
 import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
