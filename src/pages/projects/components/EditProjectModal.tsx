@@ -203,9 +203,6 @@ export default function EditProjectDrawer({
                 style={{ width: '100%' }}
               />
             </Form.Item>
-            <Form.Item valuePropName="checked" name="active" label="Active">
-              <Switch />
-            </Form.Item>
           </Col>
         </Row>
       </Form>
