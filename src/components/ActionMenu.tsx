@@ -7,21 +7,13 @@ interface RenderProps {
 export default function ActionMenu({ items }: RenderProps) {
   return (
     <Dropdown
-      getPopupContainer={() =>
-        document.getElementById('action-button') as HTMLElement
-      }
       menu={{
         items,
       }}
       placement="bottomLeft"
       trigger={['click']}
     >
-      <Button
-        size="small"
-        icon={<FiMoreVertical size={18} />}
-        id="action-button"
-        type="ghost"
-      />
+      <Button size="small" icon={<FiMoreVertical size={18} />} type="ghost" />
     </Dropdown>
   )
 }
