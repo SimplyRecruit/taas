@@ -2,15 +2,14 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Button, Table } from 'antd'
 import { useEffect, useState } from 'react'
-import { FiEdit2 } from 'react-icons/fi'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
 import { Resource } from 'models'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
-import TeamFilter from '@/pages/team/components/TeamFilter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
+import Filter from '@/components/Filter'
 
 export default function Team() {
   const columns: ColumnsType<Resource> = [
@@ -149,10 +148,12 @@ export default function Team() {
           marginBottom: 20,
         }}
       >
-        <TeamFilter
+        <Filter
           onStatusChange={setSelectedStatus}
           onSearch={setSearchText}
+          defaultStatus="all"
           searchText={searchText}
+          searchPlaceholder="Search by name"
         />
         <Button
           type="primary"

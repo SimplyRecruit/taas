@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
-import { Button, Space, Table, Tag } from 'antd'
+import { Button, Table, Tag } from 'antd'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Client, Project } from 'models'
 import Filter from '@/components/Filter'
@@ -9,7 +9,6 @@ import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import { ALL_UUID } from '~/common/Config'
-import { FiEdit2 } from 'react-icons/fi'
 import TableActionColumn from '@/components/TableActionColumn'
 
 export default function ProjectsPage() {
@@ -93,7 +92,7 @@ export default function ProjectsPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Project[]>([])
-  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
 
   const filterData = (data: Project[]) => {

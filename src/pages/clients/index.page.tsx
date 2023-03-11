@@ -2,17 +2,16 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
-import { FiEdit } from 'react-icons/fi'
-import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
-import { Client, ClientContractType, Resource } from 'models'
+import { Client } from 'models'
 import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
 import { ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
+import Filter from '@/components/Filter'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -181,10 +180,11 @@ export default function Clients() {
           marginBottom: 20,
         }}
       >
-        <ClientsFilter
+        <Filter
           onStatusChange={setSelectedStatus}
           onSearch={setSearchText}
           searchText={searchText}
+          searchPlaceholder="Search by name"
         />
         <Button
           type="primary"

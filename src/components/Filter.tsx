@@ -16,11 +16,11 @@ interface RenderProps {
 }
 const Filter = ({
   onStatusChange,
-  defaultStatus = 'all',
+  defaultStatus = 'active',
   items = [
     { value: 'all', text: 'All' },
     { value: 'active', text: 'Active' },
-    { value: 'inactive', text: 'Inactive' },
+    { value: 'inactive', text: 'Archived' },
   ],
   onSearch,
   searchText,
