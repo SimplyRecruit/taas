@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString } from 'class-validator'
+import { IsBoolean, IsDateString, IsOptional, IsString } from 'class-validator'
 import Model from 'models/Model'
 
 export default class ReportReqBody extends Model {
@@ -8,6 +8,19 @@ export default class ReportReqBody extends Model {
   @IsDateString()
   to: Date
 
+  @IsOptional()
   @IsBoolean()
   billable?: boolean
+
+  @IsOptional()
+  @IsString({ each: true })
+  resourceIds?: string[]
+
+  @IsOptional()
+  @IsString({ each: true })
+  clientIds?: string[]
+
+  @IsOptional()
+  @IsString({ each: true })
+  projectIds?: string[]
 }

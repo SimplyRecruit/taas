@@ -17,7 +17,8 @@ export default class ReportController {
   @Post(undefined)
   @Authorized(UserRole.ADMIN)
   async get(
-    @Body({ patch: true }) { from, to, billable }: ReportReqBody,
+    @Body()
+    { from, to, billable, clientIds, projectIds, resourceIds }: ReportReqBody,
     @CurrentUser() currentUser: UserEntity
   ) {
     let t
@@ -32,13 +33,30 @@ export default class ReportController {
         .addSelect('SUM(tt.hour)', 'totalHours')
         .from(TimeTrackEntity, 'tt')
         .innerJoin(ResourceEntity, 'resource', 'resource.id = tt.resource_id')
-        .where('resource.id = :resourceId', {
-          resourceId: currentResource.id,
-        })
-        .andWhere('tt.date BETWEEN :from AND :to ', { from, to })
+        .where('tt.date BETWEEN :from AND :to ', { from, to })
         .groupBy(`DATE_TRUNC('day', tt.date)`)
         .addGroupBy('tt.billable')
         .orderBy('date')
+
+      if (resourceIds && resourceIds.length) {
+        query = query.andWhere('tt.resource_id IN (:...resourceIds)', {
+          resourceIds,
+        })
+      } else {
+        query = query.andWhere('tt.resource_id = :resourceId', {
+          resourceId: currentResource.id,
+        })
+      }
+      if (clientIds && clientIds.length) {
+        query = query.andWhere('tt.client_id IN (:...clientIds)', {
+          clientIds,
+        })
+      }
+      if (projectIds && projectIds.length) {
+        query = query.andWhere('tt.project_id IN (:...projectIds)', {
+          projectIds,
+        })
+      }
       if (typeof billable === 'boolean') {
         query = query.andWhere('tt.billable = :billable', {
           billable: billable,

@@ -9,7 +9,7 @@ type OptionType = {
 }
 
 interface RenderProps {
-  onChange?: (value: string) => void
+  onChange: (value: string[]) => void
   options?: OptionType[]
   title: string
   searchable?: boolean
@@ -38,9 +38,7 @@ export default function PopoverContent({
       )}
       <Checkbox.Group
         options={filteredOptions}
-        onChange={e => {
-          console.log(e)
-        }}
+        onChange={onChange}
       ></Checkbox.Group>
     </Space>
   )

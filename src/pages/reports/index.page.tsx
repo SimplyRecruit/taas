@@ -71,20 +71,16 @@ export default function ReportsPage() {
     },
     annotations,
   }
-  function getReport(values: any) {
+  function getReport(values: ReportReqBody) {
     if (values) {
-      call(
-        ReportReqBody.create({
-          from: momentToDate(values[0]),
-          to: momentToDate(values[1]),
-        })
-      )
+      console.log(values)
+      call(values)
     }
   }
 
   return (
     <>
-      <ReportsFilter getReport={getReport}></ReportsFilter>
+      <ReportsFilter onChange={getReport}></ReportsFilter>
       <ColumnChart {...config} style={{ margin: 20 }} />
     </>
   )

@@ -9,7 +9,7 @@ type OptionType = {
 }
 
 interface RenderProps {
-  onChange?: (value: string) => void
+  onChange: (value: string[]) => void
   options?: OptionType[]
   title: string
   searchable?: boolean
