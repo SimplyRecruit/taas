@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
-import { Client } from 'models'
+import { Client, ClientUpdateBody } from 'models'
 import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
@@ -103,8 +103,8 @@ export default function Clients() {
             onEdit={() => {
               openEditDrawer(record, '1')
             }}
-            onArchive={() => null}
-            onRestore={() => null}
+            onArchive={() => setClientStatus(false, record)}
+            onRestore={() => setClientStatus(true, record)}
             onDelete={() => null}
           />
         </span>
@@ -113,6 +113,7 @@ export default function Clients() {
   ]
 
   const { data, call, loading, setData } = useApi('client', 'getAll')
+  const { call: update, loading: loadingUpdate } = useApi('client', 'update')
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
@@ -138,6 +139,18 @@ export default function Clients() {
       setData([...data])
     }
     setCurrentRecord(record)
+  }
+
+  async function setClientStatus(isActive: boolean, record: Client) {
+    try {
+      await update(ClientUpdateBody.createPartially({ active: isActive }), {
+        id: record.id,
+      })
+      record.active = isActive
+      setData([...data!])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {
