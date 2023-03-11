@@ -12,6 +12,7 @@ import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
 import { ColumnsType } from 'antd/es/table'
+import TableActionColumn from '@/components/TableActionColumn'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -98,11 +99,14 @@ export default function Clients() {
       fixed: 'right',
       render: (record: Client) => (
         <span>
-          <FiEdit
-            onClick={() => {
+          <TableActionColumn
+            isActive={record.active}
+            onEdit={() => {
               openEditDrawer(record, '1')
             }}
-            style={{ cursor: 'pointer' }}
+            onArchive={() => null}
+            onRestore={() => null}
+            onDelete={() => null}
           />
         </span>
       ),
