@@ -17,6 +17,7 @@ export default function ActionMenu({ items }: RenderProps) {
       trigger={['click']}
     >
       <Button
+        size="small"
         icon={<FiMoreVertical size={18} />}
         id="action-button"
         type="ghost"

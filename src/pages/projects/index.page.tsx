@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
-import { Button, Table, Tag } from 'antd'
+import { Button, Space, Table, Tag } from 'antd'
 import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
 import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
@@ -11,6 +11,7 @@ import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import { ALL_UUID } from '~/common/Config'
+import { FiEdit2 } from 'react-icons/fi'
 
 export default function ProjectsPage() {
   const columns = [
@@ -66,33 +67,35 @@ export default function ProjectsPage() {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: (record: Project) =>
-        record.active ? (
-          <ActiveActionMenu
-            onEdit={() => {
+      render: (record: Project) => (
+        <Space>
+          <FiEdit2
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
               setCurrentRecord(record)
               setModalOpen(true)
             }}
-            onArchive={() => {
-              record.active = false
-              setData([...data!])
-            }}
           />
-        ) : (
-          <ArchivedActionMenu
-            onEdit={() => {
-              setCurrentRecord(record)
-              setModalOpen(true)
-            }}
-            onRestore={() => {
-              record.active = true
-              setData([...data!])
-            }}
-            onDelete={() => {
-              return null
-            }}
-          />
-        ),
+          {record.active ? (
+            <ActiveActionMenu
+              onArchive={() => {
+                record.active = false
+                setData([...data!])
+              }}
+            />
+          ) : (
+            <ArchivedActionMenu
+              onRestore={() => {
+                record.active = true
+                setData([...data!])
+              }}
+              onDelete={() => {
+                return null
+              }}
+            />
+          )}
+        </Space>
+      ),
     },
   ]
 
