@@ -3,7 +3,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Button, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
-import { Resource } from 'models'
+import { Resource, ResourceUpdateBody } from 'models'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -80,8 +80,8 @@ export default function Team() {
             setSelectedRowKey(record.id)
             setInviteMemberModalOpen(true)
           }}
-          onArchive={() => null}
-          onRestore={() => null}
+          onArchive={() => setResourceStatus(false, record)}
+          onRestore={() => setResourceStatus(true, record)}
           onDelete={() => null}
         />
       ),
@@ -89,6 +89,7 @@ export default function Team() {
   ]
 
   const { data, loading, call, setData } = useApi('resource', 'getAll', [])
+  const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -114,6 +115,17 @@ export default function Team() {
     setData([record, ...data])
     setFilteredData([record, ...filteredData])
     setInviteMemberModalOpen(false)
+  }
+  async function setResourceStatus(isActive: boolean, record: Resource) {
+    try {
+      await update(ResourceUpdateBody.createPartially({ active: isActive }), {
+        id: record.id,
+      })
+      record.active = isActive
+      setData([...data!])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const filterData = (data: Resource[]) => {

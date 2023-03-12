@@ -210,11 +210,6 @@ const EditMemberDrawer = ({
                 placeholder="Enter rate"
               />
             </Form.Item>
-            {!!value && (
-              <Form.Item valuePropName="checked" name="active" label="Active">
-                <Switch />
-              </Form.Item>
-            )}
           </Col>
         </Row>
       </Form>
