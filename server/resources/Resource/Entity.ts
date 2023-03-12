@@ -23,7 +23,8 @@ export default class ResourceEntity extends EntityBase {
 
   @OneToMany(
     () => ClientResourceEntity,
-    clientResource => clientResource.resource
+    clientResource => clientResource.resource,
+    { cascade: true }
   )
   clientResource: ClientResourceEntity
 }

@@ -82,7 +82,7 @@ export default function Team() {
           }}
           onArchive={() => setResourceStatus(false, record)}
           onRestore={() => setResourceStatus(true, record)}
-          onDelete={() => null}
+          onDelete={() => remove({ id: record.id })}
         />
       ),
     },
@@ -90,6 +90,7 @@ export default function Team() {
 
   const { data, loading, call, setData } = useApi('resource', 'getAll', [])
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
+  const { loading: loadingRemove, call: remove } = useApi('resource', 'delete')
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')

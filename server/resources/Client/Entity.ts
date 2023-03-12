@@ -44,7 +44,8 @@ export default class ClientEntity extends EntityBase {
 
   @OneToMany(
     () => ClientResourceEntity,
-    clientResource => clientResource.client
+    clientResource => clientResource.client,
+    { cascade: true }
   )
   clientResource: ClientResourceEntity[]
 }
