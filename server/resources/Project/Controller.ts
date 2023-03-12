@@ -94,20 +94,23 @@ export default class ProjectController {
     @Body({ patch: true }) { clientId, ...body }: ProjectUpdateBody,
     @CurrentUser() currentUser: UserEntity
   ) {
-    console.log(clientId, body)
     await dataSource.transaction(async em => {
       try {
-        const client = await em.findOneOrFail(ClientEntity, {
-          where: { id: clientId },
-          relations: { organization: true },
-        })
-        if (
-          clientId != ALL_UUID &&
-          client.organization.id !== currentUser.organization.id
-        )
-          throw new ForbiddenError()
+        let updateBody: any = body
+        if (clientId) {
+          const client = await em.findOneOrFail(ClientEntity, {
+            where: { id: clientId },
+            relations: { organization: true },
+          })
+          if (
+            clientId != ALL_UUID &&
+            client.organization.id !== currentUser.organization.id
+          )
+            throw new ForbiddenError()
+          updateBody = { client, ...body }
+        }
 
-        await em.update(ProjectEntity, id, { client, ...body })
+        await em.update(ProjectEntity, id, updateBody)
       } catch (error) {
         console.log(error)
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
