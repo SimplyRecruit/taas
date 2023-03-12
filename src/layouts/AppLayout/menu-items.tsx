@@ -36,6 +36,11 @@ const topItems = [
     label: 'Periods',
     path: Route.Periods,
   },
+  {
+    icon: <FiBarChart2 size={iconSize} />,
+    label: 'Reports',
+    path: Route.Reports,
+  },
 ]
 
 const analyseItems = [
@@ -43,11 +48,6 @@ const analyseItems = [
     icon: <IoGridOutline size={iconSize} />,
     label: 'Dashboard',
     path: Route.DashBoard,
-  },
-  {
-    icon: <FiBarChart2 size={iconSize} />,
-    label: 'Reports',
-    path: Route.Reports,
   },
 ]
 const adminItems = [
