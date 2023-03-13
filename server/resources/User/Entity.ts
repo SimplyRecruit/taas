@@ -1,8 +1,8 @@
 import { UserRole, UserStatus } from 'models'
-import { Column, Entity, Index, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, Index, ManyToOne, OneToMany } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
+import ClientUserEntity from '~/resources/relations/ClientResource'
 
 @Entity('user')
 @Index(['abbr', 'organization'], { unique: true })
@@ -36,8 +36,19 @@ export default class UserEntity extends EntityBase {
   @Column({ default: true })
   isEnabled: boolean
 
-  @OneToOne(() => ResourceEntity)
-  resource: ResourceEntity
+  @Column({ type: 'timestamptz', nullable: true })
+  startDate: Date
+
+  @Column({ type: 'int2', nullable: true })
+  hourlyRate: number
+
+  @Column({ default: true })
+  active: boolean
+
+  @OneToMany(() => ClientUserEntity, clientUser => clientUser.user, {
+    cascade: true,
+  })
+  clientUser: ClientUserEntity
 
   @ManyToOne(() => OrganizationEntity, { onDelete: 'CASCADE' })
   organization: OrganizationEntity

@@ -2,13 +2,13 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import ClientEntity from '~/resources/Client/Entity'
 import ProjectEntity from '~/resources/Project/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
+import UserEntity from '~/resources/User/Entity'
 
 @Entity('time_track')
 export default class TimeTrackEntity extends EntityBase {
-  @ManyToOne(() => ResourceEntity)
+  @ManyToOne(() => UserEntity)
   @JoinColumn()
-  resource: ResourceEntity
+  user: UserEntity
 
   @ManyToOne(() => ClientEntity)
   @JoinColumn()

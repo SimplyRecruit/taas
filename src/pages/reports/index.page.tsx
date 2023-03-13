@@ -1,17 +1,19 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { each, groupBy } from '@antv/util'
 import dynamic from 'next/dynamic'
-import { ColumnConfig } from '@ant-design/plots/es/components/column'
+import type { ColumnConfig } from '@ant-design/plots/es/components/column'
 import useApi from '@/services/useApi'
 import { ReportReqBody } from 'models'
-import { momentToDate } from '@/util'
 import ReportsFilter from '@/pages/reports/components/ReportsFilter'
+import { Spin } from 'antd'
+import { baseConfig } from '@/pages/reports/components/constants'
 const ColumnChart = dynamic(
   () => import('@ant-design/plots').then(({ Column }) => Column),
   { ssr: false }
 )
+
 export default function ReportsPage() {
   const { data, call, loading } = useApi('report', 'get', [])
 
@@ -24,53 +26,29 @@ export default function ReportsPage() {
     )
   }, [])
 
-  const annotations: any = []
-  each(groupBy(data, 'date'), (values, k) => {
-    const value = values.reduce((a: any, b: any) => a + b.totalHours, 0)
-    annotations.push({
-      type: 'text',
-      position: [k, value],
-      content: `${value}`,
-      style: {
-        textAlign: 'center',
-        fontSize: 14,
-        fill: 'rgba(0,0,0,0.85)',
-      },
-      offsetY: -10,
+  const config: ColumnConfig = useMemo(() => {
+    const annotations: any = []
+    each(groupBy(data, 'date'), (values, k) => {
+      const value = values.reduce((a: any, b: any) => a + b.totalHours, 0)
+      annotations.push({
+        type: 'text',
+        position: [k, value],
+        content: `${value}`,
+        style: {
+          textAlign: 'center',
+          fontSize: 14,
+          fill: 'rgba(0,0,0,0.85)',
+        },
+        offsetY: -10,
+      })
     })
-  })
-  const config: ColumnConfig = {
-    data,
-    isStack: true,
-    xField: 'date',
-    yField: 'totalHours',
-    seriesField: 'billable',
-    loading,
-    xAxis: {
-      label: {
-        formatter(text) {
-          return new Date(text).toDateString()
-        },
-      },
-    },
-    legend: {
-      slidable: false,
-    },
-    label: {
-      layout: [
-        {
-          type: 'interval-adjust-position',
-        },
-        {
-          type: 'interval-hide-overlap',
-        },
-        {
-          type: 'adjust-color',
-        },
-      ],
-    },
-    annotations,
-  }
+    return {
+      ...baseConfig,
+      data,
+      annotations,
+    }
+  }, [data])
+
   function getReport(values: ReportReqBody) {
     if (values) {
       console.log(values)
@@ -80,8 +58,10 @@ export default function ReportsPage() {
 
   return (
     <>
-      <ReportsFilter onFilter={getReport}></ReportsFilter>
-      <ColumnChart {...config} style={{ margin: 20 }} />
+      <ReportsFilter onFilter={getReport} />
+      <Spin spinning={loading}>
+        <ColumnChart {...config} style={{ margin: 20 }} />
+      </Spin>
     </>
   )
 }

@@ -37,7 +37,6 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   const [dates, setDates] = useState<Date[]>(
     defaultRangePreset.map(e => momentToDate(e))
   )
-
   useEffect(() => {
     getAllResources()
     getAllClients()
@@ -49,7 +48,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
       ReportReqBody.create({
         from: dates[0],
         to: dates[1],
-        resourceIds: selectedResources,
+        userIds: selectedResources,
         clientIds: selectedClients,
         projectIds: selectedProjects,
       })
@@ -67,23 +66,27 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
       <div>
         <Space split={<Divider type="vertical" />}>
           <DropdownAutocomplete
-            onSave={e => setSelectedResources(e)}
+            badgeCount={selectedResources.length}
+            onChange={e => setSelectedResources(e)}
             title="Team"
             options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
           />
 
           <DropdownAutocomplete
-            onSave={e => setSelectedClients(e)}
+            badgeCount={selectedClients.length}
+            onChange={e => setSelectedClients(e)}
             title="Client"
             options={clients?.map(e => ({ value: e.id, label: e.abbr }))}
           />
           <DropdownAutocomplete
-            onSave={e => setSelectedProjects(e)}
+            badgeCount={selectedProjects.length}
+            onChange={e => setSelectedProjects(e)}
             title="Project"
             options={projects?.map(e => ({ value: e.id, label: e.abbr }))}
           />
           <DropdownAutocomplete
-            onSave={e => setSelectedStatus(e)}
+            badgeCount={selectedStatus.length}
+            onChange={e => setSelectedStatus(e)}
             searchable={false}
             title="Billable"
             options={[

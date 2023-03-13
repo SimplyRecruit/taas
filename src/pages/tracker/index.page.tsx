@@ -60,29 +60,22 @@ export default function Tracker() {
     'getAll',
     []
   )
-  const [pageSize, setPageSize] = useState(10)
-  const [page, setPage] = useState(1)
-  const getTTs = useCallback(
-    (pageParam?: number, pageSizeParam?: number) => {
-      callTT(
-        TableQueryParameters.create({
-          sortBy: [{ column: 'date', direction: 'DESC' }],
-          page: pageParam ?? page,
-          pageSize: pageSizeParam ?? pageSize,
-        })
-      )
-    },
-    [callTT, page, pageSize]
-  )
+
+  function getTTs(pageParam = 1, pageSizeParam = 10) {
+    callTT(
+      TableQueryParameters.create({
+        sortBy: [{ column: 'date', direction: 'DESC' }],
+        page: pageParam,
+        pageSize: pageSizeParam,
+      })
+    )
+  }
 
   useEffect(() => {
     callClient()
     callProject()
-  }, [])
-
-  useEffect(() => {
     getTTs()
-  }, [page, pageSize])
+  }, [])
 
   function onAdd() {
     getTTs()
@@ -92,6 +85,7 @@ export default function Tracker() {
   function onError() {
     messageApi.error('Invalid timetrack')
   }
+
   return (
     <>
       {contextHolder}
@@ -103,9 +97,7 @@ export default function Tracker() {
         projectOptions={dataProject}
       />
       <AddBatchTT
-        onAdd={() => {
-          getTTs()
-        }}
+        onAdd={getTTs}
         clientOptions={dataClient}
         projectOptions={dataProject}
       />
@@ -125,12 +117,7 @@ export default function Tracker() {
           showTotal: total => `Total ${total} clients`,
           showSizeChanger: false,
           total: dataTT?.count,
-          pageSize,
-          onChange(page, pageSize) {
-            setPageSize(pageSize)
-            setPage(page)
-          },
-          current: page,
+          onChange: getTTs,
         }}
       />
     </>
