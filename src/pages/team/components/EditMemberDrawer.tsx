@@ -58,7 +58,7 @@ const EditMemberDrawer = ({
       if (value) {
         const { email, ...updatedMember } = member
         await callUpdate(updatedMember as ResourceUpdateBody, { id: value.id })
-        onUpdate({ ...member, id: value.id })
+        onUpdate({ ...member, active: value.active, id: value.id })
       } else {
         const id: string = await callCreate(member as ResourceCreateBody)
         onAdd({ ...member, id, active: true })

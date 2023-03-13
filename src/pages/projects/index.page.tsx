@@ -1,6 +1,6 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Client, Project, ProjectUpdateBody } from 'models'
@@ -82,15 +82,20 @@ export default function ProjectsPage() {
     },
   ]
 
-  const { data, call, setData, loading } = useApi('project', 'getAll')
+  const {
+    data,
+    call,
+    setData,
+    loading: loadingGetAll,
+  } = useApi('project', 'getAll', [])
   const { call: update, loading: loadingUpdate } = useApi('project', 'update')
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState<Project[]>([])
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
 
-  const filterData = (data: Project[]) => {
+  const loading = loadingUpdate || loadingGetAll
+  const filteredData = useMemo(() => {
     let filtered = data
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(
@@ -102,19 +107,18 @@ export default function ProjectsPage() {
         item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
-    setFilteredData(filtered)
-  }
+    return filtered
+  }, [data, searchText, selectedStatus])
 
-  const find = (record: Project, values: Project[]): number => {
-    return values.findIndex(x => x.id === record.id)
+  const find = (record: Project): number => {
+    return data.findIndex(x => x.id === record.id)
   }
 
   function onUpdate(record: Project) {
-    if (!data) return
-    const index = find(record, data)
+    const index = find(record)
     if (index != -1) {
       data[index] = record
-      setData([...data])
+      setData(prev => [...prev])
     }
     setCurrentRecord(record)
   }
@@ -125,16 +129,11 @@ export default function ProjectsPage() {
         id: record.id,
       })
       record.active = isActive
-      setData([...data!])
+      setData(prev => [...prev])
     } catch (error) {
       console.log(error)
     }
   }
-
-  useEffect(() => {
-    if (!data) return
-    filterData(data)
-  }, [data, searchText, selectedStatus])
 
   useEffect(() => {
     call()

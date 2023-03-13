@@ -1,6 +1,6 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -112,31 +112,51 @@ export default function Clients() {
     },
   ]
 
-  const { data, call, loading, setData } = useApi('client', 'getAll')
+  const {
+    data,
+    call,
+    loading: loadingGetAll,
+    setData,
+  } = useApi('client', 'getAll', [])
   const { call: update, loading: loadingUpdate } = useApi('client', 'update')
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState<Client[]>([])
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
-  const find = (record: Client, values: Client[]): number => {
-    return values.findIndex(x => x.id === record.id)
+  const loading = loadingUpdate || loadingGetAll
+
+  const filteredData = useMemo(() => {
+    let filtered = data
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(
+        item => item.active === (selectedStatus == 'active')
+      )
+    }
+    if (searchText) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    }
+    return filtered
+  }, [data, searchText, selectedStatus])
+
+  const find = (record: Client): number => {
+    return data.findIndex(x => x.id === record.id)
   }
 
   function onAdd(value: Client) {
-    if (!data) setData([value])
-    else setData([value, ...data])
+    if (!data.length) setData([value])
+    else setData(prev => [value, ...prev])
   }
 
   function onUpdate(record: Client) {
-    if (!data) return
-    const index = find(record, data)
+    const index = find(record)
     if (index != -1) {
       data[index] = record
-      setData([...data])
+      setData(prev => [...prev])
     }
     setCurrentRecord(record)
   }
@@ -147,7 +167,7 @@ export default function Clients() {
         id: record.id,
       })
       record.active = isActive
-      setData([...data!])
+      setData(prev => [...prev])
     } catch (error) {
       console.log(error)
     }
@@ -164,25 +184,6 @@ export default function Clients() {
     call()
   }, [])
 
-  useEffect(() => {
-    if (!data) return
-    filterData(data)
-  }, [data, searchText, selectedStatus])
-
-  const filterData = (values: Client[]) => {
-    let filtered = values
-    if (selectedStatus !== 'all') {
-      filtered = filtered.filter(
-        item => item.active === (selectedStatus == 'active')
-      )
-    }
-    if (searchText) {
-      filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    }
-    setFilteredData(filtered)
-  }
   return (
     <>
       <div

@@ -51,7 +51,7 @@ const EditClientDrawer = ({
     loading: loadingGetResources,
     error,
     call: callResourceGetAll,
-  } = useApi('resource', 'getAll')
+  } = useApi('resource', 'getAll', [])
   const { call: callUpdate, loading: loadingUpdate } = useApi(
     'client',
     'update'
@@ -245,35 +245,33 @@ const EditClientDrawer = ({
                 </Radio>
               </Radio.Group>
             </Form.Item>
-            {internalEveryoneHasAccess === false &&
-              !loadingGetResources &&
-              !!resources && (
-                <Form.Item name="resourceIds">
-                  <Select
-                    placement="topRight"
-                    filterOption={(inputValue, option) =>
-                      option?.label
-                        .toLocaleLowerCase()
-                        .includes(inputValue.toLocaleLowerCase()) ?? false
-                    }
-                    mode="multiple"
-                    allowClear
-                    style={{ width: '100%' }}
-                    placeholder="Please select"
-                    options={resources
-                      .filter(e =>
-                        value.resources
-                          ? value.resources.findIndex(a => a.id == e.id) == -1
-                          : true
-                      )
-                      .map(e => ({
-                        value: e.id,
-                        label: `${e.abbr} - ${e.name}`,
-                      }))}
-                    dropdownRender={menu => <>{menu}</>}
-                  />
-                </Form.Item>
-              )}
+            {internalEveryoneHasAccess === false && !loadingGetResources && (
+              <Form.Item name="resourceIds">
+                <Select
+                  placement="topRight"
+                  filterOption={(inputValue, option) =>
+                    option?.label
+                      .toLocaleLowerCase()
+                      .includes(inputValue.toLocaleLowerCase()) ?? false
+                  }
+                  mode="multiple"
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder="Please select"
+                  options={resources
+                    .filter(e =>
+                      value.resources
+                        ? value.resources.findIndex(a => a.id == e.id) == -1
+                        : true
+                    )
+                    .map(e => ({
+                      value: e.id,
+                      label: `${e.abbr} - ${e.name}`,
+                    }))}
+                  dropdownRender={menu => <>{menu}</>}
+                />
+              </Form.Item>
+            )}
           </Form>
           <Divider style={{ margin: '8px 0' }} />
           <Button

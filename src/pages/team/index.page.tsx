@@ -1,7 +1,8 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Button, message, Table } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
 import { Resource, ResourceUpdateBody } from 'models'
 import useApi from '@/services/useApi'
@@ -88,55 +89,30 @@ export default function Team() {
     },
   ]
 
-  const { data, loading, call, setData } = useApi('resource', 'getAll', [])
+  const {
+    data,
+    loading: loadingGetAll,
+    call,
+    setData,
+  } = useApi('resource', 'getAll', [])
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
   const { loading: loadingRemove, call: remove } = useApi('resource', 'delete')
+
   const [messageApi, contextHolder] = message.useMessage()
+
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState<Resource[]>([])
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
-  const find = (record: Resource): number => {
-    return data.findIndex(x => x.id === record.id)
-  }
-
-  const onUpdate = (record: Resource) => {
-    const index = find(record)
-    if (index != -1) {
-      data[index] = record
-      setData([...data])
-    }
-    setInviteMemberModalOpen(false)
-    setSelectedRowKey(null)
-    messageApi.success('Team member updated')
-  }
-  const onAdd = (record: Resource) => {
-    setData([record, ...data])
-    setFilteredData([record, ...filteredData])
-    setInviteMemberModalOpen(false)
-    messageApi.success('Team member invited')
-  }
-  async function setResourceStatus(isActive: boolean, record: Resource) {
-    try {
-      await update(ResourceUpdateBody.createPartially({ active: isActive }), {
-        id: record.id,
-      })
-      record.active = isActive
-      setData([...data!])
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const filterData = (data: Resource[]) => {
+  const loading = loadingUpdate || loadingGetAll || loadingRemove
+  const filteredData = useMemo(() => {
     let filtered = data
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(
-        item => item.active === (selectedStatus === 'active')
+        item => item.active === (selectedStatus == 'active')
       )
     }
     if (searchText) {
@@ -144,11 +120,41 @@ export default function Team() {
         item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
-    setFilteredData(filtered)
+    return filtered
+  }, [data, searchText, selectedStatus])
+
+  function find(record: Resource): number {
+    return data.findIndex(x => x.id === record.id)
   }
-  useEffect(() => {
-    filterData(data)
-  }, [data, setSearchText, selectedStatus])
+
+  function onUpdate(record: Resource) {
+    const index = find(record)
+    if (index != -1) {
+      data[index] = record
+      setData(prev => [...prev])
+    }
+    setInviteMemberModalOpen(false)
+    setSelectedRowKey(null)
+    messageApi.success('Team member updated')
+  }
+
+  function onAdd(record: Resource) {
+    setData(prev => [record, ...prev])
+    setInviteMemberModalOpen(false)
+    messageApi.success('Team member invited')
+  }
+
+  async function setResourceStatus(isActive: boolean, record: Resource) {
+    try {
+      await update(ResourceUpdateBody.createPartially({ active: isActive }), {
+        id: record.id,
+      })
+      record.active = isActive
+      setData(prev => [...prev])
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     call()
