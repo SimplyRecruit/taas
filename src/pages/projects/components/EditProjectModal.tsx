@@ -40,7 +40,7 @@ export default function EditProjectDrawer({
     data,
     loading: loadingGetAll,
     error,
-  } = useApi('client', 'getAll')
+  } = useApi('client', 'getAll', [])
   const { call: callCreate, loading: loadingCreate } = useApi(
     'project',
     'create'
@@ -58,7 +58,7 @@ export default function EditProjectDrawer({
     call()
   }, [])
 
-  const loading = () => loadingUpdate || loadingCreate
+  const loading = loadingUpdate || loadingCreate
 
   async function onSubmit() {
     form.validateFields().then(async body => {
@@ -69,7 +69,14 @@ export default function EditProjectDrawer({
             body.clientId == ALL_UUID
               ? Client.createPartially({ id: ALL_UUID })
               : data?.find(e => e.id == body.clientId)
-          onUpdate(Project.createPartially({ id: value.id, ...body, client }))
+          onUpdate(
+            Project.createPartially({
+              id: value.id,
+              active: value.active,
+              ...body,
+              client,
+            })
+          )
         } else {
           const id = await callCreate(body)
           const client =
@@ -103,7 +110,7 @@ export default function EditProjectDrawer({
             onClick={onSubmit}
             type="primary"
             htmlType="submit"
-            loading={loading()}
+            loading={loading}
           >
             Save
           </Button>
@@ -180,12 +187,10 @@ export default function EditProjectDrawer({
           <Select
             options={[
               { value: ALL_UUID, label: 'ALL' },
-              ...(data
-                ? data.map(e => ({
-                    value: e.id,
-                    label: `${e.abbr} - ${e.name}`,
-                  }))
-                : []),
+              ...data.map(e => ({
+                value: e.id,
+                label: `${e.abbr} - ${e.name}`,
+              })),
             ]}
           />
         </Form.Item>
