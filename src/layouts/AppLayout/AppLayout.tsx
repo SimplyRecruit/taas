@@ -1,4 +1,4 @@
-import { authRoutes } from '@/auth/utils/AuthUtil'
+import { allWelcomeRoutes, authRoutes } from '@/auth/utils/AuthUtil'
 import ProfileMenu from '@/components/ProfileMenu'
 import {
   HEADER_HEIGHT,
@@ -30,6 +30,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const [sidebarCollapsed] = useState(false)
   if (
     authRoutes.includes(router.pathname as Route) ||
+    allWelcomeRoutes.includes(router.pathname) ||
     router.pathname === '/_error'
   ) {
     return <div>{children}</div>
