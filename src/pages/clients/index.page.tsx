@@ -1,6 +1,6 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -112,12 +112,16 @@ export default function Clients() {
     },
   ]
 
-  const { data, call, loading, setData } = useApi('client', 'getAll')
+  const {
+    data,
+    call,
+    loading: loadingGetAll,
+    setData,
+  } = useApi('client', 'getAll', [])
   const { call: update, loading: loadingUpdate } = useApi('client', 'update')
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
-  const [filteredData, setFilteredData] = useState<Client[]>([])
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
@@ -127,8 +131,8 @@ export default function Clients() {
   }
 
   function onAdd(value: Client) {
-    if (!data) setData([value])
-    else setData([value, ...data])
+    if (!data.length) setData([value])
+    else setData(prev => [value, ...prev])
   }
 
   function onUpdate(record: Client) {
@@ -147,7 +151,7 @@ export default function Clients() {
         id: record.id,
       })
       record.active = isActive
-      setData([...data!])
+      setData(prev => [...prev])
     } catch (error) {
       console.log(error)
     }
@@ -163,14 +167,10 @@ export default function Clients() {
   useEffect(() => {
     call()
   }, [])
+  const loading = loadingUpdate || loadingGetAll
 
-  useEffect(() => {
-    if (!data) return
-    filterData(data)
-  }, [data, searchText, selectedStatus])
-
-  const filterData = (values: Client[]) => {
-    let filtered = values
+  const filteredData = useMemo(() => {
+    let filtered = data
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(
         item => item.active === (selectedStatus == 'active')
@@ -181,8 +181,9 @@ export default function Clients() {
         item.name.toLowerCase().includes(searchText.toLowerCase())
       )
     }
-    setFilteredData(filtered)
-  }
+    return filtered
+  }, [data, searchText, selectedStatus])
+
   return (
     <>
       <div
