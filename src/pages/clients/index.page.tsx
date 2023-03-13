@@ -126,8 +126,25 @@ export default function Clients() {
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
-  const find = (record: Client, values: Client[]): number => {
-    return values.findIndex(x => x.id === record.id)
+  const loading = loadingUpdate || loadingGetAll
+
+  const filteredData = useMemo(() => {
+    let filtered = data
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(
+        item => item.active === (selectedStatus == 'active')
+      )
+    }
+    if (searchText) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    }
+    return filtered
+  }, [data, searchText, selectedStatus])
+
+  const find = (record: Client): number => {
+    return data.findIndex(x => x.id === record.id)
   }
 
   function onAdd(value: Client) {
@@ -136,11 +153,10 @@ export default function Clients() {
   }
 
   function onUpdate(record: Client) {
-    if (!data) return
-    const index = find(record, data)
+    const index = find(record)
     if (index != -1) {
       data[index] = record
-      setData([...data])
+      setData(prev => [...prev])
     }
     setCurrentRecord(record)
   }
@@ -167,22 +183,6 @@ export default function Clients() {
   useEffect(() => {
     call()
   }, [])
-  const loading = loadingUpdate || loadingGetAll
-
-  const filteredData = useMemo(() => {
-    let filtered = data
-    if (selectedStatus !== 'all') {
-      filtered = filtered.filter(
-        item => item.active === (selectedStatus == 'active')
-      )
-    }
-    if (searchText) {
-      filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    }
-    return filtered
-  }, [data, searchText, selectedStatus])
 
   return (
     <>
