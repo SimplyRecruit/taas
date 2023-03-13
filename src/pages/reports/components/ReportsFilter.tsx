@@ -59,7 +59,6 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     selectedClients,
     selectedStatus,
     dates,
-    onFilter,
   ])
 
   return (
