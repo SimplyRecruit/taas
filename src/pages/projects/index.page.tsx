@@ -118,6 +118,7 @@ export default function ProjectsPage() {
     }
     setCurrentRecord(record)
   }
+
   async function setProjectStatus(isActive: boolean, record: Project) {
     try {
       await update(ProjectUpdateBody.createPartially({ active: isActive }), {

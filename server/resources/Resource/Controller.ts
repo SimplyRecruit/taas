@@ -111,13 +111,17 @@ export default class ResourceController {
       try {
         const resource = await em.findOneOrFail(ResourceEntity, {
           where: { id: resourceId },
-          relations: { user: true },
+          relations: { user: { organization: true }, clientResource: true },
         })
-        if (resource.user.organization.id !== currentUser.organization.id)
+
+        if (
+          resource.user.organization.id !== currentUser.organization.id ||
+          resource.active
+        )
           throw new ForbiddenError()
-        await em.remove(resource.user)
-        await em.remove(resource)
+        await em.softRemove(resource)
       } catch (error) {
+        console.log(error)
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
         else throw new InternalServerError('Internal Server Error')

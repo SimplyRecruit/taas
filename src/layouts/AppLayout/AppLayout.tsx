@@ -106,7 +106,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
               />
-              <Menu
+              {/* <Menu
                 items={[
                   {
                     label: '‏ ‏ ‏ Analyse',
@@ -117,7 +117,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 ]}
                 mode="inline"
                 selectedKeys={[router.pathname.split('/')[1]]}
-              />
+              /> */}
               <Menu
                 style={{ height: '100%' }}
                 items={[
