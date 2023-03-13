@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import type { Dayjs } from 'dayjs'
+import type { ColumnConfig } from '@ant-design/plots/es/components/column'
 
 const rangePresets: {
   label: string
@@ -18,4 +19,34 @@ const rangePresets: {
 
 const defaultRangePreset = rangePresets[3].value
 
-export { rangePresets, defaultRangePreset }
+const baseConfig = {
+  isStack: true,
+  xField: 'date',
+  yField: 'totalHours',
+  seriesField: 'billable',
+  xAxis: {
+    label: {
+      formatter(text) {
+        return new Date(text).toDateString()
+      },
+    },
+  },
+  legend: {
+    slidable: false,
+  },
+  label: {
+    layout: [
+      {
+        type: 'interval-adjust-position',
+      },
+      {
+        type: 'interval-hide-overlap',
+      },
+      {
+        type: 'adjust-color',
+      },
+    ],
+  },
+} satisfies Partial<ColumnConfig>
+
+export { rangePresets, defaultRangePreset, baseConfig }
