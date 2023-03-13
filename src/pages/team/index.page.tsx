@@ -83,7 +83,6 @@ export default function Team() {
           }}
           onArchive={() => setResourceStatus(false, record)}
           onRestore={() => setResourceStatus(true, record)}
-          onDelete={() => remove({ id: record.id })}
         />
       ),
     },
@@ -96,10 +95,8 @@ export default function Team() {
     setData,
   } = useApi('resource', 'getAll', [])
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
-  const { loading: loadingRemove, call: remove } = useApi('resource', 'delete')
 
   const [messageApi, contextHolder] = message.useMessage()
-
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -107,7 +104,7 @@ export default function Team() {
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
-  const loading = loadingUpdate || loadingGetAll || loadingRemove
+  const loading = loadingUpdate || loadingGetAll
   const filteredData = useMemo(() => {
     let filtered = data
     if (selectedStatus !== 'all') {

@@ -74,9 +74,6 @@ export default function ProjectsPage() {
           }}
           onArchive={() => setProjectStatus(false, record)}
           onRestore={() => setProjectStatus(true, record)}
-          onDelete={() => {
-            return null
-          }}
         />
       ),
     },

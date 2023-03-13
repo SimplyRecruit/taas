@@ -105,7 +105,6 @@ export default function Clients() {
             }}
             onArchive={() => setClientStatus(false, record)}
             onRestore={() => setClientStatus(true, record)}
-            onDelete={() => null}
           />
         </span>
       ),
