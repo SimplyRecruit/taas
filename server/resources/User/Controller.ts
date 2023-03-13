@@ -31,7 +31,6 @@ import { Body } from '~/decorators/CustomRequestParams'
 import { AlreadyExistsError } from '~/errors/AlreadyExistsError'
 import { dataSource } from '~/main'
 import OrganizationEntity from '~/resources/Organization/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
 import SessionTokenEntity from '~/resources/SessionToken/Entity'
 import {
   createResetPasswordLink,
@@ -90,13 +89,10 @@ export default class UserController {
           name,
           role: UserRole.ADMIN,
           organization,
-        })
-        await em.save(ResourceEntity, {
-          id: randomUUID(),
           hourlyRate: 0,
           startDate: new Date(),
-          user,
         })
+
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {
@@ -114,11 +110,11 @@ export default class UserController {
     return 'Registration Succesful'
   }
 
-  @Post(undefined, '/invite-member')
+  @Post(String, '/invite-member')
   @Authorized(UserRole.ADMIN)
   async inviteMember(
     @Body()
-    { email, hourlyRate, name, abbr, role, startDate }: ResourceCreateBody,
+    { email, name, ...rest }: ResourceCreateBody,
     @CurrentUser() currentUser: UserEntity,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
@@ -129,16 +125,10 @@ export default class UserController {
         const user = await em.save(UserEntity, {
           email,
           name,
-          abbr,
-          role,
           organization: currentUser.organization,
+          ...rest,
         })
         id = user.id
-        await em.save(ResourceEntity, {
-          hourlyRate,
-          user,
-          startDate: startDate,
-        })
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {

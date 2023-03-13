@@ -19,7 +19,6 @@ import { dataSource } from '~/main'
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
 import ClientEntity from '~/resources/Client/Entity'
 import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBody'
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
@@ -37,11 +36,8 @@ export default class TimeTrackController {
     let count = 0
     await dataSource.transaction(async em => {
       try {
-        const resource = await em.findOneOrFail(ResourceEntity, {
-          where: { userId: currentUser.id },
-        })
         ;[entityObjects, count] = await TTEntity.findAndCount({
-          where: { resource: { id: resource.id } },
+          where: { user: { id: currentUser.id } },
           relations: { client: true, project: true },
           order,
           take,
@@ -86,21 +82,18 @@ export default class TimeTrackController {
           - Not owned by currentUser's organization
           - Not accessable by the resource
         */
-        const resource = await em.findOneOrFail(ResourceEntity, {
-          where: { userId: currentUser.id },
-        })
 
         const client = await em.findOneOrFail(ClientEntity, {
           where: [
             {
               abbr: clientAbbr,
               organization: { id: currentUser.organization.id },
-              clientResource: { resourceId: resource.id },
+              clientUser: { userId: currentUser.id },
             },
             {
               abbr: clientAbbr,
               organization: { id: currentUser.organization.id },
-              clientResource: { resourceId: ALL_UUID },
+              clientUser: { userId: ALL_UUID },
             },
           ],
           relations: { organization: true },
@@ -126,12 +119,11 @@ export default class TimeTrackController {
           ],
           relations: { organization: true },
         })
-
         id = (
           await em.save(
             TTEntity.create({
               ...body,
-              resource,
+              user: currentUser,
               client,
               project,
             })
@@ -157,9 +149,6 @@ export default class TimeTrackController {
     const resBodies: TTBatchCreateResBody[] = []
     await dataSource.transaction(async em => {
       try {
-        const resource = await em.findOneOrFail(ResourceEntity, {
-          where: { userId: currentUser.id },
-        })
         for (const body of bodies) {
           // Checking client
           const client = await em.findOne(ClientEntity, {
@@ -167,12 +156,12 @@ export default class TimeTrackController {
               {
                 abbr: body.clientAbbr,
                 organization: { id: currentUser.organization.id },
-                clientResource: { resourceId: resource.id },
+                clientUser: { userId: currentUser.id },
               },
               {
                 abbr: body.clientAbbr,
                 organization: { id: currentUser.organization.id },
-                clientResource: { resourceId: ALL_UUID },
+                clientUser: { userId: ALL_UUID },
               },
             ],
             relations: { organization: true },
@@ -209,7 +198,7 @@ export default class TimeTrackController {
           const { id } = await em.save(
             TTEntity.create({
               ...body,
-              resource,
+              user: currentUser,
               client,
               project,
             })

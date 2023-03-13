@@ -203,17 +203,6 @@ export default {
                 data: body,
             })
         },
-        async delete(
-            params: { id: string, },
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/resource/:id"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "delete",
-                url,
-            })
-        },
         async getClients(
         ) : Promise<AxiosResponse<any>>
         {
@@ -232,17 +221,6 @@ export default {
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "get",
-                url,
-            })
-        },
-        async assignClientToResource(
-            params: { clientId: string,resourceId: string, },
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/resource/:resourceId/clients/:clientId"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "post",
                 url,
             })
         },
@@ -312,7 +290,7 @@ export default {
         },
         async inviteMember(
             body: ResourceCreateBody,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/user/invite-member"
             const url = route

@@ -1,25 +1,25 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
 import EntityBaseOnlyDates from '~/EntityBaseOnlyDates'
 import ClientEntity from '~/resources/Client/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
+import UserEntity from '~/resources/User/Entity'
 
-@Entity('client_resource')
-export default class ClientResourceEntity extends EntityBaseOnlyDates {
+@Entity('client_user')
+export default class ClientUserEntity extends EntityBaseOnlyDates {
   @PrimaryColumn({ name: 'client_id' })
   clientId: string
 
-  @PrimaryColumn({ name: 'resource_id' })
-  resourceId: string
+  @PrimaryColumn({ name: 'user_id' })
+  userId: string
 
-  @ManyToOne(() => ClientEntity, client => client.clientResource, {
+  @ManyToOne(() => ClientEntity, client => client.clientUser, {
     onDelete: 'CASCADE',
   })
   client: ClientEntity
 
-  @ManyToOne(() => ResourceEntity, resource => resource.clientResource, {
+  @ManyToOne(() => UserEntity, user => user.clientUser, {
     onDelete: 'CASCADE',
   })
-  resource: ResourceEntity
+  user: UserEntity
 
   @Column({ default: true })
   active: boolean

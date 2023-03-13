@@ -8,9 +8,7 @@ import { Post } from '~/decorators/CustomApiMethods'
 
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
-import ResourceEntity from '~/resources/Resource/Entity'
 
 @JsonController('/report')
 export default class ReportController {
@@ -18,33 +16,30 @@ export default class ReportController {
   @Authorized(UserRole.ADMIN)
   async get(
     @Body()
-    { from, to, billable, clientIds, projectIds, resourceIds }: ReportReqBody,
+    { from, to, billable, clientIds, projectIds, userIds }: ReportReqBody,
     @CurrentUser() currentUser: UserEntity
   ) {
     let t
     await dataSource.transaction(async em => {
-      const currentResource = await em.findOneByOrFail(ResourceEntity, {
-        user: { id: currentUser.id },
-      })
       let query = em
         .createQueryBuilder()
         .select(`DATE_TRUNC('day', tt.date)`, 'date')
         .addSelect('BOOL_OR(tt.billable)', 'billable')
         .addSelect('SUM(tt.hour)', 'totalHours')
         .from(TimeTrackEntity, 'tt')
-        .innerJoin(ResourceEntity, 'resource', 'resource.id = tt.resource_id')
+        .innerJoin(UserEntity, 'user', 'user.id = tt.user_id')
         .where('tt.date BETWEEN :from AND :to ', { from, to })
         .groupBy(`DATE_TRUNC('day', tt.date)`)
         .addGroupBy('tt.billable')
         .orderBy('date')
 
-      if (resourceIds && resourceIds.length) {
-        query = query.andWhere('tt.resource_id IN (:...resourceIds)', {
-          resourceIds,
+      if (userIds && userIds.length) {
+        query = query.andWhere('tt.user_id IN (:...userIds)', {
+          userIds,
         })
       } else {
-        query = query.andWhere('tt.resource_id = :resourceId', {
-          resourceId: currentResource.id,
+        query = query.andWhere('tt.user_id = :userId', {
+          userId: currentUser.id,
         })
       }
       if (clientIds && clientIds.length) {

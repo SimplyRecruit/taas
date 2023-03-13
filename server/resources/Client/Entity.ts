@@ -9,7 +9,7 @@ import {
 } from 'typeorm'
 import EntityBase from '~/EntityBase'
 import OrganizationEntity from '~/resources/Organization/Entity'
-import ClientResourceEntity from '~/resources/relations/ClientResource'
+import ClientUserEntity from '~/resources/relations/ClientResource'
 
 @Entity('client')
 @Index(['abbr', 'organization'], { unique: true })
@@ -38,14 +38,12 @@ export default class ClientEntity extends EntityBase {
   @Column({ default: true })
   active: boolean
 
-  @ManyToOne(() => OrganizationEntity)
+  @ManyToOne(() => OrganizationEntity, { onDelete: 'CASCADE' })
   @JoinColumn()
   organization: OrganizationEntity
 
-  @OneToMany(
-    () => ClientResourceEntity,
-    clientResource => clientResource.client,
-    { cascade: true }
-  )
-  clientResource: ClientResourceEntity[]
+  @OneToMany(() => ClientUserEntity, clientUser => clientUser.client, {
+    cascade: true,
+  })
+  clientUser: ClientUserEntity[]
 }

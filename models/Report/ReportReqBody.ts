@@ -14,7 +14,7 @@ export default class ReportReqBody extends Model {
 
   @IsOptional()
   @IsString({ each: true })
-  resourceIds?: string[]
+  userIds?: string[]
 
   @IsOptional()
   @IsString({ each: true })

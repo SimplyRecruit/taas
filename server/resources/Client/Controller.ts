@@ -17,7 +17,7 @@ import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import ClientEntity from '~/resources/Client/Entity'
-import ClientResourceEntity from '~/resources/relations/ClientResource'
+import ClientUserEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'
 
 @JsonController('/client')
@@ -30,7 +30,7 @@ export default class ClientController {
         organization: { id: currentUser.organization.id },
       },
       relations: {
-        clientResource: { resource: { user: true } },
+        clientUser: { user: true },
       },
     })
     return rows.map(
@@ -43,7 +43,7 @@ export default class ClientController {
         contractDate,
         partnerName,
         contractType,
-        clientResource,
+        clientUser,
       }) =>
         Client.create({
           id,
@@ -55,20 +55,31 @@ export default class ClientController {
           contractDate,
           contractType,
           everyoneHasAccess:
-            clientResource.length && clientResource[0].resourceId === ALL_UUID
+            clientUser.length && clientUser[0].userId === ALL_UUID
               ? true
               : false,
           resources:
-            clientResource.length && clientResource[0].resourceId === ALL_UUID
+            clientUser.length && clientUser[0].userId === ALL_UUID
               ? undefined
-              : clientResource.map(
-                  ({ resource: { id, user, active, startDate, hourlyRate } }) =>
+              : clientUser.map(
+                  ({
+                    user: {
+                      id,
+                      abbr,
+                      name,
+                      email,
+                      role,
+                      active,
+                      startDate,
+                      hourlyRate,
+                    },
+                  }) =>
                     Resource.create({
                       id,
-                      abbr: user.abbr,
-                      name: user.name,
-                      email: user.email,
-                      role: user.role,
+                      abbr,
+                      name,
+                      email,
+                      role,
                       active,
                       startDate,
                       hourlyRate,
@@ -120,15 +131,13 @@ export default class ClientController {
         )
         if (everyoneHasAccess) {
           // All logic
-          await em.save(
-            ClientResourceEntity.create({ client, resourceId: ALL_UUID })
-          )
+          await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
         } else if (resourceIds?.length) {
           const clientResources = resourceIds.map(resourceId =>
-            ClientResourceEntity.create({ client, resourceId })
+            ClientUserEntity.create({ client, userId: resourceId })
           )
           // TODO resources are part of this organization
-          await em.insert(ClientResourceEntity, clientResources)
+          await em.insert(ClientUserEntity, clientResources)
           id = client.id
         }
       } catch (error: any) {
@@ -181,20 +190,18 @@ export default class ClientController {
 
         if (everyoneHasAccess) {
           // All logic
-          await em.delete(ClientResourceEntity, { client })
-          await em.save(
-            ClientResourceEntity.create({ client, resourceId: ALL_UUID })
-          )
+          await em.delete(ClientUserEntity, { client })
+          await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
         } else if (resourceIds?.length) {
           const clientResources = resourceIds.map(resourceId =>
-            ClientResourceEntity.create({ client, resourceId })
+            ClientUserEntity.create({ client, userId: resourceId })
           )
-          await em.delete(ClientResourceEntity, {
+          await em.delete(ClientUserEntity, {
             client,
             resourceId: ALL_UUID,
           })
           // TODO resources are part of this organization
-          await em.insert(ClientResourceEntity, clientResources)
+          await em.insert(ClientUserEntity, clientResources)
         }
       } catch (error) {
         console.log(error)
@@ -220,7 +227,7 @@ export default class ClientController {
         })
         if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.delete(ClientResourceEntity, { client, resourceId })
+        await em.delete(ClientUserEntity, { client, resourceId })
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()
@@ -242,11 +249,11 @@ export default class ClientController {
       })
       if (client.organization.id !== currentUser.organization.id)
         throw new ForbiddenError()
-      const [resources, count] = await ClientResourceEntity.findAndCount({
-        relations: { resource: true },
+      const [users, count] = await ClientUserEntity.findAndCount({
+        relations: { user: true },
         where: { client: { id: client.id } },
       })
-      return { resources, count }
+      return { users, count }
     } catch (error) {
       console.log(error)
       if (error instanceof EntityNotFoundError) throw new NotFoundError()
