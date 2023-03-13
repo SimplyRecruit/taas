@@ -1,6 +1,6 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Button, Table } from 'antd'
+import { Button, message, Table } from 'antd'
 import { useEffect, useState } from 'react'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
 import { Resource, ResourceUpdateBody } from 'models'
@@ -91,6 +91,7 @@ export default function Team() {
   const { data, loading, call, setData } = useApi('resource', 'getAll', [])
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
   const { loading: loadingRemove, call: remove } = useApi('resource', 'delete')
+  const [messageApi, contextHolder] = message.useMessage()
 
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -111,11 +112,13 @@ export default function Team() {
     }
     setInviteMemberModalOpen(false)
     setSelectedRowKey(null)
+    messageApi.success('Team member updated')
   }
   const onAdd = (record: Resource) => {
     setData([record, ...data])
     setFilteredData([record, ...filteredData])
     setInviteMemberModalOpen(false)
+    messageApi.success('Team member invited')
   }
   async function setResourceStatus(isActive: boolean, record: Resource) {
     try {
@@ -153,6 +156,7 @@ export default function Team() {
 
   return (
     <>
+      {contextHolder}
       <div
         style={{
           display: 'flex',
