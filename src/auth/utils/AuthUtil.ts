@@ -1,11 +1,9 @@
 import { Route } from '@/constants'
 import { User } from 'models'
 
-export const authRoutes: string[] = [
-  Route.Login,
-  Route.ResetPassword,
-  Route.ForgotPassword,
-]
+export const authRoutes: string[] = [Route.Login, Route.ForgotPassword]
+
+export const allWelcomeRoutes: string[] = [Route.ResetPassword]
 
 export async function checkAuthentication(
   path: string,
@@ -32,7 +30,7 @@ export async function checkAuthentication(
     return { routeToRedirect: null, user }
   } catch (error) {
     console.log(error)
-    if (!authRoutes.includes(path))
+    if (!authRoutes.includes(path) && !allWelcomeRoutes.includes(path))
       return { routeToRedirect: 'login', user: null }
     return { routeToRedirect: null, user: null }
   }

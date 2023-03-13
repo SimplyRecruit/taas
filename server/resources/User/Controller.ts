@@ -54,6 +54,7 @@ export default class UserController {
       },
     })
     if (user == null) throw new UnauthorizedError()
+    if (user.status == UserStatus.PENDING) throw new UnauthorizedError()
     const isPasswordCorrect = Bcrypt.compareSync(password, user.passwordHash)
     if (!isPasswordCorrect) throw new UnauthorizedError()
     const token = Jwt.sign(

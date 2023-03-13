@@ -31,6 +31,7 @@ export default function ResetPasswordPage() {
         const body = ResetPasswordReqBody.create({ password, token, email })
         console.log(body)
         await call(body)
+        router.push(Route.Logout)
       } catch (e) {
         /* Invalid Credentials */
       }
@@ -78,26 +79,34 @@ export default function ResetPasswordPage() {
             t('title')
           )}
         </Typography.Title>
-        <Form
-          form={form}
-          name="basic"
-          layout="vertical"
-          style={{ width: '100%' }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item
-            name="password"
-            rules={[{ validator: ResetPasswordReqBody.validator('password') }]}
+        {!data ? (
+          <Form
+            form={form}
+            name="basic"
+            layout="vertical"
+            style={{ width: '100%' }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
           >
-            <Input.Password placeholder="Enter your password" />
-          </Form.Item>
-          <Form.Item>
-            <Button loading={loading} block htmlType="submit">
-              {t('common:button.submit')}
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item
+              name="password"
+              rules={[
+                { validator: ResetPasswordReqBody.validator('password') },
+              ]}
+            >
+              <Input.Password placeholder="Enter your password" />
+            </Form.Item>
+            <Form.Item>
+              <Button loading={loading} block htmlType="submit">
+                {t('common:button.submit')}
+              </Button>
+            </Form.Item>
+          </Form>
+        ) : (
+          <Typography.Text>
+            Please wait while being redirected to the login page.
+          </Typography.Text>
+        )}
       </Card>
     </div>
   )
