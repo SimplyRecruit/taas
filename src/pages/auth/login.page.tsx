@@ -65,7 +65,7 @@ export default function LoginPage() {
         en
       </button>
       <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
-        <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 20 }}>
+        <Typography.Title level={3} style={{ marginTop: 0, marginBottom: 20 }}>
           {error ? (
             <span style={{ color: 'red' }}>{t('invalidCredentials')}</span>
           ) : data ? (
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <Input.Password placeholder="Enter your password" />
           </Form.Item>
           <Form.Item>
-            <Button loading={loading} block htmlType="submit">
+            <Button loading={loading || !!data} block htmlType="submit">
               {t('common:button.submit')}
             </Button>
           </Form.Item>
