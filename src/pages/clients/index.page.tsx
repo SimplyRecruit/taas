@@ -2,16 +2,16 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
-import { FiEdit } from 'react-icons/fi'
-import ClientsFilter from '@/pages/clients/components/ClientsFilter'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
-import { Client, ClientContractType, Resource } from 'models'
+import { Client, ClientUpdateBody } from 'models'
 import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
 import { ColumnsType } from 'antd/es/table'
+import TableActionColumn from '@/components/TableActionColumn'
+import Filter from '@/components/Filter'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -98,11 +98,14 @@ export default function Clients() {
       fixed: 'right',
       render: (record: Client) => (
         <span>
-          <FiEdit
-            onClick={() => {
+          <TableActionColumn
+            isActive={record.active}
+            onEdit={() => {
               openEditDrawer(record, '1')
             }}
-            style={{ cursor: 'pointer' }}
+            onArchive={() => setClientStatus(false, record)}
+            onRestore={() => setClientStatus(true, record)}
+            onDelete={() => null}
           />
         </span>
       ),
@@ -110,6 +113,7 @@ export default function Clients() {
   ]
 
   const { data, call, loading, setData } = useApi('client', 'getAll')
+  const { call: update, loading: loadingUpdate } = useApi('client', 'update')
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
@@ -135,6 +139,18 @@ export default function Clients() {
       setData([...data])
     }
     setCurrentRecord(record)
+  }
+
+  async function setClientStatus(isActive: boolean, record: Client) {
+    try {
+      await update(ClientUpdateBody.createPartially({ active: isActive }), {
+        id: record.id,
+      })
+      record.active = isActive
+      setData([...data!])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const openEditDrawer = (record: Client, tabKey: string) => {
@@ -177,10 +193,11 @@ export default function Clients() {
           marginBottom: 20,
         }}
       >
-        <ClientsFilter
+        <Filter
           onStatusChange={setSelectedStatus}
           onSearch={setSearchText}
           searchText={searchText}
+          searchPlaceholder="Search by name"
         />
         <Button
           type="primary"

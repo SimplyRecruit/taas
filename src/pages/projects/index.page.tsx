@@ -2,15 +2,14 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useState } from 'react'
 import { Button, Table, Tag } from 'antd'
-import ActiveActionMenu from '@/pages/projects/components/ActiveActionMenu'
-import ArchivedActionMenu from '@/pages/projects/components/ArchivedActionMenu'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
-import { Client, Project } from 'models'
+import { Client, Project, ProjectUpdateBody } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import { ALL_UUID } from '~/common/Config'
+import TableActionColumn from '@/components/TableActionColumn'
 
 export default function ProjectsPage() {
   const columns = [
@@ -66,41 +65,29 @@ export default function ProjectsPage() {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: (record: Project) =>
-        record.active ? (
-          <ActiveActionMenu
-            onEdit={() => {
-              setCurrentRecord(record)
-              setModalOpen(true)
-            }}
-            onArchive={() => {
-              record.active = false
-              setData([...data!])
-            }}
-          />
-        ) : (
-          <ArchivedActionMenu
-            onEdit={() => {
-              setCurrentRecord(record)
-              setModalOpen(true)
-            }}
-            onRestore={() => {
-              record.active = true
-              setData([...data!])
-            }}
-            onDelete={() => {
-              return null
-            }}
-          />
-        ),
+      render: (record: Project) => (
+        <TableActionColumn
+          isActive={record.active}
+          onEdit={() => {
+            setCurrentRecord(record)
+            setModalOpen(true)
+          }}
+          onArchive={() => setProjectStatus(false, record)}
+          onRestore={() => setProjectStatus(true, record)}
+          onDelete={() => {
+            return null
+          }}
+        />
+      ),
     },
   ]
 
   const { data, call, setData, loading } = useApi('project', 'getAll')
+  const { call: update, loading: loadingUpdate } = useApi('project', 'update')
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredData, setFilteredData] = useState<Project[]>([])
-  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
 
   const filterData = (data: Project[]) => {
@@ -130,6 +117,17 @@ export default function ProjectsPage() {
       setData([...data])
     }
     setCurrentRecord(record)
+  }
+  async function setProjectStatus(isActive: boolean, record: Project) {
+    try {
+      await update(ProjectUpdateBody.createPartially({ active: isActive }), {
+        id: record.id,
+      })
+      record.active = isActive
+      setData([...data!])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
