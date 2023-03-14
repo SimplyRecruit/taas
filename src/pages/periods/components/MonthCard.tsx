@@ -1,4 +1,5 @@
-import { Button, Space, Tag, Card } from 'antd'
+import useColor from '@/styles/useColor'
+import { Button, Card, Badge } from 'antd'
 
 interface RenderProps {
   active: boolean
@@ -10,31 +11,32 @@ export default function MonthCard({
   date,
   onToggleStatus,
 }: RenderProps) {
+  const { getColor } = useColor()
   return (
-    <Card
-      title={date.toLocaleString('default', {
-        month: 'long',
-      })}
-      extra={
-        <Space>
-          {active ? <Tag color="success">Active</Tag> : <Tag>Inactive</Tag>}
-        </Space>
-      }
-      actions={[
-        <Button key="details" type="link" size="small">
-          See details
-        </Button>,
-        <Button
-          onClick={() => onToggleStatus(date, active)}
-          key="active"
-          type="link"
-          size="small"
-        >
-          {active ? 'Deactivate' : 'Activate'}
-        </Button>,
-      ]}
+    <Badge.Ribbon
+      text={active ? 'Active' : 'Inactive'}
+      color={active ? getColor('blue') : getColor('blue', 2)}
     >
-      Total 74 time tracks
-    </Card>
+      <Card
+        title={date.toLocaleString('default', {
+          month: 'long',
+        })}
+        actions={[
+          <Button key="details" type="link" size="small">
+            See details
+          </Button>,
+          <Button
+            onClick={() => onToggleStatus(date, active)}
+            key="active"
+            type="link"
+            size="small"
+          >
+            {active ? 'Deactivate' : 'Activate'}
+          </Button>,
+        ]}
+      >
+        Total 74 time tracks
+      </Card>
+    </Badge.Ribbon>
   )
 }
