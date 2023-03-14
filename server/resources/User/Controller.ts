@@ -48,7 +48,7 @@ export default class UserController {
         id: true,
         role: true,
         status: true,
-        isEnabled: true,
+        active: true,
         passwordHash: true,
       },
     })
@@ -61,7 +61,7 @@ export default class UserController {
         id: user.id,
         role: user.role,
         status: user.status,
-        active: user.isEnabled,
+        active: user.active,
       },
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       process.env['JWT_SECRET']!,

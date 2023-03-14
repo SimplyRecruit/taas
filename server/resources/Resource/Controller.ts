@@ -56,6 +56,7 @@ export default class ResourceController {
         if (user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
         await em.save(UserEntity, {
+          ...user,
           ...body,
         })
       } catch (error) {
