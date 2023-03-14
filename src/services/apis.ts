@@ -106,10 +106,10 @@ export default {
             })
         },
         async removeResource(
-            params: { resourceId: string,clientId: string, },
+            params: { userId: string,clientId: string, },
         ) : Promise<AxiosResponse<any>>
         {
-            const route = "/client/:clientId/resource/:resourceId"
+            const route = "/client/:clientId/resource/:userId"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "delete",

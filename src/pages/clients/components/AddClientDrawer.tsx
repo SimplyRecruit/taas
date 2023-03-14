@@ -31,7 +31,7 @@ export default function AddClientDrawer({
 }: RenderProps) {
   const [form] = Form.useForm<ClientCreateBody>()
   const everyoneHasAccess = Form.useWatch('everyoneHasAccess', form)
-  const { call, data, loading, error } = useApi('resource', 'getAll')
+  const { call, data, loading, error } = useApi('resource', 'getAll', [])
   const { call: callCreate, loading: loadingCreate } = useApi(
     'client',
     'create'
@@ -45,9 +45,9 @@ export default function AddClientDrawer({
     form.validateFields().then(async body => {
       const id = await callCreate(body)
       const resources = !body.everyoneHasAccess
-        ? data!.filter(r => body.resourceIds?.includes(r.id))
+        ? data.filter(r => body.userIds?.includes(r.id))
         : undefined
-      delete body.resourceIds
+      delete body.userIds
       onAdd(
         Client.create({
           ...body,
@@ -215,7 +215,7 @@ export default function AddClientDrawer({
           </Radio.Group>
         </Form.Item>
         {everyoneHasAccess === false && !loading && !!data && (
-          <Form.Item name="resourceIds">
+          <Form.Item name="userIds">
             <Select
               filterOption={(inputValue, option) =>
                 option?.label

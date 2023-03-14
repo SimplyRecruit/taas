@@ -69,7 +69,7 @@ const EditClientDrawer = ({
 
   async function removeResource(id: string) {
     try {
-      await callRemoveResource({ resourceId: id, clientId: value.id })
+      await callRemoveResource({ userId: id, clientId: value.id })
       const resources = value.resources
       const index = resources?.findIndex(e => e.id == id)
       if (index != undefined && resources && index != -1) {
@@ -91,11 +91,11 @@ const EditClientDrawer = ({
 
   async function onSubmitAccess() {
     accessForm.validateFields().then(async body => {
-      if (body.everyoneHasAccess) delete body.resourceIds
+      if (body.everyoneHasAccess) delete body.userIds
       await callAddResource(body, { clientId: value.id })
-      const { everyoneHasAccess, resourceIds } = body
-      const newResources = resourceIds
-        ? resources?.filter(e => resourceIds!.includes(e.id))
+      const { everyoneHasAccess, userIds } = body
+      const newResources = userIds
+        ? resources?.filter(e => userIds!.includes(e.id))
         : undefined
       let merged: Resource[] | undefined = everyoneHasAccess
         ? undefined
@@ -246,7 +246,7 @@ const EditClientDrawer = ({
               </Radio.Group>
             </Form.Item>
             {internalEveryoneHasAccess === false && !loadingGetResources && (
-              <Form.Item name="resourceIds">
+              <Form.Item name="userIds">
                 <Select
                   placement="topRight"
                   filterOption={(inputValue, option) =>
