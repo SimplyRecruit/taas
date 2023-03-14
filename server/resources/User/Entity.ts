@@ -7,10 +7,10 @@ import ClientUserEntity from '~/resources/relations/ClientResource'
 @Entity('user')
 @Index(['abbr', 'organization'], { unique: true })
 export default class UserEntity extends EntityBase {
-  @Column({ nullable: true })
+  @Column()
   name: string
 
-  @Column({ nullable: true })
+  @Column()
   abbr: string
 
   @Column({ unique: true })
@@ -33,13 +33,10 @@ export default class UserEntity extends EntityBase {
   })
   status: UserStatus
 
-  @Column({ default: true })
-  isEnabled: boolean
-
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamptz' })
   startDate: Date
 
-  @Column({ type: 'int2', nullable: true })
+  @Column({ type: 'int2' })
   hourlyRate: number
 
   @Column({ default: true })

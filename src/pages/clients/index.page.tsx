@@ -77,16 +77,13 @@ export default function Clients() {
             openEditDrawer(record, '2')
           }}
           type="text"
-          size="small"
+          style={{ paddingTop: 0, paddingBottom: 0 }}
         >
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <Tag color={record.everyoneHasAccess ? 'warning' : 'processing'}>
               {record.everyoneHasAccess ? 'Everyone' : 'Custom'}
             </Tag>
-            <FaExpandAlt
-              size={16}
-              style={{ color: 'blue', marginTop: 3, marginLeft: 4 }}
-            />
+            <FaExpandAlt size={16} style={{ color: 'blue', marginLeft: 4 }} />
           </div>
         </Button>
       ),

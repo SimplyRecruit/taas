@@ -121,7 +121,7 @@ export default class ClientController {
   ) {
     let id
     await dataSource.transaction(async em => {
-      const { resourceIds, everyoneHasAccess, ...rest } = body
+      const { userIds, everyoneHasAccess, ...rest } = body
       try {
         const client = await em.save(
           ClientEntity.create({
@@ -132,9 +132,9 @@ export default class ClientController {
         if (everyoneHasAccess) {
           // All logic
           await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
-        } else if (resourceIds?.length) {
-          const clientResources = resourceIds.map(resourceId =>
-            ClientUserEntity.create({ client, userId: resourceId })
+        } else if (userIds?.length) {
+          const clientResources = userIds.map(userId =>
+            ClientUserEntity.create({ client, userId })
           )
           // TODO resources are part of this organization
           await em.insert(ClientUserEntity, clientResources)
@@ -175,7 +175,7 @@ export default class ClientController {
 
   @Post(undefined, '/resource/:clientId')
   async addResource(
-    @Body() { everyoneHasAccess, resourceIds }: ClientAddResourceBody,
+    @Body() { everyoneHasAccess, userIds }: ClientAddResourceBody,
     @Param('clientId') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
@@ -192,13 +192,13 @@ export default class ClientController {
           // All logic
           await em.delete(ClientUserEntity, { client })
           await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
-        } else if (resourceIds?.length) {
-          const clientResources = resourceIds.map(resourceId =>
-            ClientUserEntity.create({ client, userId: resourceId })
+        } else if (userIds?.length) {
+          const clientResources = userIds.map(userId =>
+            ClientUserEntity.create({ client, userId })
           )
           await em.delete(ClientUserEntity, {
             client,
-            resourceId: ALL_UUID,
+            userId: ALL_UUID,
           })
           // TODO resources are part of this organization
           await em.insert(ClientUserEntity, clientResources)
@@ -213,10 +213,10 @@ export default class ClientController {
     return 'Client Deletion Successful'
   }
 
-  @Delete(undefined, '/:clientId/resource/:resourceId')
+  @Delete(undefined, '/:clientId/resource/:userId')
   async removeResource(
     @Param('clientId') clientId: string,
-    @Param('resourceId') resourceId: string,
+    @Param('userId') userId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
     await dataSource.transaction(async em => {
@@ -227,7 +227,7 @@ export default class ClientController {
         })
         if (client.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
-        await em.delete(ClientUserEntity, { client, resourceId })
+        await em.delete(ClientUserEntity, { client, userId })
       } catch (error) {
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
         else if (error instanceof ForbiddenError) throw new ForbiddenError()

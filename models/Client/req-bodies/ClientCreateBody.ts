@@ -4,7 +4,7 @@ import ClientBase from 'models/Client/ClientBase'
 export default class ClientCreateBody extends ClientBase {
   @IsOptional()
   @IsString({ each: true })
-  resourceIds?: string[]
+  userIds?: string[]
 
   @IsBoolean()
   everyoneHasAccess: boolean

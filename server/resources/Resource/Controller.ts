@@ -43,19 +43,20 @@ export default class ResourceController {
   @Authorized(UserRole.ADMIN)
   async update(
     @CurrentUser() currentUser: UserEntity,
-    @Param('id') resourceId: string,
+    @Param('id') userId: string,
     @Body({ patch: true })
     body: ResourceUpdateBody
   ) {
     await dataSource.transaction(async em => {
       try {
         const user = await em.findOneOrFail(UserEntity, {
-          where: { id: resourceId },
+          where: { id: userId },
           relations: { organization: true },
         })
         if (user.organization.id !== currentUser.organization.id)
           throw new ForbiddenError()
         await em.save(UserEntity, {
+          ...user,
           ...body,
         })
       } catch (error) {
