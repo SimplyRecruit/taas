@@ -13,6 +13,7 @@ Project,
 ProjectCreateBody,
 ProjectUpdateBody,
 ReportReqBody,
+Report,
 Resource,
 ResourceUpdateBody,
 TableQueryParameters,
@@ -168,7 +169,7 @@ export default {
     report: {
         async get(
             body: ReportReqBody,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<Report[]>>
         {
             const route = "/report"
             const url = route

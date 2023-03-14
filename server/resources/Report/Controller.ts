@@ -9,17 +9,18 @@ import { Post } from '~/decorators/CustomApiMethods'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
+import Report from 'models/Report/Report'
 
 @JsonController('/report')
 export default class ReportController {
-  @Post(undefined)
+  @Post([Report])
   @Authorized(UserRole.ADMIN)
   async get(
     @Body()
     { from, to, billable, clientIds, projectIds, userIds }: ReportReqBody,
     @CurrentUser() currentUser: UserEntity
   ) {
-    let t
+    let t: Report[] = []
     await dataSource.transaction(async em => {
       let query = em
         .createQueryBuilder()
