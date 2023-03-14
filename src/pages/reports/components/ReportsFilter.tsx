@@ -53,6 +53,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         projectIds: selectedProjects,
       })
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedResources,
     selectedProjects,

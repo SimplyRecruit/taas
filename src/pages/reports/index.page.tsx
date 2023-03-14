@@ -9,6 +9,7 @@ import { ReportReqBody } from 'models'
 import ReportsFilter from '@/pages/reports/components/ReportsFilter'
 import { Spin } from 'antd'
 import { baseConfig } from '@/pages/reports/components/constants'
+import { formatDate } from '@/util'
 const ColumnChart = dynamic(
   () => import('@ant-design/plots').then(({ Column }) => Column),
   { ssr: false }
@@ -16,15 +17,6 @@ const ColumnChart = dynamic(
 
 export default function ReportsPage() {
   const { data, call, loading } = useApi('report', 'get', [])
-
-  useEffect(() => {
-    call(
-      ReportReqBody.create({
-        from: new Date(Date.now() - 86400000),
-        to: new Date(),
-      })
-    )
-  }, [])
 
   const config: ColumnConfig = useMemo(() => {
     const annotations: any = []
@@ -44,7 +36,14 @@ export default function ReportsPage() {
     })
     return {
       ...baseConfig,
-      data,
+      data: data.map(e => {
+        console.log(e)
+        return {
+          ...e,
+          date: formatDate(new Date(e.date)),
+          billable: e.billable ? 'billable' : 'not billable',
+        }
+      }),
       annotations,
     }
   }, [data])

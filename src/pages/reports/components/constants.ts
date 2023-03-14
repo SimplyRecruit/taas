@@ -20,20 +20,11 @@ const rangePresets: {
 const defaultRangePreset = rangePresets[3].value
 
 const baseConfig = {
+  color: ['#8BC34A', '#AED581'],
   isStack: true,
   xField: 'date',
   yField: 'totalHours',
   seriesField: 'billable',
-  xAxis: {
-    label: {
-      formatter(text) {
-        return new Date(text).toDateString()
-      },
-    },
-  },
-  legend: {
-    slidable: false,
-  },
   label: {
     layout: [
       {
