@@ -1,4 +1,4 @@
-import { Radio, Select, Space } from 'antd'
+import { Radio, Space } from 'antd'
 import { UserRole } from 'models'
 import { NON_SUPER_USER_ROLES } from 'models/User/enums/UserRole'
 interface RenderProps {

@@ -1,10 +1,4 @@
-import {
-  Client,
-  Project,
-  ProjectCreateBody,
-  ProjectUpdateBody,
-  UserRole,
-} from 'models'
+import { Project, ProjectCreateBody, ProjectUpdateBody, UserRole } from 'models'
 
 import {
   Authorized,

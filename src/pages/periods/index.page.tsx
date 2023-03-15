@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Space, Spin, Tag, Typography } from 'antd'
+import { Button, Col, Row, Space, Spin, Typography } from 'antd'
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 

@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  Length,
-} from 'class-validator'
+import { IsDateString, IsEnum, IsOptional, Length } from 'class-validator'
 import Model from 'models/Model'
 import ClientContractType from './enums/ClientContractType'
 

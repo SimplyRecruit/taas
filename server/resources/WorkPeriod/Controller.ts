@@ -1,4 +1,4 @@
-import { TableQueryParameters, UserRole, WorkPeriod } from 'models'
+import { UserRole, WorkPeriod } from 'models'
 import {
   Authorized,
   BadRequestError,
@@ -11,7 +11,7 @@ import {
 } from 'routing-controllers'
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
 import { Delete, Get, Post, Put } from '~/decorators/CustomApiMethods'
-import { Body, QueryParams } from '~/decorators/CustomRequestParams'
+import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import UserEntity from '~/resources/User/Entity'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'

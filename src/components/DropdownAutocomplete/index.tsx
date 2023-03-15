@@ -2,7 +2,6 @@ import { Badge, Popover } from 'antd'
 
 import DropdownActivator from '@/components/DropdownActivator'
 import PopoverContent from '@/components/DropdownAutocomplete/PopoverContent'
-import { useState } from 'react'
 
 type OptionType = {
   value: string

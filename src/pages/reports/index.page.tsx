@@ -1,6 +1,6 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { each, groupBy } from '@antv/util'
 import dynamic from 'next/dynamic'
 import type { ColumnConfig } from '@ant-design/plots/es/components/column'

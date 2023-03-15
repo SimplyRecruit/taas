@@ -10,7 +10,6 @@ import {
   Button,
   Space,
   DatePicker,
-  Switch,
 } from 'antd'
 import {
   ResourceCreateBody,
