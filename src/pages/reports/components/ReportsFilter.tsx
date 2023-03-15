@@ -1,4 +1,4 @@
-import { DatePicker, Divider, Space } from 'antd'
+import { Card, DatePicker, Divider, Space } from 'antd'
 import DropdownAutocomplete from '@/components/DropdownAutocomplete'
 import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
@@ -64,7 +64,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <div>
+      <Card size="small" bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}>
         <Space split={<Divider type="vertical" />}>
           <DropdownAutocomplete
             badgeCount={selectedResources.length}
@@ -96,7 +96,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             ]}
           />
         </Space>
-      </div>
+      </Card>
       <DatePicker.RangePicker
         allowClear={false}
         presets={rangePresets}
