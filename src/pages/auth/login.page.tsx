@@ -87,13 +87,13 @@ export default function LoginPage() {
             name="email"
             rules={[{ validator: LoginReqBody.validator('email') }]}
           >
-            <Input type="email" placeholder="Enter your email" />
+            <Input type="email" placeholder={t('emailPlaceholder') ?? ''} />
           </Form.Item>
           <Form.Item
             name="password"
             rules={[{ validator: LoginReqBody.validator('password') }]}
           >
-            <Input.Password placeholder="Enter your password" />
+            <Input.Password placeholder={t('passwordPlaceHolder') ?? ''} />
           </Form.Item>
           <Form.Item>
             <Button loading={loading || !!data} block htmlType="submit">

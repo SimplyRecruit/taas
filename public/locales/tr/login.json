@@ -3,5 +3,7 @@
     "redirecting": "Yönlendiriliyorsunuz...",
     "invalidCredentials": "Yanlış Giriş Bilgisi",
     "title": "Oturum Aç",
-    "forgotPassword": "Şifreni mi unuttun?"
+    "forgotPassword": "Şifreni mi unuttun?",
+    "emailPlaceholder": "E-postanızı giriniz",
+    "passwordPlaceholder": "Şifrenizi giriniz"
 }

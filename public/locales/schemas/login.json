@@ -22,6 +22,14 @@
         "forgotPassword": {
             "type": "string",
             "minLength": 1
+        },
+        "emailPlaceholder": {
+            "type": "string",
+            "minLength": 1
+        },
+        "passwordPlaceholder": {
+            "type": "string",
+            "minLength": 1
         }
     },
     "required": [
@@ -29,7 +37,9 @@
         "redirecting",
         "invalidCredentials",
         "title",
-        "forgotPassword"
+        "forgotPassword",
+        "emailPlaceholder",
+        "passwordPlaceholder"
     ],
     "additionalProperties": false
 }
