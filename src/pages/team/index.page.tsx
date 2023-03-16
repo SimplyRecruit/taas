@@ -147,8 +147,17 @@ export default function Team() {
       })
       record.active = isActive
       setData(prev => [...prev])
+      messageApi.success(
+        isActive
+          ? 'Team member restored successfully!'
+          : 'Team member  archived successfully!'
+      )
     } catch (error) {
-      console.log(error)
+      messageApi.error(
+        isActive
+          ? 'An error occured. Could not restore team member.'
+          : 'An error occured. Could not archive team member.'
+      )
     }
   }
 

@@ -167,8 +167,17 @@ export default function Clients() {
       })
       record.active = isActive
       setData(prev => [...prev])
-    } catch (error) {
-      console.log(error)
+      messageApi.success(
+        isActive
+          ? 'Client restored successfully!'
+          : 'Client archived successfully!'
+      )
+    } catch {
+      messageApi.error(
+        isActive
+          ? 'An error occured. Could not restore client.'
+          : 'An error occured. Could not archive client.'
+      )
     }
   }
 
