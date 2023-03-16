@@ -3,5 +3,7 @@
     "redirecting": "Redirecting...",
     "invalidCredentials": "Invalid Credentials",
     "title": "Log In",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password"
 }
