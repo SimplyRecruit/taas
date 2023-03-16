@@ -114,7 +114,7 @@ export default class ClientController {
     return 'Client Update Successful'
   }
 
-  @Post()
+  @Post(String)
   async create(
     @CurrentUser() currentUser: UserEntity,
     @Body() body: ClientCreateBody
@@ -129,6 +129,7 @@ export default class ClientController {
             ...rest,
           })
         )
+        id = client.id
         if (everyoneHasAccess) {
           // All logic
           await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
@@ -138,10 +139,9 @@ export default class ClientController {
           )
           // TODO resources are part of this organization
           await em.insert(ClientUserEntity, clientResources)
-          id = client.id
         }
       } catch (error: any) {
-        console.log(error)
+        console.log({ error })
         if (error.code == 23505)
           throw new AlreadyExistsError('Abbr already exists')
         throw new InternalServerError('Internal Server Error')
