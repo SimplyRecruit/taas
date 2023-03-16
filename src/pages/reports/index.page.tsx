@@ -7,7 +7,7 @@ import type { ColumnConfig } from '@ant-design/plots/es/components/column'
 import useApi from '@/services/useApi'
 import { ReportReqBody } from 'models'
 import ReportsFilter from '@/pages/reports/components/ReportsFilter'
-import { Spin } from 'antd'
+import { Card, Space, Spin } from 'antd'
 import { baseConfig } from '@/pages/reports/components/constants'
 import { formatDate } from '@/util'
 const ColumnChart = dynamic(
@@ -57,10 +57,19 @@ export default function ReportsPage() {
 
   return (
     <>
-      <ReportsFilter onFilter={getReport} />
-      <Spin spinning={loading}>
-        <ColumnChart {...config} style={{ margin: 20 }} />
-      </Spin>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <ReportsFilter onFilter={getReport} />
+        <Card
+          bodyStyle={{
+            height: 448,
+            textAlign: 'center',
+          }}
+        >
+          <Spin spinning={loading} size="large">
+            <ColumnChart {...config} />
+          </Spin>
+        </Card>
+      </Space>
     </>
   )
 }

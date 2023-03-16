@@ -63,7 +63,12 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   ])
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+      }}
+    >
       <Card size="small" bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}>
         <Space split={<Divider type="vertical" />}>
           <DropdownAutocomplete
