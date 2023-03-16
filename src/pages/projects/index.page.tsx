@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useMemo, useState } from 'react'
-import { Button, Table, Tag } from 'antd'
+import { Button, message, Table, Tag } from 'antd'
 import EditProjectModal from '@/pages/projects/components/EditProjectModal'
 import { Client, Project, ProjectUpdateBody } from 'models'
 import Filter from '@/components/Filter'
@@ -88,6 +88,7 @@ export default function ProjectsPage() {
     loading: loadingGetAll,
   } = useApi('project', 'getAll', [])
   const { call: update, loading: loadingUpdate } = useApi('project', 'update')
+  const [messageApi, contextHolder] = message.useMessage()
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('active')
@@ -116,6 +117,10 @@ export default function ProjectsPage() {
       data[selectedRowIndex] = record
       console.log(record)
       setData(prev => [...prev])
+      messageApi.success('Project updated successfully!')
+    } else {
+      console.log('this should not happen')
+      messageApi.error('Fatal error')
     }
     setSelectedRowIndex(null)
   }
@@ -127,8 +132,17 @@ export default function ProjectsPage() {
       })
       record.active = isActive
       setData(prev => [...prev])
-    } catch (error) {
-      console.log(error)
+      messageApi.success(
+        isActive
+          ? 'Project restored successfully!'
+          : 'Project archived successfully!'
+      )
+    } catch {
+      messageApi.error(
+        isActive
+          ? 'An error occured. Could not restore project.'
+          : 'An error occured. Could not archive project.'
+      )
     }
   }
 
@@ -138,6 +152,7 @@ export default function ProjectsPage() {
 
   return (
     <>
+      {contextHolder}
       <div
         style={{
           display: 'flex',
@@ -193,8 +208,16 @@ export default function ProjectsPage() {
         onAdd={e => {
           setData([e, ...(data ?? [])])
           setModalOpen(false)
+          messageApi.success('Project added successfully!')
         }}
         onUpdate={onUpdate}
+        onError={() =>
+          messageApi.error(
+            selectedRecord
+              ? 'An error occured. Could not update project.'
+              : 'An error occured. Could not add project.'
+          )
+        }
       />
     </>
   )
