@@ -23,11 +23,13 @@ interface RenderProps {
   open: boolean
   onAdd: (newMember: Client) => void
   onCancel: () => void
+  onError: () => void
 }
 export default function AddClientDrawer({
   open,
   onAdd,
   onCancel,
+  onError,
 }: RenderProps) {
   const [form] = Form.useForm<ClientCreateBody>()
   const everyoneHasAccess = Form.useWatch('everyoneHasAccess', form)
@@ -43,20 +45,24 @@ export default function AddClientDrawer({
 
   const onSubmit = async () => {
     form.validateFields().then(async body => {
-      const id = await callCreate(body)
-      const resources = !body.everyoneHasAccess
-        ? data.filter(r => body.userIds?.includes(r.id))
-        : undefined
-      delete body.userIds
-      onAdd(
-        Client.create({
-          ...body,
-          resources,
-          active: true,
-          id,
-        })
-      )
-      onClose()
+      try {
+        const id = await callCreate(body)
+        const resources = !body.everyoneHasAccess
+          ? data.filter(r => body.userIds?.includes(r.id))
+          : undefined
+        delete body.userIds
+        onAdd(
+          Client.create({
+            ...body,
+            resources,
+            active: true,
+            id,
+          })
+        )
+        onClose()
+      } catch {
+        onError()
+      }
     })
   }
 

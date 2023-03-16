@@ -1,4 +1,4 @@
-import { Button, Col, Row, Space, Spin, Typography } from 'antd'
+import { Button, Col, message, Row, Space, Spin, Typography } from 'antd'
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
@@ -25,6 +25,7 @@ export default function PeriodsPage() {
     'create'
   )
   const [year, setYear] = useState(new Date().getFullYear())
+  const [messageApi, contextHolder] = message.useMessage()
 
   const loading = loadingGetAll || loadingDelete || loadingCreate
   function createBody(period: Date): WorkPeriod {
@@ -42,12 +43,18 @@ export default function PeriodsPage() {
               period.toISOString()
           )
         )
+        messageApi.success('Period deactivated successfully!')
       } else {
         await callCreate(body)
         setData([...data, body])
+        messageApi.success('Period activated successfully!')
       }
-    } catch (error) {
-      console.log(error)
+    } catch {
+      messageApi.error(
+        active
+          ? 'An error occured. Could not deactivate period.'
+          : 'An error occured. Could not activate period.'
+      )
     }
   }
   useEffect(() => {
@@ -78,6 +85,7 @@ export default function PeriodsPage() {
   }
   return (
     <>
+      {contextHolder}
       <Spin spinning={loading} size="large">
         <Space direction="vertical" size="large">
           <Space>

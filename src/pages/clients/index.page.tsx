@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useMemo, useState } from 'react'
-import { Button, Table, Tag } from 'antd'
+import { Button, message, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientUpdateBody } from 'models'
@@ -115,6 +115,7 @@ export default function Clients() {
     setData,
   } = useApi('client', 'getAll', [])
   const { call: update, loading: loadingUpdate } = useApi('client', 'update')
+  const [messageApi, contextHolder] = message.useMessage()
   const [drawerStatus, setDrawerStatus] = useState<DrawerStatus>('none')
   const [drawerTabKey, setDrawerTabKey] = useState('1')
   const [searchText, setSearchText] = useState('')
@@ -146,6 +147,7 @@ export default function Clients() {
   function onAdd(value: Client) {
     if (!data.length) setData([value])
     else setData(prev => [value, ...prev])
+    messageApi.success('Client added successfully!')
   }
 
   function onUpdate(record: Client) {
@@ -155,6 +157,7 @@ export default function Clients() {
       setData(prev => [...prev])
     }
     setCurrentRecord(record)
+    messageApi.success('Client updated successfully!')
   }
 
   async function setClientStatus(isActive: boolean, record: Client) {
@@ -164,8 +167,17 @@ export default function Clients() {
       })
       record.active = isActive
       setData(prev => [...prev])
-    } catch (error) {
-      console.log(error)
+      messageApi.success(
+        isActive
+          ? 'Client restored successfully!'
+          : 'Client archived successfully!'
+      )
+    } catch {
+      messageApi.error(
+        isActive
+          ? 'An error occured. Could not restore client.'
+          : 'An error occured. Could not archive client.'
+      )
     }
   }
 
@@ -182,6 +194,7 @@ export default function Clients() {
 
   return (
     <>
+      {contextHolder}
       <div
         style={{
           display: 'flex',
@@ -238,15 +251,20 @@ export default function Clients() {
             setSelectedRowKey(null)
           }}
           onUpdate={onUpdate}
+          onError={() =>
+            messageApi.error('An error occured. Could not update client')
+          }
         />
       )}
       <AddClientDrawer
         open={drawerStatus === 'create'}
         onCancel={() => {
           setDrawerStatus('none')
-          setSelectedRowKey(null)
         }}
         onAdd={onAdd}
+        onError={() =>
+          messageApi.error('An error occured. Could not add client')
+        }
       />
     </>
   )

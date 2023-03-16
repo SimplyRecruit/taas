@@ -27,6 +27,7 @@ import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBod
 interface RenderProps {
   open: boolean
   onUpdate: (updatedClient: Client) => void
+  onError: () => void
   onActiveTabKeyChange: (tabKey: string) => void
   activeTabKey: string
   onCancel: () => void
@@ -35,6 +36,7 @@ interface RenderProps {
 const EditClientDrawer = ({
   open,
   onUpdate,
+  onError,
   onActiveTabKeyChange,
   activeTabKey,
   onCancel,
@@ -76,32 +78,40 @@ const EditClientDrawer = ({
         resources.splice(index, 1)
         onUpdate({ ...value, resources: [...resources] })
       }
-    } catch (error) {
-      console.log(error)
+    } catch {
+      onError()
     }
   }
 
   async function onSubmitSettings() {
     settingsForm.validateFields().then(async e => {
-      await callUpdate(e, { id: value.id })
-      onUpdate({ ...value, ...e })
-      onCancel()
+      try {
+        await callUpdate(e, { id: value.id })
+        onUpdate({ ...value, ...e })
+        onCancel()
+      } catch {
+        onError()
+      }
     })
   }
 
   async function onSubmitAccess() {
     accessForm.validateFields().then(async body => {
-      if (body.everyoneHasAccess) delete body.userIds
-      await callAddResource(body, { clientId: value.id })
-      const { everyoneHasAccess, userIds } = body
-      const newResources = userIds
-        ? resources?.filter(e => userIds!.includes(e.id))
-        : undefined
-      let merged: Resource[] | undefined = everyoneHasAccess
-        ? undefined
-        : [...(value.resources ?? []), ...(newResources ?? [])]
-      if (merged && merged.length == 0) merged = undefined
-      onUpdate({ ...value, everyoneHasAccess, resources: merged })
+      try {
+        if (body.everyoneHasAccess) delete body.userIds
+        await callAddResource(body, { clientId: value.id })
+        const { everyoneHasAccess, userIds } = body
+        const newResources = userIds
+          ? resources?.filter(e => userIds!.includes(e.id))
+          : undefined
+        let merged: Resource[] | undefined = everyoneHasAccess
+          ? undefined
+          : [...(value.resources ?? []), ...(newResources ?? [])]
+        if (merged && merged.length == 0) merged = undefined
+        onUpdate({ ...value, everyoneHasAccess, resources: merged })
+      } catch {
+        onError()
+      }
     })
   }
 

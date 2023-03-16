@@ -20,15 +20,17 @@ import { ALL_UUID } from '~/common/Config'
 
 interface RenderProps {
   open: boolean
-  value: Project | null
+  value?: Project
   onAdd: (newProject: Project) => void
   onUpdate: (updatedProject: Project) => void
+  onError: () => void
   onCancel: () => void
 }
 export default function EditProjectDrawer({
   open,
   onAdd,
   value,
+  onError,
   onUpdate,
   onCancel,
 }: RenderProps) {
@@ -84,8 +86,8 @@ export default function EditProjectDrawer({
           onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
         onClose()
-      } catch (error) {
-        console.log(error)
+      } catch {
+        onError()
       }
     })
   }

@@ -1,5 +1,7 @@
-import AppLayout from '@/layouts/AppLayout'
+import 'antd/dist/reset.css'
+
 import '@/styles/globals.css'
+import AppLayout from '@/layouts/AppLayout'
 import { ConfigProvider } from 'antd'
 import { appWithTranslation, useTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'

@@ -72,7 +72,7 @@ export default {
         },
         async create(
             body: ClientCreateBody,
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<string>>
         {
             const route = "/client"
             const url = route

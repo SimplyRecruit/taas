@@ -27,6 +27,7 @@ interface RenderProps {
   open: boolean
   onAdd: (newMember: Resource) => void
   onUpdate: (updatedMember: Resource) => void
+  onError: () => void
   onCancel: () => void
   value: Resource | null
 }
@@ -34,6 +35,7 @@ const EditMemberDrawer = ({
   open,
   onAdd,
   onUpdate,
+  onError,
   onCancel,
   value,
 }: RenderProps) => {
@@ -63,13 +65,9 @@ const EditMemberDrawer = ({
         onAdd({ ...member, id, active: true })
         form.resetFields()
       }
-    } catch (error) {
-      console.log(error)
+    } catch {
+      onError()
     }
-  }
-
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
   }
 
   const onClose = () => {

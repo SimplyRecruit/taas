@@ -97,7 +97,6 @@ export default function Team() {
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
 
   const [messageApi, contextHolder] = message.useMessage()
-
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
@@ -132,13 +131,13 @@ export default function Team() {
     }
     setInviteMemberModalOpen(false)
     setSelectedRowKey(null)
-    messageApi.success('Team member updated')
+    messageApi.success('Team member updated successfully!')
   }
 
   function onAdd(record: Resource) {
     setData(prev => [record, ...prev])
     setInviteMemberModalOpen(false)
-    messageApi.success('Team member invited')
+    messageApi.success('Team member invited successfully!')
   }
 
   async function setResourceStatus(isActive: boolean, record: Resource) {
@@ -148,8 +147,17 @@ export default function Team() {
       })
       record.active = isActive
       setData(prev => [...prev])
+      messageApi.success(
+        isActive
+          ? 'Team member restored successfully!'
+          : 'Team member  archived successfully!'
+      )
     } catch (error) {
-      console.log(error)
+      messageApi.error(
+        isActive
+          ? 'An error occured. Could not restore team member.'
+          : 'An error occured. Could not archive team member.'
+      )
     }
   }
 
@@ -215,6 +223,13 @@ export default function Team() {
         }}
         onUpdate={onUpdate}
         onAdd={onAdd}
+        onError={() =>
+          messageApi.error(
+            currentRecord
+              ? 'An error occured. Could not update team member'
+              : 'An error occured. Could not add team member'
+          )
+        }
       />
     </>
   )
