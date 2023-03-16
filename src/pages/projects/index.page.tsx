@@ -65,16 +65,18 @@ export default function ProjectsPage() {
       title: '',
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: (record: Project) => (
-        <TableActionColumn
-          isActive={record.active}
-          onEdit={() => {
-            setCurrentRecord(record)
-            setModalOpen(true)
-          }}
-          onArchive={() => setProjectStatus(false, record)}
-          onRestore={() => setProjectStatus(true, record)}
-        />
+      render: (_text: any, record: Project, index: number) => (
+        <div>
+          <TableActionColumn
+            isActive={record.active}
+            onEdit={() => {
+              setSelectedRowIndex(index)
+              setModalOpen(true)
+            }}
+            onArchive={() => setProjectStatus(false, record)}
+            onRestore={() => setProjectStatus(true, record)}
+          />
+        </div>
       ),
     },
   ]
@@ -89,7 +91,9 @@ export default function ProjectsPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('active')
-  const [currentRecord, setCurrentRecord] = useState<Project | null>(null)
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+  const selectedRecord =
+    typeof selectedRowIndex == 'number' ? data[selectedRowIndex] : undefined
 
   const loading = loadingUpdate || loadingGetAll
   const filteredData = useMemo(() => {
@@ -107,17 +111,13 @@ export default function ProjectsPage() {
     return filtered
   }, [data, searchText, selectedStatus])
 
-  const find = (record: Project): number => {
-    return data.findIndex(x => x.id === record.id)
-  }
-
   function onUpdate(record: Project) {
-    const index = find(record)
-    if (index != -1) {
-      data[index] = record
+    if (typeof selectedRowIndex == 'number') {
+      data[selectedRowIndex] = record
+      console.log(record)
       setData(prev => [...prev])
     }
-    setCurrentRecord(record)
+    setSelectedRowIndex(null)
   }
 
   async function setProjectStatus(isActive: boolean, record: Project) {
@@ -155,7 +155,7 @@ export default function ProjectsPage() {
         <Button
           type="primary"
           onClick={() => {
-            setCurrentRecord(null)
+            setSelectedRowIndex(null)
             setModalOpen(true)
           }}
         >
@@ -166,6 +166,13 @@ export default function ProjectsPage() {
         rowKey="id"
         columns={columns}
         loading={loading}
+        rowClassName={record => {
+          console.log(selectedRecord)
+          if (selectedRecord?.id == record.id) {
+            return 'ant-table-row-selected'
+          }
+          return ''
+        }}
         dataSource={filteredData}
         pagination={{
           position: ['bottomCenter'],
@@ -178,8 +185,11 @@ export default function ProjectsPage() {
       />
       <EditProjectModal
         open={modalOpen}
-        value={currentRecord}
-        onCancel={() => setModalOpen(false)}
+        value={selectedRecord}
+        onCancel={() => {
+          setModalOpen(false)
+          setSelectedRowIndex(null)
+        }}
         onAdd={e => {
           setData([e, ...(data ?? [])])
           setModalOpen(false)

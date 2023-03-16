@@ -20,7 +20,7 @@ import { ALL_UUID } from '~/common/Config'
 
 interface RenderProps {
   open: boolean
-  value: Project | null
+  value?: Project
   onAdd: (newProject: Project) => void
   onUpdate: (updatedProject: Project) => void
   onCancel: () => void
