@@ -93,7 +93,7 @@ export default function LoginPage() {
             name="password"
             rules={[{ validator: LoginReqBody.validator('password') }]}
           >
-            <Input.Password placeholder={t('passwordPlaceHolder') ?? ''} />
+            <Input.Password placeholder={t('passwordPlaceholder') ?? ''} />
           </Form.Item>
           <Form.Item>
             <Button loading={loading || !!data} block htmlType="submit">
