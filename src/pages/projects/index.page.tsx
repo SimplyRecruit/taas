@@ -147,7 +147,7 @@ export default function ProjectsPage() {
   }
 
   useEffect(() => {
-    call()
+    call({ entityStatus: 'all' })
   }, [])
 
   return (

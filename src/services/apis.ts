@@ -133,6 +133,7 @@ export default {
     },
     project: {
         async getAll(
+            queries: { entityStatus: string, },
         ) : Promise<AxiosResponse<Project[]>>
         {
             const route = "/project"
@@ -140,6 +141,7 @@ export default {
             return await createAxiosInstance().request({
                 method: "get",
                 url,
+                params: queries,
             })
         },
         async create(

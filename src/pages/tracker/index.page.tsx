@@ -54,8 +54,12 @@ export default function Tracker() {
     call: callTT,
     loading: loadingTT,
   } = useApi('timeTrack', 'getAll')
-  const { data: dataClient, call: callClient } = useApi('client', 'getAll', [])
-  const { data: dataProject, call: callProject } = useApi(
+  const { data: dataClient, call: getAllClients } = useApi(
+    'client',
+    'getAll',
+    []
+  )
+  const { data: dataProject, call: getAllProjects } = useApi(
     'project',
     'getAll',
     []
@@ -72,8 +76,8 @@ export default function Tracker() {
   }
 
   useEffect(() => {
-    callClient({ entityStatus: 'active' })
-    callProject()
+    getAllClients({ entityStatus: 'active' })
+    getAllProjects({ entityStatus: 'active' })
     getTTs()
   }, [])
 
