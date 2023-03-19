@@ -99,7 +99,7 @@ export default function Team() {
   const [messageApi, contextHolder] = message.useMessage()
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
@@ -150,7 +150,7 @@ export default function Team() {
       messageApi.success(
         isActive
           ? 'Team member restored successfully!'
-          : 'Team member  archived successfully!'
+          : 'Team member archived successfully!'
       )
     } catch (error) {
       messageApi.error(
@@ -179,7 +179,6 @@ export default function Team() {
         <Filter
           onStatusChange={setSelectedStatus}
           onSearch={setSearchText}
-          defaultStatus="all"
           searchText={searchText}
           searchPlaceholder="Search by name"
         />
