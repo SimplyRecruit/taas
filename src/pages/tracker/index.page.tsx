@@ -72,7 +72,7 @@ export default function Tracker() {
   }
 
   useEffect(() => {
-    callClient()
+    callClient({ entityStatus: 'active' })
     callProject()
     getTTs()
   }, [])

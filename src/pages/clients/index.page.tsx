@@ -189,7 +189,7 @@ export default function Clients() {
   }
 
   useEffect(() => {
-    call()
+    call({ entityStatus: 'all' })
   }, [])
 
   return (

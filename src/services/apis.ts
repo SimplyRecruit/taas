@@ -48,6 +48,7 @@ function createUrl(params: { [key: string]: string }, route: string) {
 export default {
     client: {
         async getAll(
+            queries: { entityStatus: string, },
         ) : Promise<AxiosResponse<Client[]>>
         {
             const route = "/client"
@@ -55,6 +56,7 @@ export default {
             return await createAxiosInstance().request({
                 method: "get",
                 url,
+                params: queries,
             })
         },
         async update(

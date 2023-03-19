@@ -1,4 +1,10 @@
-import { Client, ClientUpdateBody, Resource, UserRole } from 'models'
+import {
+  Client,
+  ClientUpdateBody,
+  type EntityStatus,
+  Resource,
+  UserRole,
+} from 'models'
 import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
@@ -9,6 +15,7 @@ import {
   JsonController,
   NotFoundError,
   Param,
+  QueryParam,
 } from 'routing-controllers'
 import { AlreadyExistsError } from 'server/errors/AlreadyExistsError'
 import { EntityNotFoundError } from 'typeorm'
@@ -24,15 +31,21 @@ import UserEntity from '~/resources/User/Entity'
 @Authorized(UserRole.ADMIN)
 export default class ClientController {
   @Get([Client])
-  async getAll(@CurrentUser() currentUser: UserEntity) {
-    const rows = await ClientEntity.find({
+  async getAll(
+    @CurrentUser() currentUser: UserEntity,
+    @QueryParam('entityStatus') entityStatus: EntityStatus
+  ) {
+    const query: any = {
       where: {
         organization: { id: currentUser.organization.id },
       },
       relations: {
         clientUser: { user: true },
       },
-    })
+    }
+    if (entityStatus == 'active') query.where.active = true
+    else if (entityStatus == 'archived') query.where.active = false
+    const rows = await ClientEntity.find(query)
     return rows.map(
       ({
         id,
