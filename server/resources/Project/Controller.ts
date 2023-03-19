@@ -1,4 +1,10 @@
-import { Project, ProjectCreateBody, ProjectUpdateBody, UserRole } from 'models'
+import {
+  type EntityStatus,
+  Project,
+  ProjectCreateBody,
+  ProjectUpdateBody,
+  UserRole,
+} from 'models'
 
 import {
   Authorized,
@@ -8,6 +14,7 @@ import {
   JsonController,
   NotFoundError,
   Param,
+  QueryParam,
 } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
@@ -24,11 +31,17 @@ import { ALL_UUID } from '~/common/Config'
 export default class ProjectController {
   @Get([Project])
   @Authorized(UserRole.ADMIN)
-  async getAll(@CurrentUser() currentUser: UserEntity) {
-    const entityObjects = await ProjectEntity.find({
+  async getAll(
+    @CurrentUser() currentUser: UserEntity,
+    @QueryParam('entityStatus') entityStatus: EntityStatus
+  ) {
+    const query: any = {
       where: { organization: { id: currentUser.organization.id } },
       relations: { client: true },
-    })
+    }
+    if (entityStatus == 'active') query.where.active = true
+    else if (entityStatus == 'archived') query.where.active = false
+    const entityObjects = await ProjectEntity.find(query)
     return entityObjects.map(({ id, abbr, active, client, name, startDate }) =>
       Project.create({
         id,

@@ -36,12 +36,8 @@ export default class ClientController {
     @QueryParam('entityStatus') entityStatus: EntityStatus
   ) {
     const query: any = {
-      where: {
-        organization: { id: currentUser.organization.id },
-      },
-      relations: {
-        clientUser: { user: true },
-      },
+      where: { organization: { id: currentUser.organization.id } },
+      relations: { clientUser: { user: true } },
     }
     if (entityStatus == 'active') query.where.active = true
     else if (entityStatus == 'archived') query.where.active = false
