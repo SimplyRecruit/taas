@@ -18,6 +18,7 @@ export { default as ClientUpdateBody } from 'models/Client/req-bodies/ClientUpda
 export { default as ClientAddResourceBody } from 'models/Client/req-bodies/ClientAddResourceBody'
 export { default as ClientContractType } from 'models/Client/enums/ClientContractType'
 export type { default as Language } from 'models/Language'
+export type { default as EntityStatus } from 'models/EntityStatus'
 export { default as TableQueryParameters } from 'models/TableQueryParameters'
 export { default as Resource } from 'models/Resource/Resource'
 export { default as ResourceCreateBody } from 'models/Resource/req-bodies/ResourceCreateBody'
