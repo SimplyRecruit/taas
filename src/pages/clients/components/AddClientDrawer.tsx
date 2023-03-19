@@ -40,7 +40,7 @@ export default function AddClientDrawer({
   )
 
   useEffect(() => {
-    call()
+    call({ entityStatus: 'active' })
   }, [])
 
   const onSubmit = async () => {

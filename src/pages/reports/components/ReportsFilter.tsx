@@ -38,9 +38,9 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     defaultRangePreset.map(e => momentToDate(e))
   )
   useEffect(() => {
-    getAllResources()
-    getAllClients()
-    getAllProjects()
+    getAllResources({ entityStatus: 'all' })
+    getAllClients({ entityStatus: 'all' })
+    getAllProjects({ entityStatus: 'all' })
   }, [])
 
   useEffect(() => {

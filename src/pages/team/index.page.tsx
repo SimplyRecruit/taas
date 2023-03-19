@@ -162,7 +162,7 @@ export default function Team() {
   }
 
   useEffect(() => {
-    call()
+    call({ entityStatus: 'all' })
   }, [])
 
   return (

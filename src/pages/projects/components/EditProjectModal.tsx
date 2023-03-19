@@ -55,7 +55,7 @@ export default function EditProjectDrawer({
   }, [form, value])
 
   useEffect(() => {
-    call()
+    call({ entityStatus: 'active' })
   }, [])
 
   const loading = loadingUpdate || loadingCreate

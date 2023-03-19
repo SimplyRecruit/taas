@@ -121,7 +121,7 @@ const EditClientDrawer = ({
   }, [settingsForm, accessForm, value])
 
   useEffect(() => {
-    callResourceGetAll()
+    callResourceGetAll({ entityStatus: 'active' })
   }, [])
 
   const items: TabsProps['items'] = [
