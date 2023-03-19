@@ -186,6 +186,7 @@ export default {
     },
     resource: {
         async getAll(
+            queries: { entityStatus: string, },
         ) : Promise<AxiosResponse<Resource[]>>
         {
             const route = "/resource"
@@ -193,6 +194,7 @@ export default {
             return await createAxiosInstance().request({
                 method: "get",
                 url,
+                params: queries,
             })
         },
         async update(

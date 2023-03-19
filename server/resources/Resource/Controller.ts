@@ -1,4 +1,4 @@
-import { Resource, UserRole } from 'models'
+import { type EntityStatus, Resource, UserRole } from 'models'
 import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
@@ -8,6 +8,7 @@ import {
   JsonController,
   NotFoundError,
   Param,
+  QueryParam,
 } from 'routing-controllers'
 import { EntityNotFoundError } from 'typeorm'
 import { Body } from '~/decorators/CustomRequestParams'
@@ -20,10 +21,16 @@ import { Get, Patch } from '~/decorators/CustomApiMethods'
 export default class ResourceController {
   @Get([Resource])
   @Authorized(UserRole.ADMIN)
-  async getAll(@CurrentUser() currentUser: UserEntity) {
-    const entityObjects = await UserEntity.find({
+  async getAll(
+    @CurrentUser() currentUser: UserEntity,
+    @QueryParam('entityStatus') entityStatus: EntityStatus
+  ) {
+    const query: any = {
       where: { organization: { id: currentUser.organization.id } },
-    })
+    }
+    if (entityStatus == 'active') query.where.active = true
+    else if (entityStatus == 'archived') query.where.active = false
+    const entityObjects = await UserEntity.find(query)
     return entityObjects.map(
       ({ id, abbr, name, email, role, active, startDate, hourlyRate }) =>
         Resource.create({
