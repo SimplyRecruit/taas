@@ -32,11 +32,6 @@ const topItems = [
     path: Route.TimeTrack,
   },
   {
-    icon: <FiCalendar size={iconSize} />,
-    label: 'Periods',
-    path: Route.Periods,
-  },
-  {
     icon: <FiBarChart2 size={iconSize} />,
     label: 'Reports',
     path: Route.Reports,
@@ -51,6 +46,11 @@ const analyseItems = [
   },
 ]
 const adminItems = [
+  {
+    icon: <FiCalendar size={iconSize} />,
+    label: 'Periods',
+    path: Route.Periods,
+  },
   {
     icon: <FiFileText size={iconSize} />,
     label: 'Projects',
