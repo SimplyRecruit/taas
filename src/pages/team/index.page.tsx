@@ -1,17 +1,26 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Button, message, Table } from 'antd'
+import { Button, message, Table, Tag } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
-
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
-import { Resource, ResourceUpdateBody } from 'models'
+import { Resource, ResourceUpdateBody, UserRole } from 'models'
 import useApi from '@/services/useApi'
-import { formatDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
+import DateCell from '@/components/DateCell'
 
+function getUserRoleTagColor(value: UserRole) {
+  switch (value) {
+    case UserRole.ADMIN:
+      return 'magenta'
+    case UserRole.TT_MANAGER:
+      return 'orange'
+    default:
+      return 'processing'
+  }
+}
 export default function Team() {
   const columns: ColumnsType<Resource> = [
     {
@@ -27,8 +36,8 @@ export default function Team() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.abbr.localeCompare(b.abbr),
     },
-
     {
       title: 'Name',
       dataIndex: 'name',
@@ -42,16 +51,22 @@ export default function Team() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
+      sorter: (a, b) => a.role.localeCompare(b.role),
+      render: (value: UserRole) => (
+        <Tag color={getUserRoleTagColor(value)}>{value}</Tag>
+      ),
     },
     {
       title: 'Hourly rate',
@@ -61,12 +76,15 @@ export default function Team() {
       render: (value: number) => (
         <div style={{ textAlign: 'right' }}>{value}</div>
       ),
+      sorter: (a, b) => a.hourlyRate - b.hourlyRate,
     },
     {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
+      render: (value: Date) => <DateCell value={value} />,
+      sorter: (a, b) =>
+        new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
     },
     {
       title: '',

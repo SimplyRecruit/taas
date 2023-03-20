@@ -4,14 +4,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button, message, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
-import { Client, ClientUpdateBody } from 'models'
-import { formatDate } from '@/util'
+import { Client, ClientContractType, ClientUpdateBody } from 'models'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
-import { ColumnsType } from 'antd/es/table'
+import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
+import DateCell from '@/components/DateCell'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -30,6 +30,7 @@ export default function Clients() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.abbr.localeCompare(b.abbr),
     },
     {
       title: 'Name',
@@ -44,29 +45,42 @@ export default function Clients() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Partner name',
       dataIndex: 'partnerName',
       key: 'partnerName',
+      sorter: (a, b) =>
+        a.partnerName
+          ? a.partnerName.localeCompare(b.partnerName ?? '')
+          : ''.localeCompare(b.partnerName ?? ''),
     },
     {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
+      render: (value: Date) => <DateCell value={value} />,
+      sorter: (a, b) =>
+        new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
+      showSorterTooltip: true,
     },
 
     {
       title: 'Contract type',
       dataIndex: 'contractType',
       key: 'contractType',
+      sorter: (a, b) => a.contractType.localeCompare(b.contractType),
+      render: (value: ClientContractType) => <Tag>{value}</Tag>,
     },
     {
       title: 'Contract date',
       dataIndex: 'contractDate',
       key: 'contractDate',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
+      render: (value: Date) => <DateCell value={value} />,
+      sorter: (a, b) =>
+        (a.contractDate ? new Date(a.contractDate).valueOf() : 0) -
+        (b.contractDate ? new Date(b.contractDate).valueOf() : 0),
     },
     {
       title: 'Access',
@@ -87,6 +101,8 @@ export default function Clients() {
           </div>
         </Button>
       ),
+      sorter: (a, b) =>
+        Number(a.everyoneHasAccess) - Number(b.everyoneHasAccess),
     },
     {
       title: '',
@@ -94,16 +110,14 @@ export default function Clients() {
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       fixed: 'right',
       render: (record: Client) => (
-        <span>
-          <TableActionColumn
-            isActive={record.active}
-            onEdit={() => {
-              openEditDrawer(record, '1')
-            }}
-            onArchive={() => setClientStatus(false, record)}
-            onRestore={() => setClientStatus(true, record)}
-          />
-        </span>
+        <TableActionColumn
+          isActive={record.active}
+          onEdit={() => {
+            openEditDrawer(record, '1')
+          }}
+          onArchive={() => setClientStatus(false, record)}
+          onRestore={() => setClientStatus(true, record)}
+        />
       ),
     },
   ]
