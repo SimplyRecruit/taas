@@ -2,7 +2,7 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import AddTT from '@/pages/tracker/components/AddTT'
 import useApi from '@/services/useApi'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
 import { TableQueryParameters } from 'models'
@@ -49,6 +49,7 @@ export default function Tracker() {
     },
   ]
   const [messageApi, contextHolder] = message.useMessage()
+  const [pageSize, setPageSize] = useState(20)
   const {
     data: dataTT,
     call: callTT,
@@ -65,7 +66,7 @@ export default function Tracker() {
     []
   )
 
-  function getTTs(pageParam = 1, pageSizeParam = 10) {
+  function getTTs(pageParam = 1, pageSizeParam = 20) {
     callTT(
       TableQueryParameters.create({
         sortBy: [{ column: 'date', direction: 'DESC' }],
@@ -78,7 +79,7 @@ export default function Tracker() {
   useEffect(() => {
     getAllClients({ entityStatus: 'active' })
     getAllProjects({ entityStatus: 'active' })
-    getTTs()
+    getTTs(1, pageSize)
   }, [])
 
   function onAdd() {
@@ -117,11 +118,15 @@ export default function Tracker() {
           position: ['bottomCenter'],
           responsive: true,
           showQuickJumper: false,
+          pageSize,
           showLessItems: true,
-          showTotal: total => `Total ${total} clients`,
-          showSizeChanger: false,
+          showTotal: total => `Total ${total} time tracks`,
+          showSizeChanger: true,
           total: dataTT?.count,
-          onChange: getTTs,
+          onChange: (page, pageSize) => {
+            getTTs(page, pageSize)
+            setPageSize(pageSize)
+          },
         }}
       />
     </>
