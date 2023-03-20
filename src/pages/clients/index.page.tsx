@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button, message, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
-import { Client, ClientUpdateBody } from 'models'
+import { Client, ClientContractType, ClientUpdateBody } from 'models'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
@@ -71,6 +71,7 @@ export default function Clients() {
       dataIndex: 'contractType',
       key: 'contractType',
       sorter: (a, b) => a.contractType.localeCompare(b.contractType),
+      render: (value: ClientContractType) => <Tag>{value}</Tag>,
     },
     {
       title: 'Contract date',
