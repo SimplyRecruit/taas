@@ -27,8 +27,8 @@ export default function Team() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.abbr.localeCompare(b.abbr),
     },
-
     {
       title: 'Name',
       dataIndex: 'name',
@@ -42,11 +42,13 @@ export default function Team() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: 'Role',
@@ -61,12 +63,15 @@ export default function Team() {
       render: (value: number) => (
         <div style={{ textAlign: 'right' }}>{value}</div>
       ),
+      sorter: (a, b) => a.hourlyRate - b.hourlyRate,
     },
     {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
       render: (value: Date) => <span>{formatDate(value)}</span>,
+      sorter: (a, b) =>
+        new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
     },
     {
       title: '',
