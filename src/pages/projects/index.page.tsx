@@ -55,6 +55,7 @@ export default function ProjectsPage() {
           </Tag>
         )
       },
+      sorter: (a, b) => a.client.abbr.localeCompare(b.client.abbr),
     },
     {
       title: 'Start Date',
