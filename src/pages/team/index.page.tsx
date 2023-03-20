@@ -6,11 +6,11 @@ import { useEffect, useMemo, useState } from 'react'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
 import { Resource, ResourceUpdateBody } from 'models'
 import useApi from '@/services/useApi'
-import { formatDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
+import DateCell from '@/components/DateCell'
 
 export default function Team() {
   const columns: ColumnsType<Resource> = [
@@ -69,7 +69,7 @@ export default function Team() {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
+      render: (value: Date) => <DateCell value={value} />,
       sorter: (a, b) =>
         new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
     },

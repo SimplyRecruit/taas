@@ -5,13 +5,13 @@ import { Button, message, Table, Tag } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientUpdateBody } from 'models'
-import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
 import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
+import DateCell from '@/components/DateCell'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -60,7 +60,7 @@ export default function Clients() {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
+      render: (value: Date) => <DateCell value={value} />,
       sorter: (a, b) =>
         new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
       showSorterTooltip: true,
@@ -75,7 +75,7 @@ export default function Clients() {
       title: 'Contract date',
       dataIndex: 'contractDate',
       key: 'contractDate',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
+      render: (value: Date) => <DateCell value={value} />,
       sorter: (a, b) =>
         (a.contractDate ? new Date(a.contractDate).valueOf() : 0) -
         (b.contractDate ? new Date(b.contractDate).valueOf() : 0),

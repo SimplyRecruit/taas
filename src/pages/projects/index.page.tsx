@@ -7,10 +7,10 @@ import { Client, Project, ProjectUpdateBody } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
-import { formatDate } from '@/util'
 import { ALL_UUID } from '~/common/Config'
 import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
+import DateCell from '@/components/DateCell'
 
 export default function ProjectsPage() {
   const columns: ColumnsType<Project> = [
@@ -60,9 +60,7 @@ export default function ProjectsPage() {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
-      render: (date: Date) => {
-        return <div>{formatDate(date)}</div>
-      },
+      render: (value: Date) => <DateCell value={value} />,
       sorter: (a, b) =>
         new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
     },
