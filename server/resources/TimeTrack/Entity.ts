@@ -18,7 +18,7 @@ export default class TimeTrackEntity extends EntityBase {
   @JoinColumn()
   project: ProjectEntity
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'date' })
   date: Date
 
   @Column()
