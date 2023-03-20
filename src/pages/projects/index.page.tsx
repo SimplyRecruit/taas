@@ -194,8 +194,8 @@ export default function ProjectsPage() {
           responsive: true,
           showQuickJumper: false,
           showLessItems: true,
-          showTotal: total => `Total ${total} clients`,
-          showSizeChanger: false,
+          showTotal: total => `Total ${total} projects`,
+          showSizeChanger: true,
         }}
       />
       <EditProjectModal
