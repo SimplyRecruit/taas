@@ -209,7 +209,7 @@ export default function Team() {
           responsive: true,
           showQuickJumper: false,
           showLessItems: true,
-          showTotal: total => `Total ${total} clients`,
+          showTotal: total => `Total ${total} members`,
           showSizeChanger: true,
         }}
       />
