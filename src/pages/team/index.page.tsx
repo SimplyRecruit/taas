@@ -53,6 +53,7 @@ export default function Team() {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
+      sorter: (a, b) => a.role.localeCompare(b.role),
     },
     {
       title: 'Hourly rate',
