@@ -69,17 +69,15 @@ export default function ProjectsPage() {
       key: 'action',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (_text: any, record: Project, index: number) => (
-        <div>
-          <TableActionColumn
-            isActive={record.active}
-            onEdit={() => {
-              setSelectedRowIndex(index)
-              setModalOpen(true)
-            }}
-            onArchive={() => setProjectStatus(false, record)}
-            onRestore={() => setProjectStatus(true, record)}
-          />
-        </div>
+        <TableActionColumn
+          isActive={record.active}
+          onEdit={() => {
+            setSelectedRowIndex(index)
+            setModalOpen(true)
+          }}
+          onArchive={() => setProjectStatus(false, record)}
+          onRestore={() => setProjectStatus(true, record)}
+        />
       ),
     },
   ]

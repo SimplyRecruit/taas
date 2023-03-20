@@ -2,7 +2,6 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Button, message, Table } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
-
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
 import { Resource, ResourceUpdateBody } from 'models'
 import useApi from '@/services/useApi'

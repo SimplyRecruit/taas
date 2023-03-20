@@ -106,16 +106,14 @@ export default function Clients() {
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       fixed: 'right',
       render: (record: Client) => (
-        <span>
-          <TableActionColumn
-            isActive={record.active}
-            onEdit={() => {
-              openEditDrawer(record, '1')
-            }}
-            onArchive={() => setClientStatus(false, record)}
-            onRestore={() => setClientStatus(true, record)}
-          />
-        </span>
+        <TableActionColumn
+          isActive={record.active}
+          onEdit={() => {
+            openEditDrawer(record, '1')
+          }}
+          onArchive={() => setClientStatus(false, record)}
+          onRestore={() => setClientStatus(true, record)}
+        />
       ),
     },
   ]
