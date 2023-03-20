@@ -9,10 +9,11 @@ import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import useApi from '@/services/useApi'
 import { formatDate } from '@/util'
 import { ALL_UUID } from '~/common/Config'
+import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 
 export default function ProjectsPage() {
-  const columns = [
+  const columns: ColumnsType<Project> = [
     {
       title: 'Abbreviation',
       dataIndex: 'abbr',
@@ -26,6 +27,7 @@ export default function ProjectsPage() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.abbr.localeCompare(b.abbr),
     },
     {
       title: 'Name',
@@ -40,6 +42,7 @@ export default function ProjectsPage() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Client',
@@ -60,6 +63,8 @@ export default function ProjectsPage() {
       render: (date: Date) => {
         return <div>{formatDate(date)}</div>
       },
+      sorter: (a, b) =>
+        new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
     },
     {
       title: '',

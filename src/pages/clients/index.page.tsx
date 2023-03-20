@@ -9,7 +9,7 @@ import { formatDate } from '@/util'
 import { FaExpandAlt } from 'react-icons/fa'
 import AddClientDrawer from '@/pages/clients/components/AddClientDrawer'
 import useApi from '@/services/useApi'
-import { ColumnsType } from 'antd/es/table'
+import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 
