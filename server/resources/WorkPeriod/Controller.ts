@@ -73,28 +73,4 @@ export default class WorkPeriodController {
     })
     return 'Work Period Deletion Successful'
   }
-
-  @Put(String)
-  async toggle(
-    @CurrentUser() currentUser: UserEntity,
-    @Body() { periodDate }: WorkPeriod
-  ) {
-    await dataSource.transaction(async em => {
-      try {
-        const workPeriod = await em.findOneOrFail(WorkPeriodEntity, {
-          where: { period: periodDate },
-          relations: { organization: true },
-        })
-        if (workPeriod.organization.id !== currentUser.organization.id)
-          throw new ForbiddenError()
-        workPeriod.closed = !workPeriod.closed
-        await em.save(workPeriod)
-      } catch (error) {
-        if (error instanceof EntityNotFoundError) throw new NotFoundError()
-        else if (error instanceof ForbiddenError) throw new ForbiddenError()
-        else throw new InternalServerError('Internal Server Error')
-      }
-    })
-    return 'Done'
-  }
 }
