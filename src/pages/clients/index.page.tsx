@@ -70,6 +70,7 @@ export default function Clients() {
       title: 'Contract type',
       dataIndex: 'contractType',
       key: 'contractType',
+      sorter: (a, b) => a.contractType.localeCompare(b.contractType),
     },
     {
       title: 'Contract date',
@@ -99,6 +100,8 @@ export default function Clients() {
           </div>
         </Button>
       ),
+      sorter: (a, b) =>
+        Number(a.everyoneHasAccess) - Number(b.everyoneHasAccess),
     },
     {
       title: '',
