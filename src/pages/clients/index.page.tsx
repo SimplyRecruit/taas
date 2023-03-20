@@ -237,7 +237,7 @@ export default function Clients() {
           showQuickJumper: false,
           showLessItems: true,
           showTotal: total => `Total ${total} clients`,
-          showSizeChanger: false,
+          showSizeChanger: true,
         }}
       />
       {currentRecord && (
