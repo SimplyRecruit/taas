@@ -30,6 +30,7 @@ export default function Clients() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.abbr.localeCompare(b.abbr),
     },
     {
       title: 'Name',
@@ -44,17 +45,25 @@ export default function Clients() {
           {text}
         </span>
       ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Partner name',
       dataIndex: 'partnerName',
       key: 'partnerName',
+      sorter: (a, b) =>
+        a.partnerName
+          ? a.partnerName.localeCompare(b.partnerName ?? '')
+          : ''.localeCompare(b.partnerName ?? ''),
     },
     {
       title: 'Start date',
       dataIndex: 'startDate',
       key: 'startDate',
       render: (value: Date) => <span>{formatDate(value)}</span>,
+      sorter: (a, b) =>
+        new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
+      showSorterTooltip: true,
     },
 
     {
@@ -67,6 +76,9 @@ export default function Clients() {
       dataIndex: 'contractDate',
       key: 'contractDate',
       render: (value: Date) => <span>{formatDate(value)}</span>,
+      sorter: (a, b) =>
+        (a.contractDate ? new Date(a.contractDate).valueOf() : 0) -
+        (b.contractDate ? new Date(b.contractDate).valueOf() : 0),
     },
     {
       title: 'Access',
