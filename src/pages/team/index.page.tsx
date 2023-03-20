@@ -1,9 +1,9 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Button, message, Table } from 'antd'
+import { Button, message, Table, Tag } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
-import { Resource, ResourceUpdateBody } from 'models'
+import { Resource, ResourceUpdateBody, UserRole } from 'models'
 import useApi from '@/services/useApi'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
@@ -11,6 +11,16 @@ import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
 
+function getUserRoleTagColor(value: UserRole) {
+  switch (value) {
+    case UserRole.ADMIN:
+      return 'magenta'
+    case UserRole.TT_MANAGER:
+      return 'orange'
+    default:
+      return 'processing'
+  }
+}
 export default function Team() {
   const columns: ColumnsType<Resource> = [
     {
@@ -54,6 +64,9 @@ export default function Team() {
       dataIndex: 'role',
       key: 'role',
       sorter: (a, b) => a.role.localeCompare(b.role),
+      render: (value: UserRole) => (
+        <Tag color={getUserRoleTagColor(value)}>{value}</Tag>
+      ),
     },
     {
       title: 'Hourly rate',
