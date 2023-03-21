@@ -10,7 +10,7 @@ import {
   NotFoundError,
 } from 'routing-controllers'
 import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
-import { Delete, Get, Post, Put } from '~/decorators/CustomApiMethods'
+import { Delete, Get, Post } from '~/decorators/CustomApiMethods'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import UserEntity from '~/resources/User/Entity'
@@ -24,8 +24,9 @@ export default class WorkPeriodController {
       const workPeriods = await WorkPeriodEntity.find({
         where: { organization: { id: currentUser.organization.id } },
       })
-      return workPeriods.map(e => WorkPeriod.fromDate(e.period))
+      return workPeriods
     } catch (error) {
+      console.log(error)
       if (error instanceof EntityPropertyNotFoundError)
         throw new BadRequestError('Invalid column name for sorting')
       else throw new InternalServerError('Internal Server Error')
@@ -35,17 +36,17 @@ export default class WorkPeriodController {
   @Post(String)
   async create(
     @CurrentUser() currentUser: UserEntity,
-    @Body() { periodDate }: WorkPeriod
+    @Body() { periodString }: WorkPeriod
   ) {
     await dataSource.transaction(async em => {
       const existing = await em.findOneBy(WorkPeriodEntity, {
-        period: periodDate,
+        period: periodString,
         organization: { id: currentUser.organization.id },
       })
       if (existing !== null) throw new HttpError(409, 'Period already exists')
       await em.save(WorkPeriodEntity, {
         organization: currentUser.organization,
-        period: periodDate,
+        period: periodString,
       })
     })
     return 'Done'
@@ -54,12 +55,12 @@ export default class WorkPeriodController {
   @Delete(String)
   async delete(
     @CurrentUser() currentUser: UserEntity,
-    @Body() { periodDate }: WorkPeriod
+    @Body() { periodString }: WorkPeriod
   ) {
     await dataSource.transaction(async em => {
       try {
         const workPeriod = await em.findOneOrFail(WorkPeriodEntity, {
-          where: { period: periodDate },
+          where: { period: periodString },
           relations: { organization: true },
         })
         if (workPeriod.organization.id !== currentUser.organization.id)

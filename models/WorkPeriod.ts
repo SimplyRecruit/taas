@@ -18,4 +18,8 @@ export default class WorkPeriod extends Model {
     const [_, month, year] = this.period.match(regex)!
     return new Date(Date.UTC(Number.parseInt(year), Number.parseInt(month)))
   }
+
+  get periodString() {
+    return this.period
+  }
 }
