@@ -62,7 +62,7 @@ export default function PeriodsPage() {
   }, [])
 
   function getDate(monthIndex: number): Date {
-    return new Date(Date.UTC(year, monthIndex, 1))
+    return new Date(year, monthIndex)
   }
   const cols = []
   const colCount = 4
