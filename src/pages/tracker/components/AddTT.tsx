@@ -60,6 +60,7 @@ export default function AddTT({
         onFinish={onFinish}
         initialValues={TTCreateBody.createPartially({
           date: TimelessDate.fromDate(new Date()),
+          hour: 1,
           description: '',
           billable: false,
           ticketNo: '',
@@ -102,8 +103,9 @@ export default function AddTT({
           name="hour"
           rules={[
             {
+              validator: TT.validator('hour'),
               required: true,
-              message: 'Please enter a value',
+              message: 'Please enter a positive value',
             },
           ]}
         >
@@ -117,7 +119,7 @@ export default function AddTT({
           name="description"
           rules={[
             {
-              validator: Project.validator('name'),
+              validator: TT.validator('description'),
               message: 'Please enter a value',
             },
           ]}
@@ -132,12 +134,12 @@ export default function AddTT({
           name="ticketNo"
           rules={[
             {
-              validator: Project.validator('name'),
-              message: 'Please enter a value',
+              validator: TT.validator('ticketNo'),
+              message: 'Max length is 255',
             },
           ]}
         >
-          <Input placeholder="Ticket no" />
+          <Input placeholder="Ticket no (optional)" />
         </Form.Item>
         <Form.Item
           rules={[
