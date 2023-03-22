@@ -7,7 +7,7 @@ import 'jspreadsheet-ce/dist/jspreadsheet.css'
 import 'jsuites/dist/jsuites.css'
 import styles from './index.module.css'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
-import { TTBatchCreateBody, TTCreateBody } from 'models'
+import { TimelessDate, TTBatchCreateBody, TTCreateBody } from 'models'
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
 
@@ -60,7 +60,7 @@ export default function BatchSpreadSheet({
     const body = TTBatchCreateBody.create({
       bodies: data.map(e =>
         TTCreateBody.create({
-          date: new Date(e[0] as string),
+          date: TimelessDate.fromDate(new Date(e[0] as string)),
           clientAbbr: e[1] as string,
           hour: Number(e[2]),
           description: e[3] as string,

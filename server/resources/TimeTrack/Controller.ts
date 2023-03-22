@@ -1,4 +1,10 @@
-import { TT, UserRole, TTCreateBody, TableQueryParameters } from 'models'
+import {
+  TT,
+  UserRole,
+  TTCreateBody,
+  TableQueryParameters,
+  WorkPeriod,
+} from 'models'
 
 import {
   Authorized,
@@ -23,6 +29,7 @@ import ClientEntity from '~/resources/Client/Entity'
 import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBody'
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 import TTGetAllResBody from 'models/TimeTrack/res-bodies/TTGetAllResBody'
+import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
@@ -70,13 +77,20 @@ export default class TimeTrackController {
   @Post(String)
   @Authorized(UserRole.ADMIN)
   async create(
-    @Body() { clientAbbr, projectAbbr, ...body }: TTCreateBody,
+    @Body() { clientAbbr, projectAbbr, date, ...body }: TTCreateBody,
     @CurrentUser() currentUser: UserEntity
   ) {
     let id = ''
-    console.log(clientAbbr, body)
+    const period = WorkPeriod.fromDate(date.dateObject)
+    console.log(clientAbbr, date, body, period)
     await dataSource.transaction(async em => {
       try {
+        await em.findOneOrFail(WorkPeriodEntity, {
+          where: {
+            period: period.periodString,
+            organization: { id: currentUser.organization.id },
+          },
+        })
         /*
           Throws ForbiddenEror if this client is:
           - Not owned by currentUser's organization
@@ -124,6 +138,7 @@ export default class TimeTrackController {
             TTEntity.create({
               ...body,
               user: currentUser,
+              date: date.dateString,
               client,
               project,
             })
@@ -149,7 +164,7 @@ export default class TimeTrackController {
     const resBodies: TTBatchCreateResBody[] = []
     await dataSource.transaction(async em => {
       try {
-        for (const body of bodies) {
+        for (const { date, ...body } of bodies) {
           // Checking client
           const client = await em.findOne(ClientEntity, {
             where: [
@@ -198,6 +213,7 @@ export default class TimeTrackController {
           const { id } = await em.save(
             TTEntity.create({
               ...body,
+              date: date.dateString,
               user: currentUser,
               client,
               project,

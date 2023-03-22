@@ -2,6 +2,7 @@ import { stringToDate } from '@/util'
 import { Type } from 'class-transformer'
 import { IsArray, validate, ValidateNested } from 'class-validator'
 import Model from 'models/Model'
+import TimelessDate from 'models/TimelessDate'
 import TTCreateBody from 'models/TimeTrack/req-bodies/TTCreateBody'
 import 'reflect-metadata'
 
@@ -39,7 +40,7 @@ export default class TTBatchCreateBody extends Model {
       const billable = billableString === 'YES'
       bodies.push(
         TTCreateBody.create({
-          date,
+          date: TimelessDate.fromDate(date),
           clientAbbr,
           hour,
           description,

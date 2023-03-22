@@ -8,8 +8,7 @@ import {
   Checkbox,
   InputNumber,
 } from 'antd'
-import { Client, Project, TT, TTCreateBody } from 'models'
-import { momentToDate } from '@/util'
+import { Client, Project, TimelessDate, TT, TTCreateBody } from 'models'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
@@ -41,8 +40,9 @@ export default function AddTT({
   async function onFinish(body: TTCreateBody) {
     try {
       const newTTId = await callCreate(body)
+      const { date, ...rest } = body
       form.resetFields()
-      onAdd(TT.create({ id: newTTId, ...body }))
+      onAdd(TT.create({ id: newTTId, date: date.dateObject, ...rest }))
     } catch (error) {
       onError(error)
     }
@@ -59,7 +59,7 @@ export default function AddTT({
         style={{ width: '100%' }}
         onFinish={onFinish}
         initialValues={TTCreateBody.createPartially({
-          date: new Date(),
+          date: TimelessDate.fromDate(new Date()),
           description: '',
           billable: false,
           ticketNo: '',
@@ -67,10 +67,15 @@ export default function AddTT({
       >
         <Form.Item
           name="date"
-          getValueFromEvent={date => momentToDate(date)}
-          getValueProps={i => ({ value: moment(i) })}
+          getValueFromEvent={dayjs => TimelessDate.fromDate(dayjs.toDate())}
+          getValueProps={(date: TimelessDate) => ({
+            value: moment(date.dateObject),
+          })}
         >
           <DatePicker
+            onChange={e => {
+              if (e) console.log(TimelessDate.fromDate(e.toDate()))
+            }}
             allowClear={false}
             format={DEFAULT_DATE_FORMAT}
             style={{ width: '100%' }}
