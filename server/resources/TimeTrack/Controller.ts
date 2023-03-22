@@ -82,7 +82,6 @@ export default class TimeTrackController {
   ) {
     let id = ''
     const period = WorkPeriod.fromDate(date.dateObject)
-    console.log(clientAbbr, date, body, period)
     await dataSource.transaction(async em => {
       try {
         await em.findOneOrFail(WorkPeriodEntity, {
@@ -165,6 +164,20 @@ export default class TimeTrackController {
     await dataSource.transaction(async em => {
       try {
         for (const { date, ...body } of bodies) {
+          const ttPeriod = WorkPeriod.fromDate(date.dateObject)
+          if (
+            !(await em.findOne(WorkPeriodEntity, {
+              where: {
+                period: ttPeriod.periodString,
+                organization: { id: currentUser.organization.id },
+              },
+            }))
+          ) {
+            resBodies.push(
+              new TTBatchCreateResBody({ error: 'invalid-period' })
+            )
+            continue
+          }
           // Checking client
           const client = await em.findOne(ClientEntity, {
             where: [

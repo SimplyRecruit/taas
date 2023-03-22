@@ -99,7 +99,6 @@ export default function ProfileMenu() {
         icon: <FiLogOut />,
         label: t('profileMenu.signOut'),
         onClick: () => {
-          console.log('deneme')
           router.push(Route.Logout)
         },
       },

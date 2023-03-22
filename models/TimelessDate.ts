@@ -15,12 +15,10 @@ export default class TimelessDate extends Model {
       `${date.getMonth() + 1}`.padStart(2, '0') +
       '/' +
       `${date.getDate()}`.padStart(2, '0')
-    console.log(instance.timelessDate)
     return instance
   }
   get dateObject() {
     const [year, month, day] = this.timelessDate.split('/')
-    console.log(this.timelessDate, year, month, day)
     return new Date(
       Number.parseInt(year),
       Number.parseInt(month) - 1,
