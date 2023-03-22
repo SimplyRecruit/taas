@@ -28,8 +28,8 @@ const iconSize = 16
 const topItems = [
   {
     icon: <FiClock size={iconSize} />,
-    label: 'Time Track',
-    path: Route.TimeTrack,
+    label: 'Time Tracker',
+    path: Route.TimeTracker,
   },
   {
     icon: <FiBarChart2 size={iconSize} />,
