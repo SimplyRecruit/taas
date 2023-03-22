@@ -377,18 +377,6 @@ export default {
                 data: body,
             })
         },
-        async toggle(
-            body: WorkPeriod,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/work-period"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "put",
-                url,
-                data: body,
-            })
-        },
     },
     
 } 

@@ -25,7 +25,6 @@ export default function DropdownAutocomplete({
       arrow={false}
       placement="bottomLeft"
       trigger="click"
-      overlayInnerStyle={{ maxHeight: 400, overflowY: 'auto' }}
       content={<PopoverContent {...props} />}
     >
       <Badge count={badgeCount} overflowCount={9}>

@@ -10,12 +10,16 @@ export default class WorkPeriod extends Model {
   public static fromDate(period: Date) {
     const instance = new this()
     instance.period =
-      `${period.getUTCMonth()}`.padStart(2, '0') + `/${period.getUTCFullYear()}`
+      `${period.getMonth()}`.padStart(2, '0') + `/${period.getFullYear()}`
     return instance
   }
   get periodDate() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unused-vars
     const [_, month, year] = this.period.match(regex)!
-    return new Date(Date.UTC(Number.parseInt(year), Number.parseInt(month)))
+    return new Date(Number.parseInt(year), Number.parseInt(month))
+  }
+
+  get periodString() {
+    return this.period
   }
 }
