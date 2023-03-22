@@ -12,6 +12,6 @@ export default class TTBase extends Model {
   @IsBoolean()
   billable: boolean
 
-  @Length(1, 255)
+  @Length(0, 255)
   ticketNo: string
 }
