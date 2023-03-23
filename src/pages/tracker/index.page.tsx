@@ -62,14 +62,17 @@ export default function Tracker() {
       key: 'action',
       fixed: 'right',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: (record: TT) =>
+      render: (_text: any, record: TT, index: number) =>
         workPeriods.some(
           e =>
             plainToClass(WorkPeriod, e).periodString ===
             WorkPeriod.fromDate(new Date(record.date)).periodString
         ) ? (
           <TTTableActionColumn
-            onEdit={() => null}
+            onEdit={() => {
+              setSelectedRowIndex(index)
+              setDrawerOpen(true)
+            }}
             onDelete={() => onDelete(record.id)}
           />
         ) : null,
@@ -77,20 +80,18 @@ export default function Tracker() {
   ]
 
   const [messageApi, contextHolder] = message.useMessage()
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
   const [sorter, setSorter] = useState<SorterResult<TT>>()
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const {
     data: dataTT,
     call: callTT,
     loading: loadingTT,
   } = useApi('timeTrack', 'getAll')
-  const { data: dataClient, call: getAllClients } = useApi(
-    'client',
-    'getAll',
-    []
-  )
-  const { data: dataProject, call: getAllProjects } = useApi(
+  const { data: clients, call: getAllClients } = useApi('client', 'getAll', [])
+  const { data: projects, call: getAllProjects } = useApi(
     'project',
     'getAll',
     []
@@ -101,6 +102,8 @@ export default function Tracker() {
     []
   )
   const { call: deleteTT } = useApi('timeTrack', 'delete')
+  const selectedRecord =
+    selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
   function getTTs(
     pageParam = 1,
@@ -127,14 +130,12 @@ export default function Tracker() {
       })
     )
   }
+
   function onAdd() {
     getTTs(1, pageSize, sorter)
     messageApi.success('Timetrack added')
   }
 
-  function onError() {
-    messageApi.error('Invalid timetrack')
-  }
   async function onDelete(id: string) {
     try {
       await deleteTT({ id })
@@ -145,6 +146,18 @@ export default function Tracker() {
     }
   }
 
+  function onUpdate(record: TT) {
+    if (selectedRowIndex != null && dataTT?.data) {
+      dataTT.data[selectedRowIndex] = record
+      dataTT.data = [...dataTT.data]
+      messageApi.success('Updated timetrack successfully!')
+    } else {
+      console.log('this should not happen')
+      messageApi.error('Fatal error')
+    }
+    setDrawerOpen(false)
+    setSelectedRowIndex(null)
+  }
   useEffect(() => {
     getAllClients({ entityStatus: 'active' })
     getAllProjects({ entityStatus: 'active' })
@@ -155,18 +168,31 @@ export default function Tracker() {
   return (
     <>
       {contextHolder}
+      <EditTTDrawer
+        open={drawerOpen}
+        value={selectedRecord}
+        clientOptions={clients}
+        projectOptions={projects}
+        onUpdate={onUpdate}
+        onError={() => {
+          messageApi.error('An error occured. Could not update timetrack.')
+        }}
+        onCancel={() => setDrawerOpen(false)}
+      />
       <AddTT
-        onError={onError}
+        onError={() => {
+          messageApi.error('Invalid timetrack')
+        }}
         onAdd={onAdd}
-        clientOptions={dataClient}
-        projectOptions={dataProject}
+        clientOptions={clients}
+        projectOptions={projects}
       />
       <AddBatchTT
         onAdd={() => {
           getTTs(1, pageSize, sorter)
         }}
-        clientOptions={dataClient}
-        projectOptions={dataProject}
+        clientOptions={clients}
+        projectOptions={projects}
       />
 
       <Table
