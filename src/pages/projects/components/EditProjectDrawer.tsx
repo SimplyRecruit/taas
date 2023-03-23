@@ -1,15 +1,5 @@
 import moment from 'dayjs'
-import {
-  Input,
-  Form,
-  Row,
-  Col,
-  Drawer,
-  Button,
-  Space,
-  DatePicker,
-  Select,
-} from 'antd'
+import { Input, Form, Drawer, Button, Space, DatePicker, Select } from 'antd'
 import { Client, Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import { momentToDate } from '@/util'
@@ -49,15 +39,6 @@ export default function EditProjectDrawer({
     'project',
     'update'
   )
-
-  useEffect(() => {
-    form.resetFields()
-  }, [form, value])
-
-  useEffect(() => {
-    call({ entityStatus: 'active' })
-  }, [])
-
   const loading = loadingUpdate || loadingCreate
 
   async function onSubmit() {
@@ -85,23 +66,25 @@ export default function EditProjectDrawer({
               : data?.find(e => e.id == body.clientId)
           onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
-        onClose()
       } catch {
         onError()
       }
     })
   }
 
-  const onClose = () => {
-    onCancel()
-    form.resetFields()
-  }
+  useEffect(() => {
+    if (open) form.resetFields()
+  }, [form, open])
+
+  useEffect(() => {
+    call({ entityStatus: 'active' })
+  }, [])
 
   return (
     <Drawer
       title={value ? 'Edit Project' : 'Add Project'}
       open={open}
-      onClose={onClose}
+      onClose={onCancel}
       closable={false}
       mask={false}
       footer={
@@ -114,13 +97,13 @@ export default function EditProjectDrawer({
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Space>
       }
       style={{ borderRadius: '16px', position: 'relative' }}
       extra={
         <Button
-          onClick={onClose}
+          onClick={onCancel}
           size="small"
           type="text"
           icon={<CloseOutlined />}
@@ -160,7 +143,7 @@ export default function EditProjectDrawer({
             },
           ]}
         >
-          <Input style={{ width: '100%' }} />
+          <Input />
         </Form.Item>
         <Form.Item
           name="name"
@@ -172,7 +155,7 @@ export default function EditProjectDrawer({
             },
           ]}
         >
-          <Input style={{ width: '100%' }} />
+          <Input />
         </Form.Item>
         <Form.Item
           rules={[
@@ -194,22 +177,14 @@ export default function EditProjectDrawer({
             ]}
           />
         </Form.Item>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              name="startDate"
-              label="Start date"
-              getValueFromEvent={date => momentToDate(date)}
-              getValueProps={i => ({ value: moment(i) })}
-            >
-              <DatePicker
-                allowClear={false}
-                format={DEFAULT_DATE_FORMAT}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          name="startDate"
+          label="Start date"
+          getValueFromEvent={date => momentToDate(date)}
+          getValueProps={i => ({ value: moment(i) })}
+        >
+          <DatePicker allowClear={false} format={DEFAULT_DATE_FORMAT} />
+        </Form.Item>
       </Form>
     </Drawer>
   )

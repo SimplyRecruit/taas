@@ -4,7 +4,7 @@ enum Route {
   ResetPassword = '/auth/reset-password',
   ForgotPassword = '/auth/forgot-password',
   Logout = '/logout',
-  TimeTrack = '/tracker',
+  TimeTracker = '/tracker',
   Periods = '/periods',
   DashBoard = '/dashboard',
   Reports = '/reports',

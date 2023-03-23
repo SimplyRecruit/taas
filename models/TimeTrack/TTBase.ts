@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { IsBoolean, IsPositive, Length } from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsPositive, Length } from 'class-validator'
 import Model from 'models/Model'
 
 export default class TTBase extends Model {
@@ -8,6 +8,12 @@ export default class TTBase extends Model {
 
   @IsPositive()
   hour: number
+
+  @IsNotEmpty()
+  clientAbbr: string
+
+  @IsNotEmpty()
+  projectAbbr: string
 
   @IsBoolean()
   billable: boolean

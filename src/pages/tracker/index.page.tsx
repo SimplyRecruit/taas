@@ -5,16 +5,22 @@ import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
-import { TableQueryParameters } from 'models'
+import { TableQueryParameters, TT, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
+import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
+import { plainToClass } from 'class-transformer'
+import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
+import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
 
 export default function Tracker() {
-  const columns = [
+  const columns: ColumnsType<TT> = [
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
       render: (value: Date) => <span>{formatDate(value)}</span>,
+      sorter: true,
     },
     {
       title: 'Client',
@@ -25,108 +31,189 @@ export default function Tracker() {
       title: 'Hour',
       dataIndex: 'hour',
       key: 'hour',
+      sorter: true,
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      sorter: true,
     },
     {
       title: 'Billabe',
       dataIndex: 'billable',
       key: 'billable',
+      sorter: true,
       render: (value: boolean) => (value ? 'YES' : 'NO'),
     },
     {
       title: 'Ticket no',
       dataIndex: 'ticketNo',
       key: 'ticketNo',
+      sorter: true,
     },
     {
       title: 'Project',
       dataIndex: 'projectAbbr',
       key: 'projectAbbr',
     },
+    {
+      title: '',
+      key: 'action',
+      fixed: 'right',
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
+      render: (_text: any, record: TT, index: number) =>
+        workPeriods.some(
+          e =>
+            plainToClass(WorkPeriod, e).periodString ===
+            WorkPeriod.fromDate(new Date(record.date)).periodString
+        ) ? (
+          <TTTableActionColumn
+            onEdit={() => {
+              setSelectedRowIndex(index)
+              setDrawerOpen(true)
+            }}
+            onDelete={() => onDelete(record.id)}
+          />
+        ) : null,
+    },
   ]
+
   const [messageApi, contextHolder] = message.useMessage()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
+  const [sorter, setSorter] = useState<SorterResult<TT>>()
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const {
     data: dataTT,
     call: callTT,
     loading: loadingTT,
   } = useApi('timeTrack', 'getAll')
-  const { data: dataClient, call: getAllClients } = useApi(
-    'client',
-    'getAll',
-    []
-  )
-  const { data: dataProject, call: getAllProjects } = useApi(
+  const { data: clients, call: getAllClients } = useApi('client', 'getAll', [])
+  const { data: projects, call: getAllProjects } = useApi(
     'project',
     'getAll',
     []
   )
+  const { data: workPeriods, call: getAllWorkPeriods } = useApi(
+    'workPeriod',
+    'getAll',
+    []
+  )
+  const { call: deleteTT } = useApi('timeTrack', 'delete')
+  const selectedRecord =
+    selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
-  function getTTs(pageParam = 1, pageSizeParam = 20) {
+  function getTTs(
+    pageParam = 1,
+    pageSizeParam = 20,
+    sorter: SorterResult<TT> | undefined = undefined
+  ) {
+    let sortBy: { column: string; direction: 'ASC' | 'DESC' }
+    if (sorter?.column) {
+      sortBy = {
+        column: sorter.field! as string,
+        direction: sorter.order == 'ascend' ? 'ASC' : 'DESC',
+      }
+    } else {
+      sortBy = { column: 'date', direction: 'DESC' }
+    }
+    setSorter(sorter)
+    setPage(pageParam)
+    setPageSize(pageSizeParam)
     callTT(
       TableQueryParameters.create({
-        sortBy: [{ column: 'date', direction: 'DESC' }],
+        sortBy: [sortBy],
         page: pageParam,
         pageSize: pageSizeParam,
       })
     )
   }
 
-  useEffect(() => {
-    getAllClients({ entityStatus: 'active' })
-    getAllProjects({ entityStatus: 'active' })
-    getTTs(1, pageSize)
-  }, [])
-
   function onAdd() {
-    getTTs()
+    getTTs(1, pageSize, sorter)
     messageApi.success('Timetrack added')
   }
 
-  function onError() {
-    messageApi.error('Invalid timetrack')
+  async function onDelete(id: string) {
+    try {
+      await deleteTT({ id })
+      getTTs(page, pageSize, sorter)
+      messageApi.success('Deleted timetrack successfully!')
+    } catch {
+      messageApi.error('An error occured. Could not delete timetrack.')
+    }
   }
+
+  function onUpdate(record: TT) {
+    if (selectedRowIndex != null && dataTT?.data) {
+      dataTT.data[selectedRowIndex] = record
+      dataTT.data = [...dataTT.data]
+      messageApi.success('Updated timetrack successfully!')
+    } else {
+      console.log('this should not happen')
+      messageApi.error('Fatal error')
+    }
+    setDrawerOpen(false)
+    setSelectedRowIndex(null)
+  }
+  useEffect(() => {
+    getAllClients({ entityStatus: 'active' })
+    getAllProjects({ entityStatus: 'active' })
+    getAllWorkPeriods()
+    getTTs(1, pageSize)
+  }, [])
 
   return (
     <>
       {contextHolder}
-
+      <EditTTDrawer
+        open={drawerOpen}
+        value={selectedRecord}
+        clientOptions={clients}
+        projectOptions={projects}
+        onUpdate={onUpdate}
+        onError={() => {
+          messageApi.error('An error occured. Could not update timetrack.')
+        }}
+        onCancel={() => setDrawerOpen(false)}
+      />
       <AddTT
-        onError={onError}
+        onError={() => {
+          messageApi.error('Invalid timetrack')
+        }}
         onAdd={onAdd}
-        clientOptions={dataClient}
-        projectOptions={dataProject}
+        clientOptions={clients}
+        projectOptions={projects}
       />
       <AddBatchTT
-        onAdd={getTTs}
-        clientOptions={dataClient}
-        projectOptions={dataProject}
+        onAdd={() => {
+          getTTs(1, pageSize, sorter)
+        }}
+        clientOptions={clients}
+        projectOptions={projects}
       />
 
       <Table
         size="large"
-        scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
+        scroll={{ x: 'max-content' }}
         loading={loadingTT}
         rowKey={record => record.id}
         columns={columns}
         dataSource={dataTT?.data}
+        onChange={(e, _b, s) =>
+          getTTs(e.current, e.pageSize, s as SorterResult<TT>)
+        }
         pagination={{
           position: ['bottomCenter'],
-          responsive: true,
           showQuickJumper: false,
           pageSize,
+          current: page,
           showLessItems: true,
           showTotal: total => `Total ${total} time tracks`,
           showSizeChanger: true,
           total: dataTT?.count,
-          onChange: (page, pageSize) => {
-            getTTs(page, pageSize)
-            setPageSize(pageSize)
-          },
         }}
       />
     </>

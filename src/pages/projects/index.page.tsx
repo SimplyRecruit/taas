@@ -2,7 +2,7 @@ import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useMemo, useState } from 'react'
 import { Button, message, Table, Tag } from 'antd'
-import EditProjectModal from '@/pages/projects/components/EditProjectModal'
+import EditProjectModal from '@/pages/projects/components/EditProjectDrawer'
 import { Client, Project, ProjectUpdateBody } from 'models'
 import Filter from '@/components/Filter'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -95,8 +95,6 @@ export default function ProjectsPage() {
   const [searchText, setSearchText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
-  const selectedRecord =
-    typeof selectedRowIndex == 'number' ? data[selectedRowIndex] : undefined
 
   const loading = loadingUpdate || loadingGetAll
   const filteredData = useMemo(() => {
@@ -114,6 +112,11 @@ export default function ProjectsPage() {
     return filtered
   }, [data, searchText, selectedStatus])
 
+  const selectedRecord =
+    typeof selectedRowIndex == 'number'
+      ? filteredData[selectedRowIndex]
+      : undefined
+
   function onUpdate(record: Project) {
     if (typeof selectedRowIndex == 'number') {
       data[selectedRowIndex] = record
@@ -124,6 +127,7 @@ export default function ProjectsPage() {
       console.log('this should not happen')
       messageApi.error('Fatal error')
     }
+    setModalOpen(false)
     setSelectedRowIndex(null)
   }
 
@@ -184,7 +188,6 @@ export default function ProjectsPage() {
         columns={columns}
         loading={loading}
         rowClassName={record => {
-          console.log(selectedRecord)
           if (selectedRecord?.id == record.id) {
             return 'ant-table-row-selected'
           }
