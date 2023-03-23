@@ -201,16 +201,18 @@ export default class ClientController {
           // All logic
           await em.delete(ClientUserEntity, { client })
           await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
-        } else if (userIds?.length) {
-          const clientResources = userIds.map(userId =>
-            ClientUserEntity.create({ client, userId })
-          )
+        } else {
           await em.delete(ClientUserEntity, {
             client,
             userId: ALL_UUID,
           })
-          // TODO resources are part of this organization
-          await em.insert(ClientUserEntity, clientResources)
+          if (userIds?.length) {
+            const clientUsers = userIds.map(userId =>
+              ClientUserEntity.create({ client, userId })
+            )
+            // TODO resources are part of this organization
+            await em.insert(ClientUserEntity, clientUsers)
+          }
         }
       } catch (error) {
         console.log(error)
