@@ -274,7 +274,8 @@ const EditClientDrawer = ({
                 </Radio>
               </Radio.Group>
             </Form.Item>
-            {internalEveryoneHasAccess === false && !loadingGetResources && (
+            <Divider />
+            {internalEveryoneHasAccess === false && (
               <Form.Item name="userIds">
                 <DropdownAutocomplete
                   onSave={onAddResources}
@@ -294,6 +295,7 @@ const EditClientDrawer = ({
                 >
                   <DropdownAutocomplete.Activator>
                     <Button
+                      disabled={loadingGetResources}
                       style={{ padding: 0 }}
                       type="link"
                       icon={<PlusCircleOutlined />}
@@ -305,7 +307,7 @@ const EditClientDrawer = ({
               </Form.Item>
             )}
           </Form>
-          <Divider style={{ margin: '8px 0' }} />
+
           {internalEveryoneHasAccess === false && (
             <Table
               rowKey="id"
