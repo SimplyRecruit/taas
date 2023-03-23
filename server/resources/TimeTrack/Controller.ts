@@ -171,7 +171,7 @@ export default class TimeTrackController {
             id,
             user: { organization: { id: currentUser.organization.id } },
           },
-          select: { date: true },
+          select: { id: true, date: true },
         })
         const period = WorkPeriod.fromDate(new Date(tt.date))
         if (
@@ -257,7 +257,7 @@ export default class TimeTrackController {
             id,
             user: { organization: { id: currentUser.organization.id } },
           },
-          select: { date: true },
+          select: { id: true, date: true },
         })
         const period = WorkPeriod.fromDate(new Date(tt.date))
         if (
