@@ -48,7 +48,7 @@ const EditMemberDrawer = ({
     'resource',
     'update'
   )
-  const loading = () => loadingCreate || loadingUpdate
+  const loading = loadingCreate || loadingUpdate
 
   const onSubmit = () => {
     form.validateFields().then(member => onFinish(member))
@@ -63,27 +63,21 @@ const EditMemberDrawer = ({
       } else {
         const id: string = await callCreate(member as ResourceCreateBody)
         onAdd({ ...member, id, active: true })
-        form.resetFields()
       }
     } catch {
       onError()
     }
   }
 
-  const onClose = () => {
-    onCancel()
-    form.resetFields()
-  }
-
   useEffect(() => {
-    form.resetFields()
-  }, [form, value])
+    if (open) form.resetFields()
+  }, [form, open])
 
   return (
     <Drawer
       title={value ? 'Edit Member' : 'Invite Member'}
       open={open}
-      onClose={onClose}
+      onClose={onCancel}
       closable={false}
       mask={false}
       footer={
@@ -92,17 +86,17 @@ const EditMemberDrawer = ({
             onClick={onSubmit}
             type="primary"
             htmlType="submit"
-            loading={loading()}
+            loading={loading}
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Space>
       }
       style={{ borderRadius: '16px' }}
       extra={
         <Button
-          onClick={onClose}
+          onClick={onCancel}
           size="small"
           type="text"
           icon={<CloseOutlined />}
