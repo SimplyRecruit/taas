@@ -66,21 +66,16 @@ export default function EditProjectDrawer({
               : data?.find(e => e.id == body.clientId)
           onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
-        onClose()
+        onCancel()
       } catch {
         onError()
       }
     })
   }
 
-  const onClose = () => {
-    onCancel()
-    form.resetFields()
-  }
-
   useEffect(() => {
-    form.resetFields()
-  }, [form, value])
+    if (open) form.resetFields()
+  }, [form, open])
 
   useEffect(() => {
     call({ entityStatus: 'active' })
@@ -90,7 +85,7 @@ export default function EditProjectDrawer({
     <Drawer
       title={value ? 'Edit Project' : 'Add Project'}
       open={open}
-      onClose={onClose}
+      onClose={onCancel}
       closable={false}
       mask={false}
       footer={
@@ -103,13 +98,13 @@ export default function EditProjectDrawer({
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Space>
       }
       style={{ borderRadius: '16px', position: 'relative' }}
       extra={
         <Button
-          onClick={onClose}
+          onClick={onCancel}
           size="small"
           type="text"
           icon={<CloseOutlined />}
