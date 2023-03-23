@@ -1,15 +1,5 @@
 import moment from 'dayjs'
-import {
-  Input,
-  Form,
-  Row,
-  Col,
-  Drawer,
-  Button,
-  Space,
-  DatePicker,
-  Select,
-} from 'antd'
+import { Input, Form, Drawer, Button, Space, DatePicker, Select } from 'antd'
 import { Client, Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import { momentToDate } from '@/util'
@@ -49,15 +39,6 @@ export default function EditProjectDrawer({
     'project',
     'update'
   )
-
-  useEffect(() => {
-    form.resetFields()
-  }, [form, value])
-
-  useEffect(() => {
-    call({ entityStatus: 'active' })
-  }, [])
-
   const loading = loadingUpdate || loadingCreate
 
   async function onSubmit() {
@@ -96,6 +77,14 @@ export default function EditProjectDrawer({
     onCancel()
     form.resetFields()
   }
+
+  useEffect(() => {
+    form.resetFields()
+  }, [form, value])
+
+  useEffect(() => {
+    call({ entityStatus: 'active' })
+  }, [])
 
   return (
     <Drawer
@@ -160,7 +149,7 @@ export default function EditProjectDrawer({
             },
           ]}
         >
-          <Input style={{ width: '100%' }} />
+          <Input />
         </Form.Item>
         <Form.Item
           name="name"
@@ -172,7 +161,7 @@ export default function EditProjectDrawer({
             },
           ]}
         >
-          <Input style={{ width: '100%' }} />
+          <Input />
         </Form.Item>
         <Form.Item
           rules={[
@@ -194,22 +183,14 @@ export default function EditProjectDrawer({
             ]}
           />
         </Form.Item>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              name="startDate"
-              label="Start date"
-              getValueFromEvent={date => momentToDate(date)}
-              getValueProps={i => ({ value: moment(i) })}
-            >
-              <DatePicker
-                allowClear={false}
-                format={DEFAULT_DATE_FORMAT}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          name="startDate"
+          label="Start date"
+          getValueFromEvent={date => momentToDate(date)}
+          getValueProps={i => ({ value: moment(i) })}
+        >
+          <DatePicker allowClear={false} format={DEFAULT_DATE_FORMAT} />
+        </Form.Item>
       </Form>
     </Drawer>
   )
