@@ -66,7 +66,6 @@ export default function EditProjectDrawer({
               : data?.find(e => e.id == body.clientId)
           onAdd(Project.createPartially({ id, ...body, client, active: true }))
         }
-        onCancel()
       } catch {
         onError()
       }

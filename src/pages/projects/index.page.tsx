@@ -127,6 +127,7 @@ export default function ProjectsPage() {
       console.log('this should not happen')
       messageApi.error('Fatal error')
     }
+    setModalOpen(false)
     setSelectedRowIndex(null)
   }
 
