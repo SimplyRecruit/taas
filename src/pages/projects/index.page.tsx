@@ -95,8 +95,6 @@ export default function ProjectsPage() {
   const [searchText, setSearchText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
-  const selectedRecord =
-    typeof selectedRowIndex == 'number' ? data[selectedRowIndex] : undefined
 
   const loading = loadingUpdate || loadingGetAll
   const filteredData = useMemo(() => {
@@ -113,6 +111,11 @@ export default function ProjectsPage() {
     }
     return filtered
   }, [data, searchText, selectedStatus])
+
+  const selectedRecord =
+    typeof selectedRowIndex == 'number'
+      ? filteredData[selectedRowIndex]
+      : undefined
 
   function onUpdate(record: Project) {
     if (typeof selectedRowIndex == 'number') {
@@ -184,7 +187,6 @@ export default function ProjectsPage() {
         columns={columns}
         loading={loading}
         rowClassName={record => {
-          console.log(selectedRecord)
           if (selectedRecord?.id == record.id) {
             return 'ant-table-row-selected'
           }
