@@ -5,9 +5,12 @@ import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
-import { TableQueryParameters, TT } from 'models'
+import { TableQueryParameters, TT, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
+import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
+import { plainToClass } from 'class-transformer'
+import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
 
 export default function Tracker() {
   const columns: ColumnsType<TT> = [
@@ -53,6 +56,20 @@ export default function Tracker() {
       dataIndex: 'projectAbbr',
       key: 'projectAbbr',
     },
+    {
+      title: '',
+      key: 'action',
+      fixed: 'right',
+      width: DEFAULT_ACTION_COLUMN_WIDTH / 2,
+      render: (record: TT) =>
+        workPeriods.some(
+          e =>
+            plainToClass(WorkPeriod, e).periodString ===
+            WorkPeriod.fromDate(new Date(record.date)).periodString
+        ) ? (
+          <TTTableActionColumn onDelete={() => onDelete(record.id)} />
+        ) : null,
+    },
   ]
   const [messageApi, contextHolder] = message.useMessage()
   const [page, setPage] = useState(1)
@@ -73,6 +90,12 @@ export default function Tracker() {
     'getAll',
     []
   )
+  const { data: workPeriods, call: getAllWorkPeriods } = useApi(
+    'workPeriod',
+    'getAll',
+    []
+  )
+  const { call: deleteTT } = useApi('timeTrack', 'delete')
 
   function getTTs(
     pageParam = 1,
@@ -99,13 +122,6 @@ export default function Tracker() {
       })
     )
   }
-
-  useEffect(() => {
-    getAllClients({ entityStatus: 'active' })
-    getAllProjects({ entityStatus: 'active' })
-    getTTs(1, pageSize)
-  }, [])
-
   function onAdd() {
     getTTs(1, pageSize, sorter)
     messageApi.success('Timetrack added')
@@ -114,6 +130,22 @@ export default function Tracker() {
   function onError() {
     messageApi.error('Invalid timetrack')
   }
+  async function onDelete(id: string) {
+    try {
+      await deleteTT({ id })
+      getTTs(page, pageSize, sorter)
+      messageApi.success('Deleted timetrack successfully!')
+    } catch {
+      messageApi.error('An error occured. Could not delete timetrack.')
+    }
+  }
+
+  useEffect(() => {
+    getAllClients({ entityStatus: 'active' })
+    getAllProjects({ entityStatus: 'active' })
+    getAllWorkPeriods()
+    getTTs(1, pageSize)
+  }, [])
 
   return (
     <>

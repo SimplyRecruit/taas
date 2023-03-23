@@ -14,11 +14,12 @@ import {
   InternalServerError,
   JsonController,
   NotFoundError,
+  Param,
 } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
 
-import { Get, Post } from '~/decorators/CustomApiMethods'
+import { Delete, Get, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body, QueryParams } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
@@ -153,7 +154,41 @@ export default class TimeTrackController {
 
     return id
   }
+  @Delete(undefined, '/:id')
+  @Authorized(UserRole.ADMIN)
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() currentUser: UserEntity
+  ) {
+    await dataSource.transaction(async em => {
+      try {
+        const tt = await em.findOneOrFail(TTEntity, {
+          where: {
+            id,
+            user: { organization: { id: currentUser.organization.id } },
+          },
+        })
+        const period = WorkPeriod.fromDate(new Date(tt.date))
+        if (
+          !(await em.find(WorkPeriodEntity, {
+            where: {
+              period: period.periodString,
+              organization: { id: currentUser.organization.id },
+            },
+          }))
+        )
+          throw new ForbiddenError()
+        await em.delete(TTEntity, { id })
+      } catch (error) {
+        console.log(error)
+        if (error instanceof EntityNotFoundError) throw new NotFoundError()
+        else if (error instanceof ForbiddenError) throw new ForbiddenError()
+        else throw new InternalServerError('Internal Server Error')
+      }
+    })
 
+    return id
+  }
   @Post([TTBatchCreateResBody], '/batch')
   @Authorized(UserRole.ADMIN)
   async batchCreate(

@@ -257,6 +257,17 @@ export default {
                 data: body,
             })
         },
+        async delete(
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/time-track/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "delete",
+                url,
+            })
+        },
         async batchCreate(
             body: TTBatchCreateBody,
         ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
