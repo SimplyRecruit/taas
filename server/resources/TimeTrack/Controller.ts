@@ -4,6 +4,7 @@ import {
   TTCreateBody,
   TableQueryParameters,
   WorkPeriod,
+  TTUpdateBody,
 } from 'models'
 
 import {
@@ -19,7 +20,7 @@ import {
 
 import UserEntity from '~/resources/User/Entity'
 
-import { Delete, Get, Post } from '~/decorators/CustomApiMethods'
+import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body, QueryParams } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
@@ -154,6 +155,94 @@ export default class TimeTrackController {
 
     return id
   }
+
+  @Patch(undefined, '/:id')
+  @Authorized(UserRole.ADMIN)
+  async update(
+    @Body() { clientAbbr, projectAbbr, date, ...body }: TTUpdateBody,
+    @Param('id') id: string,
+    @CurrentUser() currentUser: UserEntity
+  ) {
+    await dataSource.transaction(async em => {
+      try {
+        /* Check period of TT */
+        const tt = await em.findOneOrFail(TTEntity, {
+          where: {
+            id,
+            user: { organization: { id: currentUser.organization.id } },
+          },
+          select: { date: true },
+        })
+        const period = WorkPeriod.fromDate(new Date(tt.date))
+        if (
+          !(await em.find(WorkPeriodEntity, {
+            where: {
+              period: period.periodString,
+              organization: { id: currentUser.organization.id },
+            },
+          }))
+        )
+          throw new ForbiddenError()
+        /*
+          Throws ForbiddenEror if this client is:
+          - Not owned by currentUser's organization
+          - Not accessable by the resource
+        */
+
+        const client = await em.findOneOrFail(ClientEntity, {
+          where: [
+            {
+              abbr: clientAbbr,
+              organization: { id: currentUser.organization.id },
+              clientUser: { userId: currentUser.id },
+            },
+            {
+              abbr: clientAbbr,
+              organization: { id: currentUser.organization.id },
+              clientUser: { userId: ALL_UUID },
+            },
+          ],
+          relations: { organization: true },
+        })
+
+        /*
+          Throws ForbiddenEror if this project is:
+          - Not owned by currentUser's organization
+          - Not accessable by the given clintId
+        */
+        const project = await em.findOneOrFail(ProjectEntity, {
+          where: [
+            {
+              abbr: projectAbbr,
+              organization: { id: currentUser.organization.id },
+              clientId: client.id,
+            },
+            {
+              abbr: projectAbbr,
+              organization: { id: currentUser.organization.id },
+              clientId: ALL_UUID,
+            },
+          ],
+          relations: { organization: true },
+        })
+
+        await em.update(TTEntity, id, {
+          ...body,
+          date: date.dateString,
+          client,
+          project,
+        })
+      } catch (error) {
+        console.log(error)
+        if (error instanceof EntityNotFoundError) throw new NotFoundError()
+        else if (error instanceof ForbiddenError) throw new ForbiddenError()
+        else throw new InternalServerError('Internal Server Error')
+      }
+    })
+
+    return id
+  }
+
   @Delete(undefined, '/:id')
   @Authorized(UserRole.ADMIN)
   async delete(
@@ -162,11 +251,13 @@ export default class TimeTrackController {
   ) {
     await dataSource.transaction(async em => {
       try {
+        /* Check period of TT */
         const tt = await em.findOneOrFail(TTEntity, {
           where: {
             id,
             user: { organization: { id: currentUser.organization.id } },
           },
+          select: { date: true },
         })
         const period = WorkPeriod.fromDate(new Date(tt.date))
         if (
@@ -189,6 +280,7 @@ export default class TimeTrackController {
 
     return id
   }
+
   @Post([TTBatchCreateResBody], '/batch')
   @Authorized(UserRole.ADMIN)
   async batchCreate(

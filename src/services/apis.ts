@@ -19,6 +19,7 @@ ResourceUpdateBody,
 TableQueryParameters,
 TTGetAllResBody,
 TTCreateBody,
+TTUpdateBody,
 TTBatchCreateBody,
 TTBatchCreateResBody,
 LoginReqBody,
@@ -253,6 +254,19 @@ export default {
             const url = route
             return await createAxiosInstance().request({
                 method: "post",
+                url,
+                data: body,
+            })
+        },
+        async update(
+            body: TTUpdateBody,
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/time-track/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "patch",
                 url,
                 data: body,
             })
