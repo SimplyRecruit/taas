@@ -5,16 +5,18 @@ import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
-import { TableQueryParameters } from 'models'
+import { TableQueryParameters, TT } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
+import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 
 export default function Tracker() {
-  const columns = [
+  const columns: ColumnsType<TT> = [
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
       render: (value: Date) => <span>{formatDate(value)}</span>,
+      sorter: true,
     },
     {
       title: 'Client',
@@ -25,22 +27,26 @@ export default function Tracker() {
       title: 'Hour',
       dataIndex: 'hour',
       key: 'hour',
+      sorter: true,
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      sorter: true,
     },
     {
       title: 'Billabe',
       dataIndex: 'billable',
       key: 'billable',
+      sorter: true,
       render: (value: boolean) => (value ? 'YES' : 'NO'),
     },
     {
       title: 'Ticket no',
       dataIndex: 'ticketNo',
       key: 'ticketNo',
+      sorter: true,
     },
     {
       title: 'Project',
@@ -49,7 +55,9 @@ export default function Tracker() {
     },
   ]
   const [messageApi, contextHolder] = message.useMessage()
+  const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
+  const [sorter, setSorter] = useState<SorterResult<TT>>()
   const {
     data: dataTT,
     call: callTT,
@@ -66,10 +74,26 @@ export default function Tracker() {
     []
   )
 
-  function getTTs(pageParam = 1, pageSizeParam = 20) {
+  function getTTs(
+    pageParam = 1,
+    pageSizeParam = 20,
+    sorter: SorterResult<TT> | undefined = undefined
+  ) {
+    let sortBy: { column: string; direction: 'ASC' | 'DESC' }
+    if (sorter?.column) {
+      sortBy = {
+        column: sorter.field! as string,
+        direction: sorter.order == 'ascend' ? 'ASC' : 'DESC',
+      }
+    } else {
+      sortBy = { column: 'date', direction: 'DESC' }
+    }
+    setSorter(sorter)
+    setPage(pageParam)
+    setPageSize(pageSizeParam)
     callTT(
       TableQueryParameters.create({
-        sortBy: [{ column: 'date', direction: 'DESC' }],
+        sortBy: [sortBy],
         page: pageParam,
         pageSize: pageSizeParam,
       })
@@ -83,7 +107,7 @@ export default function Tracker() {
   }, [])
 
   function onAdd() {
-    getTTs()
+    getTTs(1, pageSize, sorter)
     messageApi.success('Timetrack added')
   }
 
@@ -102,31 +126,32 @@ export default function Tracker() {
         projectOptions={dataProject}
       />
       <AddBatchTT
-        onAdd={getTTs}
+        onAdd={() => {
+          getTTs(1, pageSize, sorter)
+        }}
         clientOptions={dataClient}
         projectOptions={dataProject}
       />
 
       <Table
         size="large"
-        scroll={{ x: 'max-content', y: 'calc(100vh - 320px)' }}
+        scroll={{ x: 'max-content' }}
         loading={loadingTT}
         rowKey={record => record.id}
         columns={columns}
         dataSource={dataTT?.data}
+        onChange={(e, _b, s) =>
+          getTTs(e.current, e.pageSize, s as SorterResult<TT>)
+        }
         pagination={{
           position: ['bottomCenter'],
-          responsive: true,
           showQuickJumper: false,
           pageSize,
+          current: page,
           showLessItems: true,
           showTotal: total => `Total ${total} time tracks`,
           showSizeChanger: true,
           total: dataTT?.count,
-          onChange: (page, pageSize) => {
-            getTTs(page, pageSize)
-            setPageSize(pageSize)
-          },
         }}
       />
     </>
