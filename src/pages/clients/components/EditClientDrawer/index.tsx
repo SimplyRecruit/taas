@@ -12,17 +12,22 @@ import {
   TabsProps,
   Radio,
   Table,
-  Select,
   Divider,
 } from 'antd'
 import { Client, ClientContractType, ClientUpdateBody, Resource } from 'models'
-import { CloseOutlined, DeleteOutlined } from '@ant-design/icons'
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons'
 import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
 import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
+import DropdownAutocomplete from '@/components/DropdownAutocomplete'
+import { IoAddCircleOutline } from 'react-icons/io5'
 
 interface RenderProps {
   open: boolean
@@ -257,17 +262,9 @@ const EditClientDrawer = ({
             </Form.Item>
             {internalEveryoneHasAccess === false && !loadingGetResources && (
               <Form.Item name="userIds">
-                <Select
-                  placement="topRight"
-                  filterOption={(inputValue, option) =>
-                    option?.label
-                      .toLocaleLowerCase()
-                      .includes(inputValue.toLocaleLowerCase()) ?? false
-                  }
-                  mode="multiple"
-                  allowClear
-                  style={{ width: '100%' }}
-                  placeholder="Please select"
+                <DropdownAutocomplete
+                  actionButtons
+                  title="Members"
                   options={resources
                     .filter(e =>
                       value.resources
@@ -278,8 +275,13 @@ const EditClientDrawer = ({
                       value: e.id,
                       label: `${e.abbr} - ${e.name}`,
                     }))}
-                  dropdownRender={menu => <>{menu}</>}
-                />
+                >
+                  <DropdownAutocomplete.Activator>
+                    <Button type="text" icon={<PlusCircleOutlined />}>
+                      Add members
+                    </Button>
+                  </DropdownAutocomplete.Activator>
+                </DropdownAutocomplete>
               </Form.Item>
             )}
           </Form>

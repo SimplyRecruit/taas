@@ -2,6 +2,7 @@ import { Badge, Popover } from 'antd'
 
 import DropdownActivator from '@/components/DropdownActivator'
 import PopoverContent from '@/components/DropdownAutocomplete/PopoverContent'
+import React, { ReactNode } from 'react'
 
 type OptionType = {
   value: string
@@ -9,17 +10,34 @@ type OptionType = {
 }
 
 interface RenderProps {
-  onChange: (value: string[]) => void
+  onChange?: (value: string[]) => void
+  onSave?: () => void
+  onReset?: () => void
   options?: OptionType[]
   title: string
   searchable?: boolean
-  badgeCount: number
+  actionButtons?: boolean
+  badgeCount?: number
+  children?: ReactNode
 }
 
-export default function DropdownAutocomplete({
+const Activator = ({ children }: { children: React.ReactNode }) => {
+  return <div>{children}</div>
+}
+
+const DropdownAutocomplete = ({
   badgeCount,
+  children,
   ...props
-}: RenderProps) {
+}: RenderProps) => {
+  let activator: ReactNode
+
+  React.Children.map(children, child => {
+    if (React.isValidElement(child) && child.type === Activator) {
+      activator = child
+    }
+  })
+  console.log(children, activator)
   return (
     <Popover
       arrow={false}
@@ -27,9 +45,15 @@ export default function DropdownAutocomplete({
       trigger="click"
       content={<PopoverContent {...props} />}
     >
-      <Badge count={badgeCount} overflowCount={9}>
-        <DropdownActivator title={props.title} />
-      </Badge>
+      {
+        <Badge count={badgeCount} overflowCount={9}>
+          {activator ?? <DropdownActivator title={props.title} />}
+        </Badge>
+      }
     </Popover>
   )
 }
+
+DropdownAutocomplete.Activator = Activator
+
+export default DropdownAutocomplete

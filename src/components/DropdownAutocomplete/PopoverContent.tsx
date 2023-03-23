@@ -1,4 +1,4 @@
-import { Checkbox, Input, Space } from 'antd'
+import { Button, Checkbox, Input, Space } from 'antd'
 import type { CheckboxValueType } from 'antd/es/checkbox/Group'
 import { useState } from 'react'
 
@@ -10,17 +10,23 @@ type OptionType = {
 }
 
 interface RenderProps {
-  onChange: (value: string[]) => void
+  onChange?: (value: string[]) => void
+  onSave?: () => void
+  onReset?: () => void
   options?: OptionType[]
   title: string
   searchable?: boolean
+  actionButtons?: boolean
 }
 
 export default function PopoverContent({
   onChange,
+  onSave,
+  onReset,
   searchable = true,
   options,
   title,
+  actionButtons = false,
 }: RenderProps) {
   const [searchText, setSearchText] = useState('')
   const filteredOptions = searchable
@@ -42,6 +48,16 @@ export default function PopoverContent({
         options={filteredOptions}
         onChange={onChange as (value: CheckboxValueType[]) => void}
       />
+      {actionButtons && (
+        <Space>
+          <Button onClick={onSave} type="primary" size="small">
+            Save
+          </Button>
+          <Button onClick={onReset} size="small" type="link">
+            Reset
+          </Button>
+        </Space>
+      )}
     </Space>
   )
 }
