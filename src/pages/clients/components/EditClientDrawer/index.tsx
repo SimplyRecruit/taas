@@ -13,6 +13,8 @@ import {
   Radio,
   Table,
   Divider,
+  RadioChangeEvent,
+  Spin,
 } from 'antd'
 import { Client, ClientContractType, ClientUpdateBody, Resource } from 'models'
 import {
@@ -24,8 +26,8 @@ import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
 import useApi from '@/services/useApi'
-import { useEffect } from 'react'
-import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
+import { useEffect, useState } from 'react'
+import ClientUpdateAccessBody from 'models/Client/req-bodies/ClientUpdateAccessBody'
 import DropdownAutocomplete from '@/components/DropdownAutocomplete'
 import { IoAddCircleOutline } from 'react-icons/io5'
 
@@ -48,7 +50,7 @@ const EditClientDrawer = ({
   value,
 }: RenderProps) => {
   const [settingsForm] = Form.useForm<ClientUpdateBody>()
-  const [accessForm] = Form.useForm<ClientAddResourceBody>()
+  const [accessForm] = Form.useForm<ClientUpdateAccessBody>()
   const internalEveryoneHasAccess = Form.useWatch(
     'everyoneHasAccess',
     accessForm
@@ -64,9 +66,9 @@ const EditClientDrawer = ({
     'update'
   )
 
-  const { call: callAddResource, loading: loadingAddResource } = useApi(
+  const { call: updateAccess, loading: loadingUpdateAccess } = useApi(
     'client',
-    'addResource'
+    'updateAccess'
   )
 
   const { call: callRemoveResource, loading: loadingRemoveResource } = useApi(
@@ -100,20 +102,32 @@ const EditClientDrawer = ({
     })
   }
 
-  async function onSubmitAccess() {
+  async function onToggleAccessStatus(e: RadioChangeEvent) {
+    const everyoneHasAccess = e.target.value
+    try {
+      await updateAccess(ClientUpdateAccessBody.create({ everyoneHasAccess }), {
+        clientId: value.id,
+      })
+      onUpdate({ ...value, everyoneHasAccess, resources: undefined })
+    } catch (error) {
+      onError()
+    }
+  }
+
+  async function onAddResources() {
     accessForm.validateFields().then(async body => {
       try {
-        if (body.everyoneHasAccess) delete body.userIds
-        await callAddResource(body, { clientId: value.id })
+        await updateAccess(body, { clientId: value.id })
         const { everyoneHasAccess, userIds } = body
         const newResources = userIds
           ? resources?.filter(e => userIds!.includes(e.id))
           : undefined
-        let merged: Resource[] | undefined = everyoneHasAccess
-          ? undefined
-          : [...(value.resources ?? []), ...(newResources ?? [])]
+        let merged: Resource[] | undefined = [
+          ...(value.resources ?? []),
+          ...(newResources ?? []),
+        ]
         if (merged && merged.length == 0) merged = undefined
-        onUpdate({ ...value, everyoneHasAccess, resources: merged })
+        onUpdate({ ...value, everyoneHasAccess: false, resources: merged })
       } catch {
         onError()
       }
@@ -244,14 +258,14 @@ const EditClientDrawer = ({
       key: '2',
       label: `Access`,
       children: (
-        <div>
+        <Spin spinning={loadingUpdateAccess}>
           <Form
             form={accessForm}
             layout="vertical"
             initialValues={{ everyoneHasAccess: value.everyoneHasAccess }}
           >
             <Form.Item name="everyoneHasAccess" label="Accessable by">
-              <Radio.Group>
+              <Radio.Group onChange={onToggleAccessStatus}>
                 <Radio key="everyone" value={true}>
                   Everyone
                 </Radio>
@@ -263,6 +277,8 @@ const EditClientDrawer = ({
             {internalEveryoneHasAccess === false && !loadingGetResources && (
               <Form.Item name="userIds">
                 <DropdownAutocomplete
+                  onSave={onAddResources}
+                  onReset={() => accessForm.setFieldValue('userIds', [])}
                   actionButtons
                   title="Members"
                   options={resources
@@ -286,19 +302,10 @@ const EditClientDrawer = ({
             )}
           </Form>
           <Divider style={{ margin: '8px 0' }} />
-          <Button
-            onClick={onSubmitAccess}
-            type="primary"
-            htmlType="submit"
-            loading={loadingAddResource}
-          >
-            Save
-          </Button>
           {internalEveryoneHasAccess === false && (
             <Table
               rowKey="id"
               style={{ marginTop: 16 }}
-              scroll={{ y: 240 }}
               columns={[
                 { title: 'Abbr', dataIndex: 'abbr', key: 'abbr' },
                 { title: 'Name', dataIndex: 'name', key: 'name' },
@@ -325,9 +332,10 @@ const EditClientDrawer = ({
                 },
               ]}
               dataSource={value.resources}
+              pagination={false}
             />
           )}
-        </div>
+        </Spin>
       ),
     },
   ]

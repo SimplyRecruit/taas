@@ -8,7 +8,7 @@ import {
 Client,
 ClientUpdateBody,
 ClientCreateBody,
-ClientAddResourceBody,
+ClientUpdateAccessBody,
 Project,
 ProjectCreateBody,
 ProjectUpdateBody,
@@ -96,8 +96,8 @@ export default {
                 url,
             })
         },
-        async addResource(
-            body: ClientAddResourceBody,
+        async updateAccess(
+            body: ClientUpdateAccessBody,
             params: { clientId: string, },
         ) : Promise<AxiosResponse<any>>
         {

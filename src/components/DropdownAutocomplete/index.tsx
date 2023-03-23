@@ -12,6 +12,7 @@ type OptionType = {
 interface RenderProps {
   onChange?: (value: string[]) => void
   onSave?: () => void
+  value?: string[]
   onReset?: () => void
   options?: OptionType[]
   title: string
@@ -37,7 +38,7 @@ const DropdownAutocomplete = ({
       activator = child
     }
   })
-  console.log(children, activator)
+
   return (
     <Popover
       arrow={false}

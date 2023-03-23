@@ -13,6 +13,7 @@ interface RenderProps {
   onChange?: (value: string[]) => void
   onSave?: () => void
   onReset?: () => void
+  value?: string[]
   options?: OptionType[]
   title: string
   searchable?: boolean
@@ -23,6 +24,7 @@ export default function PopoverContent({
   onChange,
   onSave,
   onReset,
+  value,
   searchable = true,
   options,
   title,
@@ -44,6 +46,7 @@ export default function PopoverContent({
         />
       )}
       <Checkbox.Group
+        value={value}
         style={{ maxHeight: 300, overflowY: 'auto' }}
         options={filteredOptions}
         onChange={onChange as (value: CheckboxValueType[]) => void}

@@ -5,7 +5,7 @@ import {
   Resource,
   UserRole,
 } from 'models'
-import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
+import ClientUpdateAccessBody from 'models/Client/req-bodies/ClientUpdateAccessBody'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
@@ -183,8 +183,8 @@ export default class ClientController {
   }
 
   @Post(undefined, '/resource/:clientId')
-  async addResource(
-    @Body() { everyoneHasAccess, userIds }: ClientAddResourceBody,
+  async updateAccess(
+    @Body() { everyoneHasAccess, userIds }: ClientUpdateAccessBody,
     @Param('clientId') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
