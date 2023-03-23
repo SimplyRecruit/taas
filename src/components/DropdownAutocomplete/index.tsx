@@ -22,7 +22,7 @@ interface RenderProps {
 }
 
 const Activator = ({ children }: { children: React.ReactNode }) => {
-  return <div>{children}</div>
+  return <>{children}</>
 }
 
 const DropdownAutocomplete = ({
