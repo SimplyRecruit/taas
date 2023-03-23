@@ -11,6 +11,7 @@ import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { plainToClass } from 'class-transformer'
 import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
+import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
 
 export default function Tracker() {
   const columns: ColumnsType<TT> = [
@@ -60,17 +61,21 @@ export default function Tracker() {
       title: '',
       key: 'action',
       fixed: 'right',
-      width: DEFAULT_ACTION_COLUMN_WIDTH / 2,
+      width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (record: TT) =>
         workPeriods.some(
           e =>
             plainToClass(WorkPeriod, e).periodString ===
             WorkPeriod.fromDate(new Date(record.date)).periodString
         ) ? (
-          <TTTableActionColumn onDelete={() => onDelete(record.id)} />
+          <TTTableActionColumn
+            onEdit={() => null}
+            onDelete={() => onDelete(record.id)}
+          />
         ) : null,
     },
   ]
+
   const [messageApi, contextHolder] = message.useMessage()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
@@ -150,7 +155,6 @@ export default function Tracker() {
   return (
     <>
       {contextHolder}
-
       <AddTT
         onError={onError}
         onAdd={onAdd}

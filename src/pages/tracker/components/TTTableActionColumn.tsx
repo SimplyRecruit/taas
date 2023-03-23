@@ -1,13 +1,14 @@
-import { MenuProps } from 'antd'
+import { MenuProps, Space } from 'antd'
 import { BiTrashAlt } from 'react-icons/bi'
 
 import ActionMenu from '@/components/ActionMenu'
-import { FiTrash, FiTrash2 } from 'react-icons/fi'
+import { FiEdit2, FiTrash } from 'react-icons/fi'
 
 interface RenderProps {
   onDelete: () => void
+  onEdit: () => void
 }
-export default function TTTableActionColumn({ onDelete }: RenderProps) {
+export default function TTTableActionColumn({ onDelete, onEdit }: RenderProps) {
   const menuItems: MenuProps['items'] = [
     {
       key: 'delete',
@@ -18,5 +19,10 @@ export default function TTTableActionColumn({ onDelete }: RenderProps) {
     },
   ]
 
-  return <ActionMenu items={menuItems} />
+  return (
+    <Space>
+      <FiEdit2 style={{ cursor: 'pointer' }} onClick={onEdit} />
+      <ActionMenu items={menuItems} />
+    </Space>
+  )
 }
