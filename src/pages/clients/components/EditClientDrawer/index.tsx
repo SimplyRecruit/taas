@@ -293,7 +293,11 @@ const EditClientDrawer = ({
                     }))}
                 >
                   <DropdownAutocomplete.Activator>
-                    <Button type="text" icon={<PlusCircleOutlined />}>
+                    <Button
+                      style={{ padding: 0 }}
+                      type="link"
+                      icon={<PlusCircleOutlined />}
+                    >
                       Add members
                     </Button>
                   </DropdownAutocomplete.Activator>
