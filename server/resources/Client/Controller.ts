@@ -5,7 +5,7 @@ import {
   Resource,
   UserRole,
 } from 'models'
-import ClientAddResourceBody from 'models/Client/req-bodies/ClientAddResourceBody'
+import ClientUpdateAccessBody from 'models/Client/req-bodies/ClientUpdateAccessBody'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import {
   Authorized,
@@ -183,8 +183,8 @@ export default class ClientController {
   }
 
   @Post(undefined, '/resource/:clientId')
-  async addResource(
-    @Body() { everyoneHasAccess, userIds }: ClientAddResourceBody,
+  async updateAccess(
+    @Body() { everyoneHasAccess, userIds }: ClientUpdateAccessBody,
     @Param('clientId') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
@@ -201,16 +201,18 @@ export default class ClientController {
           // All logic
           await em.delete(ClientUserEntity, { client })
           await em.save(ClientUserEntity.create({ client, userId: ALL_UUID }))
-        } else if (userIds?.length) {
-          const clientResources = userIds.map(userId =>
-            ClientUserEntity.create({ client, userId })
-          )
+        } else {
           await em.delete(ClientUserEntity, {
             client,
             userId: ALL_UUID,
           })
-          // TODO resources are part of this organization
-          await em.insert(ClientUserEntity, clientResources)
+          if (userIds?.length) {
+            const clientUsers = userIds.map(userId =>
+              ClientUserEntity.create({ client, userId })
+            )
+            // TODO resources are part of this organization
+            await em.insert(ClientUserEntity, clientUsers)
+          }
         }
       } catch (error) {
         console.log(error)
