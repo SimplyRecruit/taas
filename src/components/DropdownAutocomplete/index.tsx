@@ -46,11 +46,9 @@ const DropdownAutocomplete = ({
       trigger="click"
       content={<PopoverContent {...props} />}
     >
-      {
-        <Badge count={badgeCount} overflowCount={9}>
-          {activator ?? <DropdownActivator title={props.title} />}
-        </Badge>
-      }
+      <Badge count={badgeCount} overflowCount={9}>
+        {activator ?? <DropdownActivator title={props.title} />}
+      </Badge>
     </Popover>
   )
 }

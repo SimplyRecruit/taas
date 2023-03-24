@@ -46,7 +46,7 @@ export default function PopoverContent({
         />
       )}
       <Checkbox.Group
-        value={value}
+        {...(value ? { value: value } : {})}
         style={{ maxHeight: 300, overflowY: 'auto' }}
         options={filteredOptions}
         onChange={onChange as (value: CheckboxValueType[]) => void}
