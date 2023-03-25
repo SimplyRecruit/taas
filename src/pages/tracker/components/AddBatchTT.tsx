@@ -1,6 +1,6 @@
 import { Button, Collapse, Modal, Spin, Table, Tooltip } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
-import { Client, Project, TTBatchCreateBody } from 'models'
+import { ClientRelation, ProjectRelation, TTBatchCreateBody } from 'models'
 import { formatDate } from '@/util'
 import useApi from '@/services/useApi'
 import {
@@ -14,10 +14,9 @@ import BatchSpreadSheet from '@/pages/tracker/components/BatchSpreadSheet'
 import { RenderFunction } from 'antd/es/tooltip'
 
 interface Props {
-  projectOptions: Project[]
-  clientOptions: Client[]
+  projectOptions?: ProjectRelation[]
+  clientOptions?: ClientRelation[]
   onAdd: () => void
-  onUpdate?: (updatedProject: Project) => void
   onCancel?: () => void
 }
 export default function AddBatchTT({

@@ -8,14 +8,20 @@ import {
   Checkbox,
   InputNumber,
 } from 'antd'
-import { Client, Project, TimelessDate, TT, TTCreateBody } from 'models'
+import {
+  ClientRelation,
+  ProjectRelation,
+  TimelessDate,
+  TT,
+  TTCreateBody,
+} from 'models'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
 
 interface RenderProps {
-  projectOptions: Project[]
-  clientOptions: Client[]
+  projectOptions?: ProjectRelation[]
+  clientOptions?: ClientRelation[]
   onAdd: (newTT: TT) => void
   onError: (err: unknown) => void
 }

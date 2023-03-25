@@ -5,13 +5,14 @@ import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
-import { TableQueryParameters, TT, WorkPeriod } from 'models'
+import { TableQueryParameters, TT, UserRole, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { plainToClass } from 'class-transformer'
 import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
 import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
+import { getUserFromCookies } from '@/auth/utils/AuthUtil'
 
 export default function Tracker() {
   const columns: ColumnsType<TT> = [
@@ -80,6 +81,7 @@ export default function Tracker() {
   ]
 
   const [messageApi, contextHolder] = message.useMessage()
+  const [isEndUser, setIsEndUser] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
@@ -90,8 +92,12 @@ export default function Tracker() {
     call: callTT,
     loading: loadingTT,
   } = useApi('timeTrack', 'getAll')
-  const { data: clients, call: getAllClients } = useApi('client', 'getAll', [])
-  const { data: projects, call: getAllProjects } = useApi(
+  const { data: allClients, call: getAllClients } = useApi(
+    'client',
+    'getAll',
+    []
+  )
+  const { data: allProjects, call: getAllProjects } = useApi(
     'project',
     'getAll',
     []
@@ -102,8 +108,17 @@ export default function Tracker() {
     []
   )
   const { call: deleteTT } = useApi('timeTrack', 'delete')
+  const {
+    data: clientsAndProjects,
+    call: getClientsAndProjects,
+    loading: loadingGetClientsAndProjects,
+  } = useApi('resource', 'getClientsAndProjects')
   const selectedRecord =
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
+
+  const myClients = isEndUser ? clientsAndProjects?.clients : allClients
+
+  const myProjects = isEndUser ? clientsAndProjects?.projects : allProjects
 
   function getTTs(
     pageParam = 1,
@@ -158,9 +173,16 @@ export default function Tracker() {
     setDrawerOpen(false)
     setSelectedRowIndex(null)
   }
+
   useEffect(() => {
-    getAllClients({ entityStatus: 'active' })
-    getAllProjects({ entityStatus: 'active' })
+    const role: UserRole = getUserFromCookies().role
+    setIsEndUser(role == UserRole.END_USER)
+    if (role != UserRole.END_USER) {
+      getAllClients({ entityStatus: 'active' })
+      getAllProjects({ entityStatus: 'active' })
+    } else {
+      getClientsAndProjects({ id: 'me' })
+    }
     getAllWorkPeriods()
     getTTs(1, pageSize)
   }, [])
@@ -171,8 +193,8 @@ export default function Tracker() {
       <EditTTDrawer
         open={drawerOpen}
         value={selectedRecord}
-        clientOptions={clients}
-        projectOptions={projects}
+        clientOptions={myClients}
+        projectOptions={myProjects}
         onUpdate={onUpdate}
         onError={() => {
           messageApi.error('An error occured. Could not update timetrack.')
@@ -184,15 +206,15 @@ export default function Tracker() {
           messageApi.error('Invalid timetrack')
         }}
         onAdd={onAdd}
-        clientOptions={clients}
-        projectOptions={projects}
+        clientOptions={myClients}
+        projectOptions={myProjects}
       />
       <AddBatchTT
         onAdd={() => {
           getTTs(1, pageSize, sorter)
         }}
-        clientOptions={clients}
-        projectOptions={projects}
+        clientOptions={myClients}
+        projectOptions={myProjects}
       />
 
       <Table

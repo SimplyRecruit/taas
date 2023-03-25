@@ -50,7 +50,6 @@ export default function ReportsPage() {
 
   function getReport(values: ReportReqBody) {
     if (values) {
-      console.log(values)
       call(values)
     }
   }

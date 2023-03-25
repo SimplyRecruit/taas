@@ -10,15 +10,21 @@ import {
   Checkbox,
   InputNumber,
 } from 'antd'
-import { Client, Project, TimelessDate, TT, TTUpdateBody } from 'models'
+import {
+  ClientRelation,
+  ProjectRelation,
+  TimelessDate,
+  TT,
+  TTUpdateBody,
+} from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import { useEffect } from 'react'
 import useApi from '@/services/useApi'
 
 interface RenderProps {
-  projectOptions: Project[]
-  clientOptions: Client[]
+  projectOptions?: ProjectRelation[]
+  clientOptions?: ClientRelation[]
   open: boolean
   value?: TT
   onUpdate: (updatedProject: TT) => void
