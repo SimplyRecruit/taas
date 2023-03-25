@@ -1,5 +1,7 @@
 import { Route } from '@/constants'
+import cookieKeys from '@/constants/cookie-keys'
 import { User } from 'models'
+import Cookies from 'universal-cookie'
 
 export const authRoutes: string[] = [Route.Login, Route.ForgotPassword]
 
@@ -34,4 +36,10 @@ export async function checkAuthentication(
       return { routeToRedirect: 'login', user: null }
     return { routeToRedirect: null, user: null }
   }
+}
+
+// Works with only components and pages
+// does not work in middleware.page
+export function getUserFromCookies(): User | null {
+  return (new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User) ?? null
 }
