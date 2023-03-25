@@ -29,7 +29,10 @@ export default class ReportController {
         .addSelect('SUM(tt.hour)', 'totalHours')
         .from(TimeTrackEntity, 'tt')
         .innerJoin(UserEntity, 'user', 'user.id = tt.user_id')
-        .where('tt.date BETWEEN :from AND :to ', { from, to })
+        .where('user.organization_id = :organizationId', {
+          organizationId: currentUser.organization.id,
+        })
+        .andWhere('tt.date BETWEEN :from AND :to ', { from, to })
         .groupBy(`DATE_TRUNC('day', tt.date)`)
         .addGroupBy('tt.billable')
         .orderBy('date')
@@ -37,10 +40,6 @@ export default class ReportController {
       if (userIds && userIds.length) {
         query = query.andWhere('tt.user_id IN (:...userIds)', {
           userIds,
-        })
-      } else {
-        query = query.andWhere('tt.user_id = :userId', {
-          userId: currentUser.id,
         })
       }
       if (clientIds && clientIds.length) {
