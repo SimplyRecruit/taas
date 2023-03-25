@@ -28,9 +28,9 @@ import { EntityNotFoundError } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 
 @JsonController('/project')
+@Authorized(UserRole.ADMIN)
 export default class ProjectController {
   @Get([Project])
-  @Authorized(UserRole.ADMIN)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
     @QueryParam('entityStatus') entityStatus: EntityStatus
@@ -55,7 +55,6 @@ export default class ProjectController {
   }
 
   @Post()
-  @Authorized(UserRole.ADMIN)
   async create(
     @Body() { clientId, ...body }: ProjectCreateBody,
     @CurrentUser() currentUser: UserEntity
@@ -95,7 +94,6 @@ export default class ProjectController {
   }
 
   @Patch(undefined, '/:id')
-  @Authorized(UserRole.ADMIN)
   async update(
     @Param('id') id: string,
     @Body({ patch: true }) { clientId, ...body }: ProjectUpdateBody,
