@@ -1,7 +1,7 @@
 import { Route } from '@/constants'
 import cookieKeys from '@/constants/cookie-keys'
 import useApi from '@/services/useApi'
-import { Button, Card, Form, Input, Typography } from 'antd'
+import { Button, Form, Input, Typography } from 'antd'
 import { LoginReqBody } from 'models'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -15,14 +15,6 @@ export default function LoginPage() {
   const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'login')
   const [form] = Form.useForm()
-  const changeLocale = (locale: string) => {
-    new Cookies().set('NEXT_LOCALE', locale, { path: '/' })
-    router.push(
-      { pathname: router.pathname, query: router.query },
-      router.asPath,
-      { locale }
-    )
-  }
 
   const onFinish = async (values: LoginReqBody) => {
     console.log('Success:', values)
@@ -40,74 +32,54 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="center-column"
-      style={{
-        backgroundImage:
-          'url(https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg?w=2000)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '100vh',
-      }}
-    >
-      <button
-        onClick={() => {
-          changeLocale('tr')
-        }}
+    <>
+      <Typography.Title level={3} style={{ marginTop: 0, marginBottom: 20 }}>
+        {error ? (
+          <span style={{ color: 'red' }}>{t('invalidCredentials')}</span>
+        ) : data ? (
+          <span style={{ color: 'green' }}>{t('redirecting')}</span>
+        ) : (
+          t('title')
+        )}
+      </Typography.Title>
+      <Form
+        form={form}
+        name="basic"
+        layout="vertical"
+        style={{ width: '100%' }}
+        initialValues={LoginReqBody.create({ email: '', password: '' })}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
       >
-        tr
-      </button>
-      <button
-        onClick={() => {
-          changeLocale('en')
-        }}
-      >
-        en
-      </button>
-      <Card className="elevation" style={{ width: '100%', maxWidth: 300 }}>
-        <Typography.Title level={3} style={{ marginTop: 0, marginBottom: 20 }}>
-          {error ? (
-            <span style={{ color: 'red' }}>{t('invalidCredentials')}</span>
-          ) : data ? (
-            <span style={{ color: 'green' }}>{t('redirecting')}</span>
-          ) : (
-            t('title')
-          )}
-        </Typography.Title>
-        <Form
-          form={form}
-          name="basic"
-          layout="vertical"
-          style={{ width: '100%' }}
-          initialValues={LoginReqBody.create({ email: '', password: '' })}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+        <Form.Item
+          name="email"
+          rules={[{ validator: LoginReqBody.validator('email') }]}
         >
-          <Form.Item
-            name="email"
-            rules={[{ validator: LoginReqBody.validator('email') }]}
+          <Input type="email" placeholder={t('emailPlaceholder') ?? ''} />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ validator: LoginReqBody.validator('password') }]}
+        >
+          <Input.Password placeholder={t('passwordPlaceholder') ?? ''} />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            loading={loading || !!data}
+            block
+            htmlType="submit"
           >
-            <Input type="email" placeholder={t('emailPlaceholder') ?? ''} />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ validator: LoginReqBody.validator('password') }]}
-          >
-            <Input.Password placeholder={t('passwordPlaceholder') ?? ''} />
-          </Form.Item>
-          <Form.Item>
-            <Button loading={loading || !!data} block htmlType="submit">
-              {t('common:button.submit')}
-            </Button>
-          </Form.Item>
-          <Link passHref href={Route.ForgotPassword}>
-            <Button style={{ padding: 0 }} type="ghost">
-              {t('forgotPassword')}
-            </Button>
-          </Link>
-        </Form>
-      </Card>
-    </div>
+            {t('common:button.submit')}
+          </Button>
+        </Form.Item>
+        <Link passHref href={Route.ForgotPassword}>
+          <Button style={{ padding: 0 }} type="ghost">
+            {t('forgotPassword')}
+          </Button>
+        </Link>
+      </Form>
+    </>
   )
 }
 

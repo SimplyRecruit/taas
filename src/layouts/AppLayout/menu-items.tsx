@@ -38,13 +38,6 @@ const topItems = [
   },
 ]
 
-const analyseItems = [
-  {
-    icon: <IoGridOutline size={iconSize} />,
-    label: 'Dashboard',
-    path: Route.DashBoard,
-  },
-]
 const adminItems = [
   {
     icon: <FiCalendar size={iconSize} />,
@@ -73,5 +66,4 @@ const adminItems = [
   },
 ]
 export const topMenuItems = generateMenuItems(topItems)
-export const analyseMenuItems = generateMenuItems(analyseItems)
 export const adminMenuItems = generateMenuItems(adminItems)

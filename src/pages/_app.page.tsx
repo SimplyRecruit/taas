@@ -1,7 +1,5 @@
 import 'antd/dist/reset.css'
-
 import '@/styles/globals.css'
-import AppLayout from '@/layouts/AppLayout'
 import { ConfigProvider } from 'antd'
 import { appWithTranslation, useTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
@@ -10,6 +8,7 @@ import tr from 'antd/locale/tr_TR'
 import en from 'antd/locale/en_US'
 import type { Locale } from 'antd/es/locale'
 import { Language } from 'models'
+import LayoutProvider from '@/layouts/LayoutProvider'
 
 const App = ({ Component, pageProps }: AppProps) => {
   const antdLocales: { [key in Language]: Locale } = { en, tr } as const
@@ -25,9 +24,9 @@ const App = ({ Component, pageProps }: AppProps) => {
         <link href="/logo192.png" rel="apple-touch-icon" />
       </Head>
       <ConfigProvider locale={antdLocales[lang] ?? antdLocales['en']}>
-        <AppLayout>
+        <LayoutProvider>
           <Component {...pageProps} />
-        </AppLayout>
+        </LayoutProvider>
       </ConfigProvider>
     </>
   )
