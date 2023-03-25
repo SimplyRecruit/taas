@@ -1,5 +1,5 @@
 import { IsDateString, IsEnum, IsOptional, Length } from 'class-validator'
-import Model from 'models/Model'
+import Model from 'models/common/Model'
 import ClientContractType from './enums/ClientContractType'
 
 export default class ClientBase extends Model {

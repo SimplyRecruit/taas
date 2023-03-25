@@ -1,5 +1,5 @@
 import { Matches } from 'class-validator'
-import Model from 'models/Model'
+import Model from 'models/common/Model'
 
 const regex = /^(0?[0-9]|1[01])\/(20\d{2})$/
 
