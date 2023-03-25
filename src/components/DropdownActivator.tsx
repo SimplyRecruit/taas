@@ -10,7 +10,6 @@ export default function DropdownActivator({ title, ...props }: RenderProps) {
     <Button
       {...props}
       type="text"
-      ghost
       style={{
         display: 'flex',
         alignItems: 'center',
