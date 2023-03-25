@@ -6,8 +6,8 @@ import {
   defaultRangePreset,
   rangePresets,
 } from '@/pages/reports/components/constants'
-import { ReportReqBody } from 'models'
-import { momentToDate } from '@/util'
+import { ReportReqBody, UserRole } from 'models'
+import { getUserFromCookies } from '@/auth/utils/AuthUtil'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
@@ -17,7 +17,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   const {
     data: clients,
     call: getAllClients,
-    loading,
+    loading: loadingClientGetAll,
   } = useApi('client', 'getAll')
   const {
     data: resources,
@@ -30,15 +30,18 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     loading: loadingProjectGetAll,
   } = useApi('project', 'getAll')
 
+  const [userRole, setUserRole] = useState<UserRole>()
   const [selectedResources, setSelectedResources] = useState<string[]>([])
   const [selectedClients, setSelectedClients] = useState<string[]>([])
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
   const [selectedStatus, setSelectedStatus] = useState<string[]>([])
   const [dates, setDates] = useState<Date[]>(
-    defaultRangePreset.map(e => momentToDate(e))
+    defaultRangePreset.map(e => e.toDate())
   )
   useEffect(() => {
-    getAllResources({ entityStatus: 'all' })
+    const role: UserRole = getUserFromCookies().role
+    setUserRole(role)
+    if (role != UserRole.END_USER) getAllResources({ entityStatus: 'all' })
     getAllClients({ entityStatus: 'all' })
     getAllProjects({ entityStatus: 'all' })
   }, [])
@@ -69,26 +72,30 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         justifyContent: 'space-between',
       }}
     >
-      <Card size="small" bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}>
+      <Card size="small" bodyStyle={{ padding: 0 }}>
         <Space split={<Divider type="vertical" />}>
-          <DropdownAutocomplete
-            badgeCount={selectedResources.length}
-            onChange={e => setSelectedResources(e)}
-            title="Team"
-            options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
-          />
-
+          {userRole != UserRole.END_USER && (
+            <DropdownAutocomplete
+              badgeCount={selectedResources.length}
+              onChange={e => setSelectedResources(e)}
+              title="Team"
+              options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
+              disabled={loadingResourceGetAll}
+            />
+          )}
           <DropdownAutocomplete
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}
             title="Client"
             options={clients?.map(e => ({ value: e.id, label: e.abbr }))}
+            disabled={loadingClientGetAll}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
             title="Project"
             options={projects?.map(e => ({ value: e.id, label: e.abbr }))}
+            disabled={loadingProjectGetAll}
           />
           <DropdownAutocomplete
             badgeCount={selectedStatus.length}
@@ -108,7 +115,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         defaultValue={defaultRangePreset}
         onChange={values => {
           if (values) {
-            setDates([momentToDate(values[0]!), momentToDate(values[1]!)])
+            setDates([values[0]!.toDate(), values[1]!.toDate()])
           }
         }}
       />

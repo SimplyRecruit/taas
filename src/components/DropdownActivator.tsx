@@ -3,12 +3,13 @@ import { Button } from 'antd'
 
 interface RenderProps {
   title: string
+  disabled?: boolean
 }
 export default function DropdownActivator({ title, ...props }: RenderProps) {
   return (
     <Button
       {...props}
-      type="ghost"
+      type="text"
       style={{
         display: 'flex',
         alignItems: 'center',

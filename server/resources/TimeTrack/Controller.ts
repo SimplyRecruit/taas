@@ -77,7 +77,6 @@ export default class TimeTrackController {
   }
 
   @Post(String)
-  @Authorized(UserRole.ADMIN)
   async create(
     @Body() { clientAbbr, projectAbbr, date, ...body }: TTCreateBody,
     @CurrentUser() currentUser: UserEntity

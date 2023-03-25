@@ -200,6 +200,12 @@ export default function Tracker() {
         scroll={{ x: 'max-content' }}
         loading={loadingTT}
         rowKey={record => record.id}
+        rowClassName={record => {
+          if (selectedRecord?.id == record.id && drawerOpen) {
+            return 'ant-table-row-selected'
+          }
+          return ''
+        }}
         columns={columns}
         dataSource={dataTT?.data}
         onChange={(e, _b, s) =>

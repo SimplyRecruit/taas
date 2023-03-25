@@ -1,5 +1,4 @@
 import { ICON_TOP_MARGIN_FIX, Route } from '@/constants'
-import cookieKeys from '@/constants/cookie-keys'
 import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
 import { User } from 'models'
 import Language, { LANGUAGES, LANGUAGE_NAMES } from 'models/Language'
@@ -15,6 +14,7 @@ import {
 } from 'react-icons/fi'
 import { MdLanguage } from 'react-icons/md'
 import Cookies from 'universal-cookie'
+import { getUserFromCookies } from '@/auth/utils/AuthUtil'
 
 type MenuType = 'main' | 'lang'
 
@@ -27,7 +27,7 @@ export default function ProfileMenu() {
   const { t, i18n } = useTranslation('common')
 
   useEffect(() => {
-    const currentUser = new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
+    const currentUser = getUserFromCookies()
     if (!currentUser) return
     setUser(currentUser)
     setPpSrc(

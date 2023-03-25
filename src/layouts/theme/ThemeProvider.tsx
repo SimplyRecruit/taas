@@ -17,7 +17,7 @@ export default function ThemeProvider({ children }: RenderProps) {
           colorPrimary: colors.geekblue,
           colorWarning: colors.orange,
           borderRadius: 8,
-          borderRadiusSM: 4,
+          borderRadiusSM: 8,
           borderRadiusLG: 8,
           controlHeight: 40,
           colorLinkHover: getColor('geekblue', 3),

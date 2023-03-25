@@ -6,7 +6,3 @@ export function formatDate(date: Date | string): string {
 export function stringToDate(value: string): Date {
   return moment(value, DEFAULT_DATE_FORMAT).toDate()
 }
-
-export function momentToDate(date: moment.Dayjs) {
-  return date.toDate()
-}
