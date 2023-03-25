@@ -12,6 +12,7 @@ type OptionType = {
 interface RenderProps {
   onChange?: (value: string[]) => void
   onSave?: () => void
+  disabled?: boolean
   value?: string[]
   onReset?: () => void
   options?: OptionType[]
@@ -29,6 +30,7 @@ const Activator = ({ children }: { children: React.ReactNode }) => {
 const DropdownAutocomplete = ({
   badgeCount,
   children,
+  disabled,
   ...props
 }: RenderProps) => {
   let activator: ReactNode
@@ -47,7 +49,9 @@ const DropdownAutocomplete = ({
       content={<PopoverContent {...props} />}
     >
       <Badge count={badgeCount} overflowCount={9}>
-        {activator ?? <DropdownActivator title={props.title} />}
+        {activator ?? (
+          <DropdownActivator title={props.title} disabled={disabled} />
+        )}
       </Badge>
     </Popover>
   )

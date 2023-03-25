@@ -17,7 +17,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   const {
     data: clients,
     call: getAllClients,
-    loading,
+    loading: loadingClientGetAll,
   } = useApi('client', 'getAll')
   const {
     data: resources,
@@ -80,6 +80,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
               onChange={e => setSelectedResources(e)}
               title="Team"
               options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
+              disabled={loadingResourceGetAll}
             />
           )}
           <DropdownAutocomplete
@@ -87,12 +88,14 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             onChange={e => setSelectedClients(e)}
             title="Client"
             options={clients?.map(e => ({ value: e.id, label: e.abbr }))}
+            disabled={loadingClientGetAll}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
             title="Project"
             options={projects?.map(e => ({ value: e.id, label: e.abbr }))}
+            disabled={loadingProjectGetAll}
           />
           <DropdownAutocomplete
             badgeCount={selectedStatus.length}
