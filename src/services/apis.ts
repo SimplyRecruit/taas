@@ -211,10 +211,10 @@ export default {
                 data: body,
             })
         },
-        async getClients(
+        async getClientsAndProjects(
         ) : Promise<AxiosResponse<any>>
         {
-            const route = "/resource/clients"
+            const route = "/resource/clients-and-projects"
             const url = route
             return await createAxiosInstance().request({
                 method: "get",

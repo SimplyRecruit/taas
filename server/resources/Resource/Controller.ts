@@ -1,4 +1,10 @@
-import { type EntityStatus, Resource, UserRole } from 'models'
+import {
+  type EntityStatus,
+  Resource,
+  UserRole,
+  ClientRelation,
+  Project,
+} from 'models'
 import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
@@ -10,12 +16,16 @@ import {
   Param,
   QueryParam,
 } from 'routing-controllers'
-import { EntityNotFoundError } from 'typeorm'
+import { EntityNotFoundError, In } from 'typeorm'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
 import ClientUserEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'
 import { Get, Patch } from '~/decorators/CustomApiMethods'
+import { ALL_UUID } from '~/common/Config'
+import ProjectEntity from '~/resources/Project/Entity'
+import ClientEntity from '~/resources/Client/Entity'
+import GetClientsAndProjectsResBody from 'models/Resource/res-bodies/GetClients&ProjectsResBody'
 
 @JsonController('/resource')
 export default class ResourceController {
@@ -76,14 +86,36 @@ export default class ResourceController {
     return 'Resource Update Successful'
   }
 
-  @Get(undefined, '/clients')
-  async getClients(@CurrentUser() currentUser: UserEntity) {
+  @Get(undefined, '/clients-and-projects')
+  async getClientsAndProjects(@CurrentUser() currentUser: UserEntity) {
     try {
-      const [clients, count] = await ClientUserEntity.findAndCount({
-        relations: { client: true },
-        where: { user: { id: currentUser.id } },
-      })
-      return { clients, count }
+      const clients = (await ClientEntity.find({
+        where: {
+          organization: { id: currentUser.organization.id },
+          clientUser: { user: { id: In([ALL_UUID, currentUser.id]) } },
+          active: true,
+        },
+        select: {
+          id: true,
+          abbr: true,
+          name: true,
+        },
+      })) as ClientRelation[]
+
+      const projects = (await ProjectEntity.find({
+        where: {
+          organization: { id: currentUser.organization.id },
+          clientId: In([ALL_UUID, ...clients.map(e => e.id)]),
+          active: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          abbr: true,
+        },
+      })) as Project[]
+
+      return { clients, projects } as GetClientsAndProjectsResBody
     } catch (error: unknown) {
       if (error instanceof EntityNotFoundError)
         throw new ForbiddenError('You are not a resource')
