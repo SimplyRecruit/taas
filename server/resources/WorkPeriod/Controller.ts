@@ -16,7 +16,7 @@ import { dataSource } from '~/main'
 import UserEntity from '~/resources/User/Entity'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 @JsonController('/work-period')
-@Authorized(UserRole.ADMIN)
+@Authorized([UserRole.ADMIN, UserRole.TT_MANAGER])
 export default class WorkPeriodController {
   @Get([WorkPeriod])
   async getAll(@CurrentUser() currentUser: UserEntity) {
