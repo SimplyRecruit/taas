@@ -149,7 +149,6 @@ export default class TimeTrackController {
   }
 
   @Patch(undefined, '/:id')
-  @Authorized(UserRole.ADMIN)
   async update(
     @Body() { clientAbbr, projectAbbr, date, ...body }: TTUpdateBody,
     @Param('id') id: string,
@@ -161,7 +160,10 @@ export default class TimeTrackController {
         const tt = await em.findOneOrFail(TTEntity, {
           where: {
             id,
-            user: { organization: { id: currentUser.organization.id } },
+            user:
+              currentUser.role == UserRole.ADMIN
+                ? { organization: { id: currentUser.organization.id } }
+                : { id: currentUser.id },
           },
           select: { id: true, date: true },
         })
@@ -236,7 +238,6 @@ export default class TimeTrackController {
   }
 
   @Delete(undefined, '/:id')
-  @Authorized(UserRole.ADMIN)
   async delete(
     @Param('id') id: string,
     @CurrentUser() currentUser: UserEntity
@@ -247,7 +248,10 @@ export default class TimeTrackController {
         const tt = await em.findOneOrFail(TTEntity, {
           where: {
             id,
-            user: { organization: { id: currentUser.organization.id } },
+            user:
+              currentUser.role == UserRole.ADMIN
+                ? { organization: { id: currentUser.organization.id } }
+                : { id: currentUser.id },
           },
           select: { id: true, date: true },
         })
