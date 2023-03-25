@@ -13,6 +13,7 @@ export async function getClientsAndProjectsOf(
   organizationId: string,
   userId: string
 ) {
+  // TODO Use EM
   try {
     const clients = (await ClientEntity.find({
       where: {

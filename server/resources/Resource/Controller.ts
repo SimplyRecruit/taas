@@ -86,7 +86,7 @@ export default class ResourceController {
           currentUser.id
         )
       // do not allow to see other's
-      if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
+      if (currentUser.role == UserRole.END_USER) throw new ForbiddenError()
       return getClientsAndProjectsOf(currentUser.organization.id, userId)
     } catch (error: unknown) {
       if (error instanceof EntityNotFoundError)
