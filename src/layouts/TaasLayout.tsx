@@ -8,11 +8,11 @@ import ThemeProvider from '@/layouts/theme/ThemeProvider'
 
 import { useRouter } from 'next/router'
 
-interface AppLayoutProps {
+interface TaasLayoutProps {
   children: React.ReactNode
 }
 
-export default function LayoutProvider({ children }: AppLayoutProps) {
+export default function TaasLayout({ children }: TaasLayoutProps) {
   const router = useRouter()
   let layout: React.ReactNode
   if (

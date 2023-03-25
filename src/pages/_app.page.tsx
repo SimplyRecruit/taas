@@ -8,7 +8,7 @@ import tr from 'antd/locale/tr_TR'
 import en from 'antd/locale/en_US'
 import type { Locale } from 'antd/es/locale'
 import { Language } from 'models'
-import LayoutProvider from '@/layouts/LayoutProvider'
+import TaasLayout from '@/layouts/TaasLayout'
 
 const App = ({ Component, pageProps }: AppProps) => {
   const antdLocales: { [key in Language]: Locale } = { en, tr } as const
@@ -24,9 +24,9 @@ const App = ({ Component, pageProps }: AppProps) => {
         <link href="/logo192.png" rel="apple-touch-icon" />
       </Head>
       <ConfigProvider locale={antdLocales[lang] ?? antdLocales['en']}>
-        <LayoutProvider>
+        <TaasLayout>
           <Component {...pageProps} />
-        </LayoutProvider>
+        </TaasLayout>
       </ConfigProvider>
     </>
   )

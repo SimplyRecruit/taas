@@ -1,10 +1,10 @@
 import { Card } from 'antd'
 
-interface AppLayoutProps {
+interface AuthLayoutProps {
   children: React.ReactNode
 }
 
-export default function AuthLayout({ children }: AppLayoutProps) {
+export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div
       className="center-column"

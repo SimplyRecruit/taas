@@ -1,14 +1,5 @@
-import { allWelcomeRoutes, authRoutes } from '@/auth/utils/AuthUtil'
 import ProfileMenu from '@/components/ProfileMenu'
-import {
-  HEADER_HEIGHT,
-  ICON_TOP_MARGIN_FIX,
-  Route,
-  SIDER_WIDTH,
-} from '@/constants'
-import AuthLayout from '@/layouts/AuthLayout'
-import ColorProvider from '@/layouts/theme/ColorProvider'
-import ThemeProvider from '@/layouts/theme/ThemeProvider'
+import { HEADER_HEIGHT, ICON_TOP_MARGIN_FIX, SIDER_WIDTH } from '@/constants'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { Badge, Button, Layout, Menu, Space, Typography } from 'antd'
 import { useRouter } from 'next/router'
