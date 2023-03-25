@@ -1,5 +1,5 @@
 import UserRoleSelector from '@/pages/team/components/UserRoleSelector'
-import moment from 'dayjs'
+import moment, { type Dayjs } from 'dayjs'
 import {
   InputNumber,
   Input,
@@ -19,7 +19,6 @@ import {
 } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
 import useApi from '@/services/useApi'
-import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import { useEffect } from 'react'
 
@@ -175,7 +174,7 @@ const EditMemberDrawer = ({
                   message: 'Please select a start date',
                 },
               ]}
-              getValueFromEvent={date => momentToDate(date)}
+              getValueFromEvent={(date: Dayjs) => date.toDate()}
               getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker

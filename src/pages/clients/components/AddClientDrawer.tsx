@@ -1,4 +1,4 @@
-import moment from 'dayjs'
+import moment, { type Dayjs } from 'dayjs'
 import {
   Input,
   Form,
@@ -13,7 +13,6 @@ import {
 } from 'antd'
 import { Client, ClientContractType } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
-import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import ClientCreateBody from 'models/Client/req-bodies/ClientCreateBody'
 import useApi from '@/services/useApi'
@@ -164,7 +163,7 @@ export default function AddClientDrawer({
                   message: 'Please select a start date',
                 },
               ]}
-              getValueFromEvent={date => momentToDate(date)}
+              getValueFromEvent={(date: Dayjs) => date.toDate()}
               getValueProps={i => ({ value: moment(i) })}
             >
               <DatePicker
@@ -196,8 +195,8 @@ export default function AddClientDrawer({
             <Form.Item
               name="contractDate"
               label="Contract date"
-              getValueFromEvent={date =>
-                date ? momentToDate(date) : undefined
+              getValueFromEvent={(date: Dayjs) =>
+                date ? date.toDate() : undefined
               }
               getValueProps={i => ({
                 value: i ? moment(i) : '',

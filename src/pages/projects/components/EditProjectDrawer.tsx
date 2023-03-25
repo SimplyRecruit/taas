@@ -1,8 +1,7 @@
-import moment from 'dayjs'
+import moment, { type Dayjs } from 'dayjs'
 import { Input, Form, Drawer, Button, Space, DatePicker, Select } from 'antd'
 import { Client, Project, ProjectCreateBody, ProjectUpdateBody } from 'models'
 import { CloseOutlined } from '@ant-design/icons'
-import { momentToDate } from '@/util'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import useApi from '@/services/useApi'
 import { useEffect } from 'react'
@@ -180,7 +179,7 @@ export default function EditProjectDrawer({
         <Form.Item
           name="startDate"
           label="Start date"
-          getValueFromEvent={date => momentToDate(date)}
+          getValueFromEvent={(date: Dayjs) => date.toDate()}
           getValueProps={i => ({ value: moment(i) })}
         >
           <DatePicker allowClear={false} format={DEFAULT_DATE_FORMAT} />

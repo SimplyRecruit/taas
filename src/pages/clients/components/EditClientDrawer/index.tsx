@@ -1,4 +1,4 @@
-import moment from 'dayjs'
+import moment, { type Dayjs } from 'dayjs'
 import {
   Input,
   Form,
@@ -22,7 +22,6 @@ import {
   DeleteOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons'
-import { momentToDate } from '@/util'
 import { DEFAULT_ACTION_COLUMN_WIDTH, DEFAULT_DATE_FORMAT } from '@/constants'
 import styles from './index.module.css'
 import useApi from '@/services/useApi'
@@ -207,7 +206,7 @@ const EditClientDrawer = ({
                     message: 'Please select a start date',
                   },
                 ]}
-                getValueFromEvent={date => momentToDate(date)}
+                getValueFromEvent={(date: Dayjs) => date.toDate()}
                 getValueProps={i => ({ value: moment(i) })}
               >
                 <DatePicker
@@ -239,7 +238,9 @@ const EditClientDrawer = ({
               <Form.Item
                 name="contractDate"
                 label="Contract date"
-                getValueFromEvent={date => (date ? momentToDate(date) : null)}
+                getValueFromEvent={(date: Dayjs) =>
+                  date ? date.toDate() : null
+                }
                 getValueProps={i => ({
                   value: i ? moment(i) : '',
                 })}

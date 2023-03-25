@@ -7,7 +7,6 @@ import {
   rangePresets,
 } from '@/pages/reports/components/constants'
 import { ReportReqBody } from 'models'
-import { momentToDate } from '@/util'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
@@ -35,7 +34,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
   const [selectedStatus, setSelectedStatus] = useState<string[]>([])
   const [dates, setDates] = useState<Date[]>(
-    defaultRangePreset.map(e => momentToDate(e))
+    defaultRangePreset.map(e => e.toDate())
   )
   useEffect(() => {
     getAllResources({ entityStatus: 'all' })
@@ -108,7 +107,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         defaultValue={defaultRangePreset}
         onChange={values => {
           if (values) {
-            setDates([momentToDate(values[0]!), momentToDate(values[1]!)])
+            setDates([values[0]!.toDate(), values[1]!.toDate()])
           }
         }}
       />
