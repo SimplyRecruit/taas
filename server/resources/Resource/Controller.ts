@@ -1,10 +1,4 @@
-import {
-  type EntityStatus,
-  Resource,
-  UserRole,
-  ClientRelation,
-  ProjectRelation,
-} from 'models'
+import { type EntityStatus, Resource, UserRole } from 'models'
 import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
   Authorized,
@@ -16,16 +10,13 @@ import {
   Param,
   QueryParam,
 } from 'routing-controllers'
-import { EntityNotFoundError, In } from 'typeorm'
+import { EntityNotFoundError } from 'typeorm'
 import { Body } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import ClientUserEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'
 import { Get, Patch } from '~/decorators/CustomApiMethods'
-import { ALL_UUID } from '~/common/Config'
-import ProjectEntity from '~/resources/Project/Entity'
-import ClientEntity from '~/resources/Client/Entity'
 import GetClientsAndProjectsResBody from 'models/Resource/res-bodies/GetClients&ProjectsResBody'
+import { getClientsAndProjectsOf } from '~/resources/Resource/Service'
 
 @JsonController('/resource')
 export default class ResourceController {
@@ -83,62 +74,24 @@ export default class ResourceController {
     return 'Resource Update Successful'
   }
 
-  @Get(undefined, '/clients-and-projects')
-  async getClientsAndProjects(@CurrentUser() currentUser: UserEntity) {
+  @Get(GetClientsAndProjectsResBody, '/:id/clients-and-projects')
+  async getClientsAndProjects(
+    @Param('id') userId: string,
+    @CurrentUser() currentUser: UserEntity
+  ) {
     try {
-      const clients = (await ClientEntity.find({
-        where: {
-          organization: { id: currentUser.organization.id },
-          clientUser: { user: { id: In([ALL_UUID, currentUser.id]) } },
-          active: true,
-        },
-        select: {
-          id: true,
-          abbr: true,
-          name: true,
-        },
-      })) as ClientRelation[]
-
-      const projects = (await ProjectEntity.find({
-        where: {
-          organization: { id: currentUser.organization.id },
-          clientId: In([ALL_UUID, ...clients.map(e => e.id)]),
-          active: true,
-        },
-        select: {
-          id: true,
-          name: true,
-          abbr: true,
-        },
-      })) as ProjectRelation[]
-
-      return { clients, projects } as GetClientsAndProjectsResBody
+      if (userId == 'me')
+        return getClientsAndProjectsOf(
+          currentUser.organization.id,
+          currentUser.id
+        )
+      // do not allow to see other's
+      if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
+      return getClientsAndProjectsOf(currentUser.organization.id, userId)
     } catch (error: unknown) {
       if (error instanceof EntityNotFoundError)
         throw new ForbiddenError('You are not a resource')
-      else throw new InternalServerError('Internal Server Error')
-    }
-  }
-
-  @Get(undefined, '/:id/clients')
-  @Authorized(UserRole.ADMIN)
-  async getClientsOf(
-    @CurrentUser() currentUser: UserEntity,
-    @Param('id') userId: string
-  ) {
-    try {
-      const clients = await ClientUserEntity.find({
-        relations: { client: true },
-        where: {
-          user: {
-            id: userId,
-            organization: { id: currentUser.organization.id },
-          },
-        },
-      })
-      return clients
-    } catch (error) {
-      if (error instanceof EntityNotFoundError) throw new NotFoundError()
+      else if (error instanceof ForbiddenError) throw new ForbiddenError()
       else throw new InternalServerError('Internal Server Error')
     }
   }
