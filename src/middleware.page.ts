@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { checkAuthentication } from '@/auth/utils/AuthUtil'
 import { Route } from '@/constants'
 import cookieKeys from '@/constants/cookie-keys'
-import { isLanguage } from 'models/Language'
+import { isLanguage } from 'models/common/Language'
 
 const PUBLIC_FILE = /\.(.*)$/
 
