@@ -112,18 +112,11 @@ export default class TimeTrackController {
           - Not accessable by the given clintId
         */
         const project = await em.findOneOrFail(ProjectEntity, {
-          where: [
-            {
-              abbr: projectAbbr,
-              organization: { id: currentUser.organization.id },
-              clientId: client.id,
-            },
-            {
-              abbr: projectAbbr,
-              organization: { id: currentUser.organization.id },
-              clientId: ALL_UUID,
-            },
-          ],
+          where: {
+            abbr: projectAbbr,
+            organization: { id: currentUser.organization.id },
+            clientId: In([ALL_UUID, client.id]),
+          },
           relations: { organization: true },
         })
         id = (
@@ -278,7 +271,6 @@ export default class TimeTrackController {
   }
 
   @Post([TTBatchCreateResBody], '/batch')
-  @Authorized(UserRole.ADMIN)
   async batchCreate(
     @Body() { bodies }: TTBatchCreateBody,
     @CurrentUser() currentUser: UserEntity
@@ -303,18 +295,12 @@ export default class TimeTrackController {
           }
           // Checking client
           const client = await em.findOne(ClientEntity, {
-            where: [
-              {
-                abbr: body.clientAbbr,
-                organization: { id: currentUser.organization.id },
-                clientUser: { userId: currentUser.id },
-              },
-              {
-                abbr: body.clientAbbr,
-                organization: { id: currentUser.organization.id },
-                clientUser: { userId: ALL_UUID },
-              },
-            ],
+            where: {
+              abbr: body.clientAbbr,
+              organization: { id: currentUser.organization.id },
+              clientUser: { userId: In([ALL_UUID, currentUser.id]) },
+            },
+
             relations: { organization: true },
           })
           if (!client) {
@@ -325,18 +311,11 @@ export default class TimeTrackController {
           }
           // Checking project
           const project = await em.findOne(ProjectEntity, {
-            where: [
-              {
-                abbr: body.projectAbbr,
-                organization: { id: currentUser.organization.id },
-                clientId: client.id,
-              },
-              {
-                abbr: body.projectAbbr,
-                organization: { id: currentUser.organization.id },
-                clientId: ALL_UUID,
-              },
-            ],
+            where: {
+              abbr: body.projectAbbr,
+              organization: { id: currentUser.organization.id },
+              clientId: In([ALL_UUID, client.id]),
+            },
             relations: { organization: true },
           })
           if (!project) {
