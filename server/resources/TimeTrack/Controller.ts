@@ -41,39 +41,39 @@ export default class TimeTrackController {
     @CurrentUser() currentUser: UserEntity,
     @QueryParams() { order, take, skip }: TableQueryParameters
   ) {
-    let entityObjects: TTEntity[] = []
-    let count = 0
-    await dataSource.transaction(async em => {
-      try {
-        ;[entityObjects, count] = await TTEntity.findAndCount({
-          where: { user: { id: currentUser.id } },
-          relations: { client: true, project: true },
-          order,
-          take,
-          skip,
-        })
-      } catch (error) {
-        if (error instanceof EntityNotFoundError) throw new ForbiddenError()
-        else if (error instanceof EntityPropertyNotFoundError) {
-          throw new BadRequestError('Invalid column name for sorting')
-        } else throw new InternalServerError('Internal Server Error')
-      }
-    })
+    try {
+      const [entityObjects, count] = await TTEntity.findAndCount({
+        where: { user: { id: currentUser.id } },
+        relations: { client: true, project: true },
+        order,
+        take,
+        skip,
+        select: {
+          id: true,
+          description: true,
+          date: true,
+          billable: true,
+          hour: true,
+          ticketNo: true,
+        },
+      })
 
-    const data = entityObjects.map(
-      ({ id, client, description, date, billable, hour, project, ticketNo }) =>
-        TT.create({
-          id,
-          description,
-          date,
-          clientAbbr: client.abbr,
-          billable,
-          hour,
-          projectAbbr: project.abbr,
-          ticketNo,
-        })
-    )
-    return TTGetAllResBody.create({ data, count })
+      return TTGetAllResBody.create({
+        data: entityObjects.map(({ client, project, ...rest }) =>
+          TT.create({
+            clientAbbr: client.abbr,
+            projectAbbr: project.abbr,
+            ...rest,
+          })
+        ),
+        count,
+      })
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) throw new ForbiddenError()
+      else if (error instanceof EntityPropertyNotFoundError) {
+        throw new BadRequestError('Invalid column name for sorting')
+      } else throw new InternalServerError('Internal Server Error')
+    }
   }
 
   @Post(String)

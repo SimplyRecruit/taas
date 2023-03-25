@@ -38,20 +38,18 @@ export default class ProjectController {
     const query: any = {
       where: { organization: { id: currentUser.organization.id } },
       relations: { client: true },
+      select: {
+        id: true,
+        abbr: true,
+        name: true,
+        active: true,
+        client: true,
+        startDate: true,
+      },
     }
     if (entityStatus == 'active') query.where.active = true
     else if (entityStatus == 'archived') query.where.active = false
-    const entityObjects = await ProjectEntity.find(query)
-    return entityObjects.map(({ id, abbr, active, client, name, startDate }) =>
-      Project.create({
-        id,
-        abbr,
-        name,
-        startDate,
-        client,
-        active,
-      })
-    )
+    return ProjectEntity.find(query)
   }
 
   @Post()

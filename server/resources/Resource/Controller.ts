@@ -3,7 +3,7 @@ import {
   Resource,
   UserRole,
   ClientRelation,
-  Project,
+  ProjectRelation,
 } from 'models'
 import ResourceUpdateBody from 'models/Resource/req-bodies/ResourceUpdateBody'
 import {
@@ -37,23 +37,20 @@ export default class ResourceController {
   ) {
     const query: any = {
       where: { organization: { id: currentUser.organization.id } },
+      select: {
+        id: true,
+        abbr: true,
+        name: true,
+        email: true,
+        role: true,
+        active: true,
+        hourlyRate: true,
+        startDate: true,
+      },
     }
     if (entityStatus == 'active') query.where.active = true
     else if (entityStatus == 'archived') query.where.active = false
-    const entityObjects = await UserEntity.find(query)
-    return entityObjects.map(
-      ({ id, abbr, name, email, role, active, startDate, hourlyRate }) =>
-        Resource.create({
-          id,
-          abbr,
-          name,
-          email,
-          role,
-          active,
-          hourlyRate,
-          startDate,
-        })
-    )
+    return UserEntity.find(query)
   }
 
   @Patch(String, '/:id')
@@ -113,7 +110,7 @@ export default class ResourceController {
           name: true,
           abbr: true,
         },
-      })) as Project[]
+      })) as ProjectRelation[]
 
       return { clients, projects } as GetClientsAndProjectsResBody
     } catch (error: unknown) {
