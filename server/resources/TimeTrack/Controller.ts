@@ -24,7 +24,7 @@ import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body, QueryParams } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
+import { EntityNotFoundError, EntityPropertyNotFoundError, In } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ClientEntity from '~/resources/Client/Entity'
@@ -36,7 +36,6 @@ import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 @JsonController('/time-track')
 export default class TimeTrackController {
   @Get(TTGetAllResBody)
-  @Authorized(UserRole.ADMIN)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
     @QueryParams() { order, take, skip }: TableQueryParameters
@@ -98,18 +97,12 @@ export default class TimeTrackController {
         */
 
         const client = await em.findOneOrFail(ClientEntity, {
-          where: [
-            {
-              abbr: clientAbbr,
-              organization: { id: currentUser.organization.id },
-              clientUser: { userId: currentUser.id },
-            },
-            {
-              abbr: clientAbbr,
-              organization: { id: currentUser.organization.id },
-              clientUser: { userId: ALL_UUID },
-            },
-          ],
+          where: {
+            abbr: clientAbbr,
+            organization: { id: currentUser.organization.id },
+            clientUser: { userId: In([ALL_UUID, currentUser.id]) },
+          },
+
           relations: { organization: true },
         })
 
