@@ -72,7 +72,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         justifyContent: 'space-between',
       }}
     >
-      <Card size="small" bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}>
+      <Card size="small" bodyStyle={{ padding: 0 }}>
         <Space split={<Divider type="vertical" />}>
           {userRole != UserRole.END_USER && (
             <DropdownAutocomplete
