@@ -6,7 +6,8 @@ import {
   defaultRangePreset,
   rangePresets,
 } from '@/pages/reports/components/constants'
-import { ReportReqBody } from 'models'
+import { ReportReqBody, UserRole } from 'models'
+import { getUserFromCookies } from '@/auth/utils/AuthUtil'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
@@ -29,6 +30,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     loading: loadingProjectGetAll,
   } = useApi('project', 'getAll')
 
+  const [userRole, setUserRole] = useState<UserRole>()
   const [selectedResources, setSelectedResources] = useState<string[]>([])
   const [selectedClients, setSelectedClients] = useState<string[]>([])
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
@@ -37,7 +39,9 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     defaultRangePreset.map(e => e.toDate())
   )
   useEffect(() => {
-    getAllResources({ entityStatus: 'all' })
+    const role: UserRole = getUserFromCookies().role
+    setUserRole(role)
+    if (role != UserRole.END_USER) getAllResources({ entityStatus: 'all' })
     getAllClients({ entityStatus: 'all' })
     getAllProjects({ entityStatus: 'all' })
   }, [])
@@ -70,13 +74,14 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     >
       <Card size="small" bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}>
         <Space split={<Divider type="vertical" />}>
-          <DropdownAutocomplete
-            badgeCount={selectedResources.length}
-            onChange={e => setSelectedResources(e)}
-            title="Team"
-            options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
-          />
-
+          {userRole != UserRole.END_USER && (
+            <DropdownAutocomplete
+              badgeCount={selectedResources.length}
+              onChange={e => setSelectedResources(e)}
+              title="Team"
+              options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
+            />
+          )}
           <DropdownAutocomplete
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}

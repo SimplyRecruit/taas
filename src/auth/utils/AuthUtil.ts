@@ -40,6 +40,6 @@ export async function checkAuthentication(
 
 // Works with only components and pages
 // does not work in middleware.page
-export function getUserFromCookies(): User | null {
-  return (new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User) ?? null
+export function getUserFromCookies(): User {
+  return new Cookies().get(cookieKeys.COOKIE_USER_OBJECT) as User
 }
