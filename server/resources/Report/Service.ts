@@ -17,7 +17,7 @@ export async function getReport(
       .from(TimeTrackEntity, 'tt')
       .innerJoin(UserEntity, 'user', 'user.id = tt.user_id')
       .where('user.organization_id = :organizationId', {
-        organizationId: organizationId,
+        organizationId,
       })
       .andWhere('tt.date BETWEEN :from AND :to ', { from, to })
       .groupBy(`DATE_TRUNC('day', tt.date)`)
@@ -41,7 +41,7 @@ export async function getReport(
     }
     if (typeof billable === 'boolean') {
       query = query.andWhere('tt.billable = :billable', {
-        billable: billable,
+        billable,
       })
     }
     t = await query.printSql().getRawMany()
