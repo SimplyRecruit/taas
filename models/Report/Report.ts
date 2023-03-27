@@ -1,4 +1,4 @@
-import Model from 'models/Model'
+import Model from 'models/common/Model'
 
 export default class Report extends Model {
   date: Date

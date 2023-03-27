@@ -1,7 +1,7 @@
 import { ICON_TOP_MARGIN_FIX, Route } from '@/constants'
 import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
 import { User } from 'models'
-import Language, { LANGUAGES, LANGUAGE_NAMES } from 'models/Language'
+import Language, { LANGUAGES, LANGUAGE_NAMES } from 'models/common/Language'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'

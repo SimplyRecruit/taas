@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { IsBoolean, IsNotEmpty, IsPositive, Length } from 'class-validator'
-import Model from 'models/Model'
+import Model from 'models/common/Model'
 
 export default class TTBase extends Model {
   @Length(1, 255)

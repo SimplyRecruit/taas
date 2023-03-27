@@ -1,8 +1,8 @@
 import { stringToDate } from '@/util'
 import { Type } from 'class-transformer'
 import { IsArray, validate, ValidateNested } from 'class-validator'
-import Model from 'models/Model'
-import TimelessDate from 'models/TimelessDate'
+import Model from 'models/common/Model'
+import TimelessDate from 'models/common/TimelessDate'
 import TTCreateBody from 'models/TimeTrack/req-bodies/TTCreateBody'
 import 'reflect-metadata'
 

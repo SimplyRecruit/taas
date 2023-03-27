@@ -16,6 +16,7 @@ ReportReqBody,
 Report,
 Resource,
 ResourceUpdateBody,
+GetClientsAndProjectsResBody,
 TableQueryParameters,
 TTGetAllResBody,
 TTCreateBody,
@@ -211,21 +212,11 @@ export default {
                 data: body,
             })
         },
-        async getClients(
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/resource/clients"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-            })
-        },
-        async getClientsOf(
+        async getClientsAndProjects(
             params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<GetClientsAndProjectsResBody>>
         {
-            const route = "/resource/:id/clients"
+            const route = "/resource/:id/clients-and-projects"
             const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "get",

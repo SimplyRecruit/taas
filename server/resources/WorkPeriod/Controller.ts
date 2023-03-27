@@ -16,7 +16,6 @@ import { dataSource } from '~/main'
 import UserEntity from '~/resources/User/Entity'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 @JsonController('/work-period')
-@Authorized(UserRole.ADMIN)
 export default class WorkPeriodController {
   @Get([WorkPeriod])
   async getAll(@CurrentUser() currentUser: UserEntity) {
@@ -34,6 +33,7 @@ export default class WorkPeriodController {
   }
 
   @Post(String)
+  @Authorized([UserRole.ADMIN, UserRole.TT_MANAGER])
   async create(
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodString }: WorkPeriod
@@ -53,6 +53,7 @@ export default class WorkPeriodController {
   }
 
   @Delete(String)
+  @Authorized([UserRole.ADMIN, UserRole.TT_MANAGER])
   async delete(
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodString }: WorkPeriod

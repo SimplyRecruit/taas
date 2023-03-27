@@ -15,22 +15,28 @@ interface RenderProps {
 
 export default function ReportsFilter({ onFilter }: RenderProps) {
   const {
-    data: clients,
+    data: allClients,
     call: getAllClients,
-    loading: loadingClientGetAll,
+    loading: loadingGetAllClients,
   } = useApi('client', 'getAll')
   const {
     data: resources,
     call: getAllResources,
-    loading: loadingResourceGetAll,
+    loading: loadingGetAllResources,
   } = useApi('resource', 'getAll')
   const {
-    data: projects,
+    data: allProjects,
     call: getAllProjects,
-    loading: loadingProjectGetAll,
+    loading: loadingGetAllProjects,
   } = useApi('project', 'getAll')
 
-  const [userRole, setUserRole] = useState<UserRole>()
+  const {
+    data: clientsAndProjects,
+    call: getClientsAndProjects,
+    loading: loadingGetClientsAndProjects,
+  } = useApi('resource', 'getClientsAndProjects')
+
+  const [isEndUser, setIsEndUser] = useState(true)
   const [selectedResources, setSelectedResources] = useState<string[]>([])
   const [selectedClients, setSelectedClients] = useState<string[]>([])
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
@@ -38,12 +44,25 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   const [dates, setDates] = useState<Date[]>(
     defaultRangePreset.map(e => e.toDate())
   )
+
+  const clients = isEndUser
+    ? clientsAndProjects?.clients.map(e => ({ value: e.id, label: e.abbr }))
+    : allClients?.map(e => ({ value: e.id, label: e.abbr }))
+
+  const projects = isEndUser
+    ? clientsAndProjects?.projects.map(e => ({ value: e.id, label: e.abbr }))
+    : allProjects?.map(e => ({ value: e.id, label: e.abbr }))
+
   useEffect(() => {
     const role: UserRole = getUserFromCookies().role
-    setUserRole(role)
-    if (role != UserRole.END_USER) getAllResources({ entityStatus: 'all' })
-    getAllClients({ entityStatus: 'all' })
-    getAllProjects({ entityStatus: 'all' })
+    setIsEndUser(role == UserRole.END_USER)
+    if (role != UserRole.END_USER) {
+      getAllResources({ entityStatus: 'all' })
+      getAllClients({ entityStatus: 'all' })
+      getAllProjects({ entityStatus: 'all' })
+    } else {
+      getClientsAndProjects({ id: 'me' })
+    }
   }, [])
 
   useEffect(() => {
@@ -74,28 +93,28 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     >
       <Card size="small" bodyStyle={{ padding: 0 }}>
         <Space split={<Divider type="vertical" />}>
-          {userRole != UserRole.END_USER && (
+          {!isEndUser && (
             <DropdownAutocomplete
               badgeCount={selectedResources.length}
               onChange={e => setSelectedResources(e)}
               title="Team"
               options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
-              disabled={loadingResourceGetAll}
+              disabled={loadingGetAllResources}
             />
           )}
           <DropdownAutocomplete
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}
             title="Client"
-            options={clients?.map(e => ({ value: e.id, label: e.abbr }))}
-            disabled={loadingClientGetAll}
+            options={clients}
+            disabled={loadingGetAllClients || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
             title="Project"
-            options={projects?.map(e => ({ value: e.id, label: e.abbr }))}
-            disabled={loadingProjectGetAll}
+            options={projects}
+            disabled={loadingGetAllProjects || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete
             badgeCount={selectedStatus.length}

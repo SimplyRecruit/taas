@@ -1,5 +1,5 @@
 import { IsEmail, MaxLength, MinLength } from 'class-validator'
-import Model from 'models/Model'
+import Model from 'models/common/Model'
 
 export default class RegisterOrganizationReqBody extends Model {
   @IsEmail()

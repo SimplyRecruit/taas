@@ -24,7 +24,7 @@ import { Delete, Get, Patch, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body, QueryParams } from '~/decorators/CustomRequestParams'
 import { dataSource } from '~/main'
-import { EntityNotFoundError, EntityPropertyNotFoundError } from 'typeorm'
+import { EntityNotFoundError, EntityPropertyNotFoundError, In } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
 import ClientEntity from '~/resources/Client/Entity'
@@ -36,44 +36,43 @@ import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 @JsonController('/time-track')
 export default class TimeTrackController {
   @Get(TTGetAllResBody)
-  @Authorized(UserRole.ADMIN)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
     @QueryParams() { order, take, skip }: TableQueryParameters
   ) {
-    let entityObjects: TTEntity[] = []
-    let count = 0
-    await dataSource.transaction(async em => {
-      try {
-        ;[entityObjects, count] = await TTEntity.findAndCount({
-          where: { user: { id: currentUser.id } },
-          relations: { client: true, project: true },
-          order,
-          take,
-          skip,
-        })
-      } catch (error) {
-        if (error instanceof EntityNotFoundError) throw new ForbiddenError()
-        else if (error instanceof EntityPropertyNotFoundError) {
-          throw new BadRequestError('Invalid column name for sorting')
-        } else throw new InternalServerError('Internal Server Error')
-      }
-    })
+    try {
+      const [entityObjects, count] = await TTEntity.findAndCount({
+        where: { user: { id: currentUser.id } },
+        relations: { client: true, project: true },
+        order,
+        take,
+        skip,
+        select: {
+          id: true,
+          description: true,
+          date: true,
+          billable: true,
+          hour: true,
+          ticketNo: true,
+        },
+      })
 
-    const data = entityObjects.map(
-      ({ id, client, description, date, billable, hour, project, ticketNo }) =>
-        TT.create({
-          id,
-          description,
-          date,
-          clientAbbr: client.abbr,
-          billable,
-          hour,
-          projectAbbr: project.abbr,
-          ticketNo,
-        })
-    )
-    return TTGetAllResBody.create({ data, count })
+      return TTGetAllResBody.create({
+        data: entityObjects.map(({ client, project, ...rest }) =>
+          TT.create({
+            clientAbbr: client.abbr,
+            projectAbbr: project.abbr,
+            ...rest,
+          })
+        ),
+        count,
+      })
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) throw new ForbiddenError()
+      else if (error instanceof EntityPropertyNotFoundError) {
+        throw new BadRequestError('Invalid column name for sorting')
+      } else throw new InternalServerError('Internal Server Error')
+    }
   }
 
   @Post(String)
@@ -98,18 +97,12 @@ export default class TimeTrackController {
         */
 
         const client = await em.findOneOrFail(ClientEntity, {
-          where: [
-            {
-              abbr: clientAbbr,
-              organization: { id: currentUser.organization.id },
-              clientUser: { userId: currentUser.id },
-            },
-            {
-              abbr: clientAbbr,
-              organization: { id: currentUser.organization.id },
-              clientUser: { userId: ALL_UUID },
-            },
-          ],
+          where: {
+            abbr: clientAbbr,
+            organization: { id: currentUser.organization.id },
+            clientUser: { userId: In([ALL_UUID, currentUser.id]) },
+          },
+
           relations: { organization: true },
         })
 
@@ -119,18 +112,11 @@ export default class TimeTrackController {
           - Not accessable by the given clintId
         */
         const project = await em.findOneOrFail(ProjectEntity, {
-          where: [
-            {
-              abbr: projectAbbr,
-              organization: { id: currentUser.organization.id },
-              clientId: client.id,
-            },
-            {
-              abbr: projectAbbr,
-              organization: { id: currentUser.organization.id },
-              clientId: ALL_UUID,
-            },
-          ],
+          where: {
+            abbr: projectAbbr,
+            organization: { id: currentUser.organization.id },
+            clientId: In([ALL_UUID, client.id]),
+          },
           relations: { organization: true },
         })
         id = (
@@ -156,7 +142,6 @@ export default class TimeTrackController {
   }
 
   @Patch(undefined, '/:id')
-  @Authorized(UserRole.ADMIN)
   async update(
     @Body() { clientAbbr, projectAbbr, date, ...body }: TTUpdateBody,
     @Param('id') id: string,
@@ -168,7 +153,10 @@ export default class TimeTrackController {
         const tt = await em.findOneOrFail(TTEntity, {
           where: {
             id,
-            user: { organization: { id: currentUser.organization.id } },
+            user:
+              currentUser.role == UserRole.ADMIN
+                ? { organization: { id: currentUser.organization.id } }
+                : { id: currentUser.id },
           },
           select: { id: true, date: true },
         })
@@ -243,7 +231,6 @@ export default class TimeTrackController {
   }
 
   @Delete(undefined, '/:id')
-  @Authorized(UserRole.ADMIN)
   async delete(
     @Param('id') id: string,
     @CurrentUser() currentUser: UserEntity
@@ -254,7 +241,10 @@ export default class TimeTrackController {
         const tt = await em.findOneOrFail(TTEntity, {
           where: {
             id,
-            user: { organization: { id: currentUser.organization.id } },
+            user:
+              currentUser.role == UserRole.ADMIN
+                ? { organization: { id: currentUser.organization.id } }
+                : { id: currentUser.id },
           },
           select: { id: true, date: true },
         })
@@ -281,7 +271,6 @@ export default class TimeTrackController {
   }
 
   @Post([TTBatchCreateResBody], '/batch')
-  @Authorized(UserRole.ADMIN)
   async batchCreate(
     @Body() { bodies }: TTBatchCreateBody,
     @CurrentUser() currentUser: UserEntity
@@ -306,18 +295,12 @@ export default class TimeTrackController {
           }
           // Checking client
           const client = await em.findOne(ClientEntity, {
-            where: [
-              {
-                abbr: body.clientAbbr,
-                organization: { id: currentUser.organization.id },
-                clientUser: { userId: currentUser.id },
-              },
-              {
-                abbr: body.clientAbbr,
-                organization: { id: currentUser.organization.id },
-                clientUser: { userId: ALL_UUID },
-              },
-            ],
+            where: {
+              abbr: body.clientAbbr,
+              organization: { id: currentUser.organization.id },
+              clientUser: { userId: In([ALL_UUID, currentUser.id]) },
+            },
+
             relations: { organization: true },
           })
           if (!client) {
@@ -328,18 +311,11 @@ export default class TimeTrackController {
           }
           // Checking project
           const project = await em.findOne(ProjectEntity, {
-            where: [
-              {
-                abbr: body.projectAbbr,
-                organization: { id: currentUser.organization.id },
-                clientId: client.id,
-              },
-              {
-                abbr: body.projectAbbr,
-                organization: { id: currentUser.organization.id },
-                clientId: ALL_UUID,
-              },
-            ],
+            where: {
+              abbr: body.projectAbbr,
+              organization: { id: currentUser.organization.id },
+              clientId: In([ALL_UUID, client.id]),
+            },
             relations: { organization: true },
           })
           if (!project) {
