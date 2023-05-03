@@ -1,4 +1,13 @@
-import { Button, Collapse, Modal, Spin, Table, Tooltip } from 'antd'
+import {
+  Button,
+  Collapse,
+  Modal,
+  Select,
+  Spin,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { ClientRelation, ProjectRelation, TTBatchCreateBody } from 'models'
 import { formatDate } from '@/util'
@@ -8,6 +17,7 @@ import {
   ReactElement,
   ReactFragment,
   ReactPortal,
+  useEffect,
   useState,
 } from 'react'
 import BatchSpreadSheet from '@/pages/tracker/components/BatchSpreadSheet'
@@ -17,14 +27,17 @@ interface Props {
   projectOptions?: ProjectRelation[]
   clientOptions?: ClientRelation[]
   onAdd: () => void
+  userSelectable?: boolean
   onCancel?: () => void
 }
 export default function AddBatchTT({
   projectOptions,
   clientOptions,
+  userSelectable,
   onAdd,
 }: Props) {
   const [showResultsModal, setShowResultsModal] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState('me')
   const [batch, setBatch] = useState<TTBatchCreateBody | null>(null)
   const [ssData, setSsData] = useState<any[][]>([[]])
   const [errorExists, setErrorExists] = useState(false)
@@ -34,12 +47,17 @@ export default function AddBatchTT({
     loading: loadingBatchCreate,
     error: errorBatchCreate,
   } = useApi('timeTrack', 'batchCreate', [])
+  const { data: allResources, call: getAllResources } = useApi(
+    'resource',
+    'getAll',
+    []
+  )
 
   async function performBatchCreation() {
     try {
       if (batch === null) return
       setShowResultsModal(true)
-      await callBatchCreate(batch)
+      await callBatchCreate(batch, { id: selectedUserId })
       onAdd()
     } catch (error) {
       /* empty */
@@ -121,10 +139,35 @@ export default function AddBatchTT({
     },
   ]
 
+  useEffect(() => {
+    if (userSelectable) getAllResources({ entityStatus: 'active' })
+  }, [])
   return (
     <>
       <Collapse style={{ marginTop: 10, marginBottom: 10 }}>
         <Collapse.Panel header="Batch Addition" key="1">
+          {userSelectable && (
+            <>
+              <Typography.Text>User: </Typography.Text>
+              <Select
+                showSearch
+                style={{ width: 250 }}
+                options={allResources.map(e => ({
+                  value: e.id,
+                  label: e.abbr,
+                }))}
+                onChange={id => {
+                  setSelectedUserId(id)
+                  console.log(id)
+                }}
+                filterOption={(input, option) =>
+                  (option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </>
+          )}
           {clientOptions && projectOptions && (
             <>
               <BatchSpreadSheet
