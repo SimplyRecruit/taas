@@ -270,12 +270,27 @@ export default class TimeTrackController {
     return id
   }
 
-  @Post([TTBatchCreateResBody], '/batch')
+  @Post([TTBatchCreateResBody], '/batch/:userId')
   async batchCreate(
     @Body() { bodies }: TTBatchCreateBody,
+    @Param('id') userId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
     const resBodies: TTBatchCreateResBody[] = []
+    let ttUserId: string
+    if (userId == 'me') ttUserId = currentUser.id
+    else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
+    else {
+      ;({ id: ttUserId } = await UserEntity.findOneOrFail({
+        where: {
+          id: userId,
+          organization: { id: currentUser.organization.id },
+          active: true,
+        },
+        select: { id: true },
+      }))
+    }
+
     await dataSource.transaction(async em => {
       try {
         for (const { date, ...body } of bodies) {
@@ -298,7 +313,8 @@ export default class TimeTrackController {
             where: {
               abbr: body.clientAbbr,
               organization: { id: currentUser.organization.id },
-              clientUser: { userId: In([ALL_UUID, currentUser.id]) },
+              clientUser: { userId: In([ALL_UUID, ttUserId]) },
+              active: true,
             },
 
             relations: { organization: true },
@@ -315,6 +331,7 @@ export default class TimeTrackController {
               abbr: body.projectAbbr,
               organization: { id: currentUser.organization.id },
               clientId: In([ALL_UUID, client.id]),
+              active: true,
             },
             relations: { organization: true },
           })
@@ -329,7 +346,7 @@ export default class TimeTrackController {
             TTEntity.create({
               ...body,
               date: date.dateString,
-              user: currentUser,
+              user: { id: ttUserId },
               client,
               project,
             })
