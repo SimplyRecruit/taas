@@ -1,6 +1,6 @@
 import { IsInt, IsOptional, IsPositive, Matches, Min } from 'class-validator'
 
-const sortByRegex = /^(~|-)([a-zA-Z0-9_]*)$/
+const sortByRegex = /^(~|-)([a-zA-Z0-9_.]*)$/
 const ASC_OPERATOR = '~'
 const DESC_OPERATOR = '-'
 
@@ -44,12 +44,26 @@ export default class TableQueryParameters {
   private offset?: number
 
   get order() {
-    const order: { [column: string]: 'ASC' | 'DESC' } = {}
+    const order: any = {}
     if (this.sortBy == null) return order
+
     for (const sort of this.sortBy) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-non-null-assertion
       const [_, direction, column] = sort.match(sortByRegex)!
-      order[column] = direction === ASC_OPERATOR ? 'ASC' : 'DESC'
+      const keys = column.split('.')
+      let currentObj = order
+      // Create a nested object for each property that doesn't exist
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i]
+        if (!currentObj[key]) {
+          currentObj[key] = {}
+        }
+        currentObj = order[key] as Record<string, unknown>
+      }
+
+      // Set the value of the final nested property
+      const finalKey = keys[keys.length - 1]
+      currentObj[finalKey] = direction === ASC_OPERATOR ? 'ASC' : 'DESC'
     }
     return order
   }
