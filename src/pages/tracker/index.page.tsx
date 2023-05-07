@@ -4,7 +4,7 @@ import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
-import { TableQueryParameters, TT, WorkPeriod } from 'models'
+import { TT, TTGetAllParams, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -24,7 +24,8 @@ export default function Tracker() {
     {
       title: 'Client',
       dataIndex: 'clientAbbr',
-      key: 'clientAbbr',
+      key: 'client.abbr',
+      sorter: true,
     },
     {
       title: 'Hour',
@@ -54,7 +55,8 @@ export default function Tracker() {
     {
       title: 'Project',
       dataIndex: 'projectAbbr',
-      key: 'projectAbbr',
+      key: 'project.abbr',
+      sorter: true,
     },
     {
       title: '',
@@ -108,9 +110,9 @@ export default function Tracker() {
     sorter: SorterResult<TT> | undefined = undefined
   ) {
     let sortBy: { column: string; direction: 'ASC' | 'DESC' }
-    if (sorter?.column) {
+    if (sorter) {
       sortBy = {
-        column: sorter.field! as string,
+        column: sorter.columnKey as string,
         direction: sorter.order == 'ascend' ? 'ASC' : 'DESC',
       }
     } else {
@@ -120,7 +122,7 @@ export default function Tracker() {
     setPage(pageParam)
     setPageSize(pageSizeParam)
     callTT(
-      TableQueryParameters.create({
+      TTGetAllParams.create({
         sortBy: [sortBy],
         page: pageParam,
         pageSize: pageSizeParam,

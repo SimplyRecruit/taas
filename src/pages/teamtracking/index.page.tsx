@@ -130,7 +130,6 @@ export default function TeamTracking() {
     } else {
       sortBy = { column: 'date', direction: 'DESC' }
     }
-
     setSorter(sorter)
     setPage(pageParam)
     setPageSize(pageSizeParam)
