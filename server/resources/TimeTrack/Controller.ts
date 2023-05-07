@@ -64,7 +64,6 @@ export default class TimeTrackController {
           hour: true,
           ticketNo: true,
           user: {
-            id: !me,
             abbr: !me,
           },
         },
@@ -76,7 +75,6 @@ export default class TimeTrackController {
             clientAbbr: client.abbr,
             projectAbbr: project.abbr,
             userAbbr: user?.abbr,
-            userId: user?.id,
             ...rest,
           })
         ),
@@ -173,7 +171,14 @@ export default class TimeTrackController {
                 ? { organization: { id: currentUser.organization.id } }
                 : { id: currentUser.id },
           },
-          select: { id: true, date: true },
+          select: {
+            id: true,
+            date: true,
+            user: { id: true },
+            client: { abbr: true },
+            project: { abbr: true },
+          },
+          relations: { client: true, project: true, user: true },
         })
         const period = WorkPeriod.fromDate(new Date(tt.date))
         if (
@@ -190,43 +195,58 @@ export default class TimeTrackController {
           - Not owned by currentUser's organization
           - Not accessable by the resource
         */
-
-        const client = await em.findOneOrFail(ClientEntity, {
-          where: [
-            {
-              abbr: clientAbbr,
-              organization: { id: currentUser.organization.id },
-              clientUser: { userId: currentUser.id },
-            },
-            {
-              abbr: clientAbbr,
-              organization: { id: currentUser.organization.id },
-              clientUser: { userId: ALL_UUID },
-            },
-          ],
-          relations: { organization: true },
-        })
+        let client = undefined
+        if (tt.client.abbr != clientAbbr) {
+          // if client not changed, no need to control
+          client = await em.findOneOrFail(ClientEntity, {
+            where: [
+              {
+                abbr: clientAbbr,
+                organization: { id: currentUser.organization.id },
+                clientUser: { userId: tt.user.id },
+                active: true,
+              },
+              {
+                abbr: clientAbbr,
+                organization: { id: currentUser.organization.id },
+                clientUser: { userId: ALL_UUID },
+                active: true,
+              },
+            ],
+            relations: { organization: true },
+          })
+        }
 
         /*
           Throws ForbiddenEror if this project is:
           - Not owned by currentUser's organization
           - Not accessable by the given clintId
         */
-        const project = await em.findOneOrFail(ProjectEntity, {
-          where: [
-            {
-              abbr: projectAbbr,
-              organization: { id: currentUser.organization.id },
-              clientId: client.id,
-            },
-            {
-              abbr: projectAbbr,
-              organization: { id: currentUser.organization.id },
-              clientId: ALL_UUID,
-            },
-          ],
-          relations: { organization: true },
-        })
+        let project = undefined
+        if (tt.client.abbr != clientAbbr || tt.project.abbr != projectAbbr) {
+          // if client or project not changed, no need to control
+          project = await em.findOneOrFail(ProjectEntity, {
+            where: [
+              {
+                abbr: projectAbbr,
+                organization: { id: currentUser.organization.id },
+                client: {
+                  abbr: clientAbbr,
+                  organization: { id: currentUser.organization.id },
+                },
+                active: tt.project.abbr != projectAbbr ? true : undefined,
+              },
+              // if project changed, need to check if the new one is active
+              {
+                abbr: projectAbbr,
+                organization: { id: currentUser.organization.id },
+                clientId: ALL_UUID,
+                active: tt.project.abbr != projectAbbr ? true : undefined,
+              },
+            ],
+            relations: { organization: true },
+          })
+        }
 
         await em.update(TTEntity, id, {
           ...body,
