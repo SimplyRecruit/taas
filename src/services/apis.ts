@@ -17,7 +17,7 @@ Report,
 Resource,
 ResourceUpdateBody,
 GetClientsAndProjectsResBody,
-TableQueryParameters,
+TTGetAllParams,
 TTGetAllResBody,
 TTCreateBody,
 TTUpdateBody,
@@ -226,7 +226,7 @@ export default {
     },
     timeTrack: {
         async getAll(
-            queries: TableQueryParameters,
+            queries: TTGetAllParams,
         ) : Promise<AxiosResponse<TTGetAllResBody>>
         {
             const route = "/time-track"
@@ -275,10 +275,11 @@ export default {
         },
         async batchCreate(
             body: TTBatchCreateBody,
+            params: { userId: string, },
         ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
         {
-            const route = "/time-track/batch"
-            const url = route
+            const route = "/time-track/batch/:userId"
+            const url = createUrl(params, route)
             return await createAxiosInstance().request({
                 method: "post",
                 url,

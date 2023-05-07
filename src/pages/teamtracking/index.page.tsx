@@ -12,7 +12,7 @@ import { plainToClass } from 'class-transformer'
 import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
 import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
 
-export default function Tracker() {
+export default function TeamTracking() {
   const columns: ColumnsType<TT> = [
     {
       title: 'Date',
@@ -40,6 +40,12 @@ export default function Tracker() {
       sorter: true,
     },
     {
+      title: 'User',
+      dataIndex: 'userAbbr',
+      key: 'user.abbr',
+      sorter: true,
+    },
+    {
       title: 'Billable',
       dataIndex: 'billable',
       key: 'billable',
@@ -56,7 +62,6 @@ export default function Tracker() {
       title: 'Project',
       dataIndex: 'projectAbbr',
       key: 'project.abbr',
-      sorter: true,
     },
     {
       title: '',
@@ -91,16 +96,23 @@ export default function Tracker() {
     call: callTT,
     loading: loadingTT,
   } = useApi('timeTrack', 'getAll')
+
+  const { data: allClients, call: getAllClients } = useApi(
+    'client',
+    'getAll',
+    []
+  )
+  const { data: allProjects, call: getAllProjects } = useApi(
+    'project',
+    'getAll',
+    []
+  )
   const { data: workPeriods, call: getAllWorkPeriods } = useApi(
     'workPeriod',
     'getAll',
     []
   )
   const { call: deleteTT } = useApi('timeTrack', 'delete')
-  const { data: clientsAndProjects, call: getClientsAndProjects } = useApi(
-    'resource',
-    'getClientsAndProjects'
-  )
   const selectedRecord =
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
@@ -126,6 +138,7 @@ export default function Tracker() {
         sortBy: [sortBy],
         page: pageParam,
         pageSize: pageSizeParam,
+        userIds: ['all'],
       })
     )
   }
@@ -154,8 +167,8 @@ export default function Tracker() {
   }
 
   useEffect(() => {
-    getClientsAndProjects({ id: 'me' })
-
+    getAllClients({ entityStatus: 'active' })
+    getAllProjects({ entityStatus: 'active' })
     getAllWorkPeriods()
     getTTs(1, pageSize)
   }, [])
@@ -166,20 +179,22 @@ export default function Tracker() {
       <EditTTDrawer
         open={drawerOpen}
         value={selectedRecord}
-        clientOptions={clientsAndProjects?.clients}
-        projectOptions={clientsAndProjects?.projects}
+        clientOptions={allClients}
+        projectOptions={allProjects}
         onUpdate={onUpdate}
         onError={() => {
           messageApi.error('An error occured. Could not update timetrack.')
         }}
         onCancel={() => setDrawerOpen(false)}
       />
+
       <AddBatchTT
         onAdd={() => {
           getTTs(1, pageSize, sorter)
         }}
-        clientOptions={clientsAndProjects?.clients}
-        projectOptions={clientsAndProjects?.projects}
+        clientOptions={allClients}
+        projectOptions={allProjects}
+        userSelectable
       />
 
       <Table
