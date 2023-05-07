@@ -4,7 +4,7 @@ import useApi from '@/services/useApi'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
-import { TableQueryParameters, TT, WorkPeriod } from 'models'
+import { TT, TTGetAllParams, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
@@ -24,7 +24,8 @@ export default function TeamTracking() {
     {
       title: 'Client',
       dataIndex: 'clientAbbr',
-      key: 'clientAbbr',
+      key: 'client.abbr',
+      sorter: true,
     },
     {
       title: 'Hour',
@@ -40,8 +41,9 @@ export default function TeamTracking() {
     },
     {
       title: 'User',
-      dataIndex: 'user',
-      key: 'user',
+      dataIndex: 'userAbbr',
+      key: 'user.abbr',
+      sorter: true,
     },
     {
       title: 'Billable',
@@ -59,7 +61,7 @@ export default function TeamTracking() {
     {
       title: 'Project',
       dataIndex: 'projectAbbr',
-      key: 'projectAbbr',
+      key: 'project.abbr',
     },
     {
       title: '',
@@ -84,7 +86,6 @@ export default function TeamTracking() {
   ]
 
   const [messageApi, contextHolder] = message.useMessage()
-  const [isEndUser, setIsEndUser] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
@@ -121,22 +122,24 @@ export default function TeamTracking() {
     sorter: SorterResult<TT> | undefined = undefined
   ) {
     let sortBy: { column: string; direction: 'ASC' | 'DESC' }
-    if (sorter?.column) {
+    if (sorter) {
       sortBy = {
-        column: sorter.field! as string,
+        column: sorter.columnKey as string,
         direction: sorter.order == 'ascend' ? 'ASC' : 'DESC',
       }
     } else {
       sortBy = { column: 'date', direction: 'DESC' }
     }
+
     setSorter(sorter)
     setPage(pageParam)
     setPageSize(pageSizeParam)
     callTT(
-      TableQueryParameters.create({
+      TTGetAllParams.create({
         sortBy: [sortBy],
         page: pageParam,
         pageSize: pageSizeParam,
+        userIds: ['all'],
       })
     )
   }

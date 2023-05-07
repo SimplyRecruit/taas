@@ -17,7 +17,7 @@ Report,
 Resource,
 ResourceUpdateBody,
 GetClientsAndProjectsResBody,
-TableQueryParameters,
+TTGetAllParams,
 TTGetAllResBody,
 TTCreateBody,
 TTUpdateBody,
@@ -226,7 +226,7 @@ export default {
     },
     timeTrack: {
         async getAll(
-            queries: TableQueryParameters,
+            queries: TTGetAllParams,
         ) : Promise<AxiosResponse<TTGetAllResBody>>
         {
             const route = "/time-track"

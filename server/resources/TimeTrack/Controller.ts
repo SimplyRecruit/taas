@@ -2,13 +2,12 @@ import {
   TT,
   UserRole,
   TTCreateBody,
-  TableQueryParameters,
   WorkPeriod,
   TTUpdateBody,
+  TTGetAllParams,
 } from 'models'
 
 import {
-  Authorized,
   BadRequestError,
   CurrentUser,
   ForbiddenError,
@@ -38,12 +37,22 @@ export default class TimeTrackController {
   @Get(TTGetAllResBody)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
-    @QueryParams() { order, take, skip }: TableQueryParameters
+    @QueryParams() { order, take, skip, userIds }: TTGetAllParams
   ) {
+    const me = !(userIds && userIds.length)
     try {
+      let ttUserIds
+      if (me) ttUserIds = [currentUser.id]
+      else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
+      else ttUserIds = userIds
       const [entityObjects, count] = await TTEntity.findAndCount({
-        where: { user: { id: currentUser.id } },
-        relations: { client: true, project: true },
+        where: {
+          user: {
+            organization: { id: currentUser.organization.id },
+            id: ttUserIds[0] == 'all' ? undefined : In(ttUserIds),
+          },
+        },
+        relations: { user: !me, client: true, project: true },
         order,
         take,
         skip,
@@ -54,14 +63,20 @@ export default class TimeTrackController {
           billable: true,
           hour: true,
           ticketNo: true,
+          user: {
+            id: !me,
+            abbr: !me,
+          },
         },
       })
 
       return TTGetAllResBody.create({
-        data: entityObjects.map(({ client, project, ...rest }) =>
+        data: entityObjects.map(({ client, project, user, ...rest }) =>
           TT.create({
             clientAbbr: client.abbr,
             projectAbbr: project.abbr,
+            userAbbr: user?.abbr,
+            userId: user?.id,
             ...rest,
           })
         ),
