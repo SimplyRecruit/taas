@@ -14,7 +14,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
     pageSize: number
     page: number
-    userIds: string[]
+    userIds?: string[]
   }) {
     const instance = TableQueryParameters.create({
       sortBy,
