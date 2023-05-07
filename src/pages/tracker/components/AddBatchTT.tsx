@@ -57,7 +57,7 @@ export default function AddBatchTT({
     try {
       if (batch === null) return
       setShowResultsModal(true)
-      await callBatchCreate(batch, { id: selectedUserId })
+      await callBatchCreate(batch, { userId: selectedUserId })
       onAdd()
     } catch (error) {
       /* empty */

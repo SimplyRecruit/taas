@@ -275,7 +275,7 @@ export default {
         },
         async batchCreate(
             body: TTBatchCreateBody,
-            params: { id: string, },
+            params: { userId: string, },
         ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
         {
             const route = "/time-track/batch/:userId"

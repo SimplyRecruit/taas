@@ -288,7 +288,7 @@ export default class TimeTrackController {
   @Post([TTBatchCreateResBody], '/batch/:userId')
   async batchCreate(
     @Body() { bodies }: TTBatchCreateBody,
-    @Param('id') userId: string,
+    @Param('userId') userId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
     const resBodies: TTBatchCreateResBody[] = []
