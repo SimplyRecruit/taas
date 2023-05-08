@@ -49,7 +49,14 @@ export default function EditProjectDrawer({
         console.log('click')
         if (value) {
           await call({ date, ...rest }, { id: value.id })
-          onUpdate(TT.create({ id: value.id, date: date.dateObject, ...rest }))
+          onUpdate(
+            TT.create({
+              id: value.id,
+              date: date.dateObject,
+              userAbbr: value.userAbbr,
+              ...rest,
+            })
+          )
         } else {
           console.log('this should not happen')
         }
