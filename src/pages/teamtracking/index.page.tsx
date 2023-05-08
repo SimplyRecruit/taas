@@ -62,6 +62,7 @@ export default function TeamTracking() {
       title: 'Project',
       dataIndex: 'projectAbbr',
       key: 'project.abbr',
+      sorter: true,
     },
     {
       title: '',
