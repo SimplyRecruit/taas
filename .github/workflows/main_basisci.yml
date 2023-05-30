@@ -8,6 +8,9 @@ on:
     branches:
       - main
   workflow_dispatch:
+  
+env:
+  NEXT_PUBLIC_BASE_URL: https://basisci.azurewebsites.net
 
 jobs:
   build:
