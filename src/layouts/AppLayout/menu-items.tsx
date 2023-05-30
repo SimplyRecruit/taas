@@ -1,6 +1,6 @@
 import { Route } from '@/constants/routes'
 import Link from 'next/link'
-import { FaRegHandshake } from 'react-icons/fa'
+import { FaRegHandshake, FaUserClock } from 'react-icons/fa'
 import {
   FiBarChart2,
   FiCalendar,
@@ -9,7 +9,6 @@ import {
   FiSettings,
   FiUsers,
 } from 'react-icons/fi'
-import { IoGridOutline } from 'react-icons/io5'
 
 type MenuItem = {
   icon: JSX.Element
@@ -30,6 +29,11 @@ const topItems = [
     icon: <FiClock size={iconSize} />,
     label: 'Time Tracker',
     path: Route.TimeTracker,
+  },
+  {
+    icon: <FaUserClock size={18} />,
+    label: 'Team Tracking',
+    path: Route.TeamTracking,
   },
   {
     icon: <FiBarChart2 size={iconSize} />,

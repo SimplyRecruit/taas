@@ -35,13 +35,17 @@ export default class ClientController {
     @CurrentUser() currentUser: UserEntity,
     @QueryParam('entityStatus') entityStatus: EntityStatus
   ) {
-    const query: any = {
-      where: { organization: { id: currentUser.organization.id } },
+    let active = undefined
+    if (entityStatus == 'active') active = true
+    else if (entityStatus == 'archived') active = false
+
+    const rows = await ClientEntity.find({
+      where: {
+        organization: { id: currentUser.organization.id },
+        active,
+      },
       relations: { clientUser: { user: true } },
-    }
-    if (entityStatus == 'active') query.where.active = true
-    else if (entityStatus == 'archived') query.where.active = false
-    const rows = await ClientEntity.find(query)
+    })
     return rows.map(
       ({
         id,
