@@ -158,7 +158,7 @@ export default class UserController {
         const user = await em.findOneOrFail(UserEntity, {
           where: {
             organization: {
-              id: currentUser.id,
+              id: currentUser.organization.id,
             },
             abbr,
           },
@@ -174,8 +174,10 @@ export default class UserController {
         await sendEmail(user.email, emailTemplate)
       } catch (error: any) {
         //TODO error handling
+        console.log(error)
       }
     })
+    return 'Invite sent successfully'
   }
 
   @Post(undefined, '/reset-password')

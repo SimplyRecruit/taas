@@ -1,15 +1,17 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Button, message, Table, Tag } from 'antd'
+import { Button, message, Space, Table, Tag, Typography } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
-import { Resource, ResourceUpdateBody, UserRole } from 'models'
+import { Resource, ResourceUpdateBody, UserRole, UserStatus } from 'models'
 import useApi from '@/services/useApi'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
+import { MdOutlinePending } from 'react-icons/md'
+import useColor from '@/styles/useColor'
 
 function getUserRoleTagColor(value: UserRole) {
   switch (value) {
@@ -22,6 +24,7 @@ function getUserRoleTagColor(value: UserRole) {
   }
 }
 export default function Team() {
+  const { getColor } = useColor()
   const columns: ColumnsType<Resource> = [
     {
       title: 'Abbreviation',
@@ -73,10 +76,30 @@ export default function Team() {
       dataIndex: 'hourlyRate',
       key: 'hourlyRate',
       width: 150,
-      render: (value: number) => (
-        <div style={{ textAlign: 'right' }}>{value}</div>
-      ),
+      render: (_, resource: Resource) => {
+        if (resource.status === UserStatus.PENDING)
+          return (
+            <Space>
+              <div className="center">
+                <MdOutlinePending color={getColor('orange')} size={16} />
+                <Typography.Text type="warning">Pending invite</Typography.Text>
+              </div>
+              <Button
+                size="small"
+                type="dashed"
+                loading={loadingResendInvite && currentRecord === resource}
+                onClick={() => onResendInvite(resource)}
+              >
+                Re-send
+              </Button>
+            </Space>
+          )
+        return <div style={{ textAlign: 'right' }}>{resource.hourlyRate}</div>
+      },
       sorter: (a, b) => a.hourlyRate - b.hourlyRate,
+      onCell: resource => ({
+        colSpan: resource.status === UserStatus.PENDING ? 2 : 1,
+      }),
     },
     {
       title: 'Start date',
@@ -85,6 +108,9 @@ export default function Team() {
       render: (value: Date) => <DateCell value={value} />,
       sorter: (a, b) =>
         new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
+      onCell: resource => ({
+        colSpan: resource.status === UserStatus.PENDING ? 0 : 1,
+      }),
     },
     {
       title: '',
@@ -113,6 +139,10 @@ export default function Team() {
     setData,
   } = useApi('resource', 'getAll', [])
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
+  const { loading: loadingResendInvite, call: resendInvite } = useApi(
+    'user',
+    'reInviteMember'
+  )
 
   const [messageApi, contextHolder] = message.useMessage()
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
@@ -122,6 +152,16 @@ export default function Team() {
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
 
   const loading = loadingUpdate || loadingGetAll
+  async function onResendInvite(resource: Resource) {
+    setCurrentRecord(resource)
+    try {
+      await resendInvite({ abbr: resource.abbr })
+      messageApi.success('Sent an invite e-mail to ' + resource.email + '.')
+    } catch (error) {
+      messageApi.error('Could not sent the invite e-mail. Please try again.')
+    }
+    setCurrentRecord(null)
+  }
   const filteredData = useMemo(() => {
     let filtered = data
     if (selectedStatus !== 'all') {
