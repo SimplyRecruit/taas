@@ -93,7 +93,7 @@ export default class UserController {
         })
 
         const token = await createSessionToken(user, em)
-        const link = createResetPasswordLink(req, token, email)
+        const link = createResetPasswordLink(req, token, email, true)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {
           name,
           link,
@@ -129,7 +129,7 @@ export default class UserController {
         })
         id = user.id
         const token = await createSessionToken(user, em)
-        const link = createResetPasswordLink(req, token, email)
+        const link = createResetPasswordLink(req, token, email, true)
         const emailTemplate = new EmailTemplate.Invitation(language, {
           name,
           link,
@@ -189,7 +189,7 @@ export default class UserController {
       const user = await UserEntity.findOneByOrFail({ email })
       if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
       const token = await createSessionToken(user)
-      const link = createResetPasswordLink(req, token, email)
+      const link = createResetPasswordLink(req, token, email, false)
       const emailTemplate = new EmailTemplate.ResetPassword(language, {
         name: user.name,
         link,
