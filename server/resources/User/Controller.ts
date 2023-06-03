@@ -130,7 +130,7 @@ export default class UserController {
         id = user.id
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email)
-        const emailTemplate = new EmailTemplate.ResetPassword(language, {
+        const emailTemplate = new EmailTemplate.Invitation(language, {
           name,
           link,
         })

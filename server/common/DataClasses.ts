@@ -15,7 +15,7 @@ export namespace EmailTemplate {
       return this.params
     }
   }
-  export class Verification extends Base {
+  export class Invitation extends Base {
     constructor(
       language: Language,
       parameters: { name: string; link: string }
@@ -23,8 +23,8 @@ export namespace EmailTemplate {
       super(language, parameters)
     }
     protected static ids = {
-      en: 'd-37ccd7664e5242319a3e979e30d788d1',
-      tr: 'd-ef656d97a1d6440b82f68f7c5686c95f',
+      en: 'd-fec330a5361c406fbc0441ed861cf10c',
+      tr: 'd-fec330a5361c406fbc0441ed861cf10c',
     }
   }
   export class ResetPassword extends Base {
@@ -36,7 +36,7 @@ export namespace EmailTemplate {
     }
     protected static ids = {
       en: 'd-808240c1787147a183cab644da1360ad',
-      tr: '',
+      tr: 'd-808240c1787147a183cab644da1360ad',
     }
   }
 }
