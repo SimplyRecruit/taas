@@ -85,6 +85,7 @@ export default class ClientController {
                       active,
                       startDate,
                       hourlyRate,
+                      status,
                     },
                   }) =>
                     Resource.create({
@@ -96,6 +97,7 @@ export default class ClientController {
                       active,
                       startDate,
                       hourlyRate,
+                      status,
                     })
                 ),
         })
