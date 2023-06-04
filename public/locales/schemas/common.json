@@ -7,6 +7,10 @@
             "type": "string",
             "minLength": 1
         },
+        "test": {
+            "type": "string",
+            "minLength": 1
+        },
         "button": {
             "type": "object",
             "properties": {
@@ -46,16 +50,65 @@
                 "language"
             ]
         },
-        "test": {
-            "type": "string",
-            "minLength": 1
+        "navigationMenu": {
+            "type": "object",
+            "properties": {
+                "timeTracker": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "teamTracking": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "reports": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "manage": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "periods": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "team": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "clients": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "projects": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "settings": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": [
+                "timeTracker",
+                "teamTracking",
+                "reports",
+                "manage",
+                "periods",
+                "team",
+                "clients",
+                "projects",
+                "settings"
+            ]
         }
     },
     "required": [
         "$schema",
+        "test",
         "button",
         "profileMenu",
-        "test"
+        "navigationMenu"
     ],
     "additionalProperties": false
 }

@@ -9,6 +9,11 @@
         "thisMonth": "This Month",
         "lastMonth": "Last Month",
         "thisYear": "This Year",
-        "lastYear": "Last Year"
+        "lastYear": "Last Year",
+        "billable": "Billable",
+        "notBillable": "Not Billable",
+        "team": "Team",
+        "client": "Clients",
+        "project": "Projects"
     }
 }

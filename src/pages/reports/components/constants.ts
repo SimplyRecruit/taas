@@ -15,20 +15,35 @@ const rangePresets: {
   },
   {
     label: 'thisWeek',
-    value: [dayjs().startOf('week'), dayjs().endOf('day')],
+    value: [
+      dayjs().subtract(1, 'day').startOf('week').add(1, 'day'),
+      dayjs().subtract(1, 'day').endOf('week').add(1, 'day'),
+    ],
   },
   {
     label: 'lastWeek',
     value: [
-      dayjs().subtract(1, 'week').startOf('week'),
-      dayjs().subtract(1, 'week').endOf('week'),
+      dayjs()
+        .subtract(1, 'day')
+        .subtract(1, 'week')
+        .startOf('week')
+        .add(1, 'day'),
+      dayjs()
+        .subtract(1, 'day')
+        .subtract(1, 'week')
+        .endOf('week')
+        .add(1, 'day'),
     ],
   },
   {
     label: 'past2Weeks',
     value: [
-      dayjs().subtract(2, 'week').startOf('week'),
-      dayjs().subtract(1, 'week').endOf('week'),
+      dayjs()
+        .subtract(1, 'day')
+        .subtract(1, 'week')
+        .startOf('week')
+        .add(1, 'day'),
+      dayjs().subtract(1, 'day').endOf('week').add(1, 'day'),
     ],
   },
   {
@@ -55,7 +70,7 @@ const rangePresets: {
   },
 ]
 
-const defaultRangePreset = rangePresets[3].value
+const defaultRangePreset = rangePresets[2].value
 
 const baseConfig = {
   color: ['#8BC34A', '#AED581'],

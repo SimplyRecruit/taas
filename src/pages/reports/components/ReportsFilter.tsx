@@ -99,7 +99,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             <DropdownAutocomplete
               badgeCount={selectedResources.length}
               onChange={e => setSelectedResources(e)}
-              title="Team"
+              title={t('filter.team')}
               options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
               disabled={loadingGetAllResources}
             />
@@ -107,14 +107,14 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
           <DropdownAutocomplete
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}
-            title="Client"
+            title={t('filter.client')}
             options={clients}
             disabled={loadingGetAllClients || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
-            title="Project"
+            title={t('filter.project')}
             options={projects}
             disabled={loadingGetAllProjects || loadingGetClientsAndProjects}
           />
@@ -122,10 +122,10 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             badgeCount={selectedStatus.length}
             onChange={e => setSelectedStatus(e)}
             searchable={false}
-            title="Billable"
+            title={t('filter.billable')}
             options={[
-              { label: 'Billable', value: 'billable' },
-              { label: 'Not billable', value: 'notBillable' },
+              { label: t('filter.billable'), value: 'billable' },
+              { label: t('filter.notBillable'), value: 'notBillable' },
             ]}
           />
         </Space>

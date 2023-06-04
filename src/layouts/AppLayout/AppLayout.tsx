@@ -6,12 +6,21 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { FiBell } from 'react-icons/fi'
 import { adminMenuItems, topMenuItems } from './menu-items'
+import Link from 'next/link'
+import { useTranslation } from 'next-i18next'
+
+type MenuItem = {
+  icon: JSX.Element
+  label: string
+  path: string
+}
 
 interface AppLayoutProps {
   children: React.ReactNode
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const [sidebarCollapsed] = useState(false)
 
@@ -74,7 +83,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         >
           <div style={{ height: '100%' }}>
             <Menu
-              items={topMenuItems}
+              items={generateMenuItems(topMenuItems)}
               mode="inline"
               selectedKeys={[router.pathname.split('/')[1]]}
             />
@@ -82,9 +91,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
               style={{ height: '100%' }}
               items={[
                 {
-                  label: '‏ ‏ ‏ Manage',
+                  label: '‏ ‏ ‏' + t('navigationMenu.manage'),
                   key: 'admin',
-                  children: adminMenuItems,
+                  children: generateMenuItems(adminMenuItems),
                   type: 'group',
                 },
               ]}
@@ -100,4 +109,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </Layout>
     </Layout>
   )
+  function generateMenuItems(items: MenuItem[]) {
+    return items.map(({ label, icon, path }) => ({
+      key: path.split('/')[1],
+      icon: <Link href={path}>{icon}</Link>,
+      label: <Link href={path}>{t('navigationMenu.' + label)}</Link>,
+    }))
+  }
 }
