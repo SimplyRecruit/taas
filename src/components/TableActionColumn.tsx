@@ -2,22 +2,18 @@ import { FiEdit2 } from 'react-icons/fi'
 import { MenuProps, Space } from 'antd'
 import { BiArchiveIn, BiArchiveOut } from 'react-icons/bi'
 import ActionMenu from '@/components/ActionMenu'
-import { MdOutlineMail } from 'react-icons/md'
-import { Resource, UserStatus } from 'models'
 
 interface RenderProps {
   onEdit: () => void
   onArchive: () => void
   onRestore: () => void
-  onSendEmail: () => void
-  resource: Resource
+  isActive: boolean
 }
 export default function TableActionColumn({
   onEdit,
   onArchive,
   onRestore,
-  onSendEmail,
-  resource,
+  isActive,
 }: RenderProps) {
   const activeMenuItems: MenuProps['items'] = [
     {
@@ -25,14 +21,6 @@ export default function TableActionColumn({
       icon: <BiArchiveIn />,
       label: 'Archive',
       onClick: onArchive,
-    },
-  ]
-  const pendingMenuItems: MenuProps['items'] = [
-    {
-      key: 'invite',
-      icon: <MdOutlineMail />,
-      label: 'Send invite email',
-      onClick: onSendEmail,
     },
   ]
   const archivedMenuItems: MenuProps['items'] = [
@@ -44,14 +32,14 @@ export default function TableActionColumn({
     },
   ]
 
-  let actionMenuItems
-  if (resource.status == UserStatus.PENDING) actionMenuItems = pendingMenuItems
-  else if (resource.active) actionMenuItems = activeMenuItems
-  else actionMenuItems = archivedMenuItems
   return (
     <Space>
       <FiEdit2 style={{ cursor: 'pointer' }} onClick={onEdit} />
-      <ActionMenu items={actionMenuItems} />
+      {isActive ? (
+        <ActionMenu items={activeMenuItems} />
+      ) : (
+        <ActionMenu items={archivedMenuItems} />
+      )}
     </Space>
   )
 }
