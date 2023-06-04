@@ -8,12 +8,14 @@ import {
 } from '@/pages/reports/components/constants'
 import { ReportReqBody, UserRole } from 'models'
 import { getUserFromCookies } from '@/auth/utils/AuthUtil'
+import { useTranslation } from 'next-i18next'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
 }
 
 export default function ReportsFilter({ onFilter }: RenderProps) {
+  const { t } = useTranslation('reports')
   const {
     data: allClients,
     call: getAllClients,
@@ -130,7 +132,10 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
       </Card>
       <DatePicker.RangePicker
         allowClear={false}
-        presets={rangePresets}
+        presets={rangePresets.map(preset => ({
+          ...preset,
+          label: t('filter.' + preset.label),
+        }))}
         defaultValue={defaultRangePreset}
         onChange={values => {
           if (values) {

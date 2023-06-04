@@ -1,0 +1,14 @@
+{
+    "$schema": "../schemas/reports.json",
+    "filter": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "thisWeek": "This Week",
+        "lastWeek": "Last Week",
+        "past2Weeks": "Past 2 Weeks",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "thisYear": "This Year",
+        "lastYear": "Last Year"
+    }
+}

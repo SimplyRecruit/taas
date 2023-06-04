@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "",
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "minLength": 1
+        },
+        "filter": {
+            "type": "object",
+            "properties": {
+                "today": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "yesterday": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "thisWeek": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "lastWeek": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "past2Weeks": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "thisMonth": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "lastMonth": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "thisYear": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "lastYear": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": [
+                "today",
+                "yesterday",
+                "thisWeek",
+                "lastWeek",
+                "past2Weeks",
+                "thisMonth",
+                "lastMonth",
+                "thisYear",
+                "lastYear"
+            ]
+        }
+    },
+    "required": [
+        "$schema",
+        "filter"
+    ],
+    "additionalProperties": false
+}
