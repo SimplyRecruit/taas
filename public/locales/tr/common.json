@@ -17,8 +17,8 @@
         "manage": "Yönet",
         "periods": "Dönemler",
         "team": "Takım",
-        "client": "Müşteriler",
-        "project": "Projeler",
+        "clients": "Müşteriler",
+        "projects": "Projeler",
         "settings": "Ayarlar"
     }
 }
