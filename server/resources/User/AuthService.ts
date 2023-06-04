@@ -73,7 +73,7 @@ export function createResetPasswordLink(
     token +
     '&email=' +
     encodeURIComponent(email) +
-    '&invitation' +
+    '&invitation=' +
     isInvitation.toString()
   )
 }
