@@ -145,13 +145,13 @@ export default function AddBatchTT({
   return (
     <>
       <Collapse style={{ marginTop: 10, marginBottom: 10 }}>
-        <Collapse.Panel header="Batch Addition" key="1">
+        <Collapse.Panel header="Add TT" key="1">
           {userSelectable && (
             <>
               <Typography.Text>User: </Typography.Text>
               <Select
                 showSearch
-                style={{ width: 250 }}
+                style={{ width: 250, marginBottom: 10 }}
                 options={allResources.map(e => ({
                   value: e.id,
                   label: e.abbr,
@@ -216,7 +216,7 @@ export default function AddBatchTT({
         disabled={batch === null || !batch.bodies.length || errorExists}
         onClick={performBatchCreation}
       >
-        Batch Add
+        Add time track
       </Button>
     )
   }
