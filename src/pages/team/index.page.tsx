@@ -1,6 +1,6 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Button, message, Space, Table, Tag, Typography } from 'antd'
+import { Badge, Button, message, Space, Table, Tag, Typography } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import EditMemberDrawer from '@/pages/team/components/EditMemberDrawer'
 import { Resource, ResourceUpdateBody, UserRole, UserStatus } from 'models'
@@ -10,7 +10,6 @@ import { ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
-import { MdOutlinePending } from 'react-icons/md'
 import useColor from '@/styles/useColor'
 
 function getUserRoleTagColor(value: UserRole) {
@@ -61,6 +60,17 @@ export default function Team() {
       dataIndex: 'email',
       key: 'email',
       sorter: (a, b) => a.email.localeCompare(b.email),
+      render: (email: string, resource: Resource) => {
+        if (resource.status === UserStatus.PENDING)
+          return (
+            <Space>
+              <span>{email}</span>
+              <Badge color={getColor('orange')} />
+              <Typography.Text type="warning">Pending invite</Typography.Text>
+            </Space>
+          )
+        return <span>{email}</span>
+      },
     },
     {
       title: 'Role',
@@ -77,29 +87,9 @@ export default function Team() {
       key: 'hourlyRate',
       width: 150,
       render: (_, resource: Resource) => {
-        if (resource.status === UserStatus.PENDING)
-          return (
-            <Space>
-              <div className="center">
-                <MdOutlinePending color={getColor('orange')} size={16} />
-                <Typography.Text type="warning">Pending invite</Typography.Text>
-              </div>
-              <Button
-                size="small"
-                type="dashed"
-                loading={loadingResendInvite && currentRecord === resource}
-                onClick={() => onResendInvite(resource)}
-              >
-                Re-send
-              </Button>
-            </Space>
-          )
         return <div style={{ textAlign: 'right' }}>{resource.hourlyRate}</div>
       },
       sorter: (a, b) => a.hourlyRate - b.hourlyRate,
-      onCell: resource => ({
-        colSpan: resource.status === UserStatus.PENDING ? 2 : 1,
-      }),
     },
     {
       title: 'Start date',
@@ -108,25 +98,23 @@ export default function Team() {
       render: (value: Date) => <DateCell value={value} />,
       sorter: (a, b) =>
         new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf(),
-      onCell: resource => ({
-        colSpan: resource.status === UserStatus.PENDING ? 0 : 1,
-      }),
     },
     {
       title: '',
       key: 'action',
       fixed: 'right',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
-      render: (record: Resource) => (
+      render: (resource: Resource) => (
         <TableActionColumn
-          isActive={record.active}
+          resource={resource}
+          onSendEmail={() => onResendInvite(resource)}
           onEdit={() => {
-            setCurrentRecord(record)
-            setSelectedRowKey(record.id)
+            setCurrentRecord(resource)
+            setSelectedRowKey(resource.id)
             setInviteMemberModalOpen(true)
           }}
-          onArchive={() => setResourceStatus(false, record)}
-          onRestore={() => setResourceStatus(true, record)}
+          onArchive={() => setResourceStatus(false, resource)}
+          onRestore={() => setResourceStatus(true, resource)}
         />
       ),
     },
@@ -139,10 +127,7 @@ export default function Team() {
     setData,
   } = useApi('resource', 'getAll', [])
   const { loading: loadingUpdate, call: update } = useApi('resource', 'update')
-  const { loading: loadingResendInvite, call: resendInvite } = useApi(
-    'user',
-    'reInviteMember'
-  )
+  const { call: resendInvite } = useApi('user', 'reInviteMember')
 
   const [messageApi, contextHolder] = message.useMessage()
   const [inviteMemberModalOpen, setInviteMemberModalOpen] = useState(false)
