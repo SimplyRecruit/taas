@@ -5,30 +5,30 @@ const lang = "en"
 const routeParamRegex = /^:(\w+)$/;
 // Model Imports
 import { 
-Client,
-ClientUpdateBody,
-ClientCreateBody,
-ClientUpdateAccessBody,
-Project,
-ProjectCreateBody,
-ProjectUpdateBody,
-ReportReqBody,
-Report,
-Resource,
-ResourceUpdateBody,
-GetClientsAndProjectsResBody,
+WorkPeriod,
+LoginReqBody,
+RegisterOrganizationReqBody,
+ResourceCreateBody,
+ResetPasswordReqBody,
+User,
 TTGetAllParams,
 TTGetAllResBody,
 TTCreateBody,
 TTUpdateBody,
 TTBatchCreateBody,
 TTBatchCreateResBody,
-LoginReqBody,
-RegisterOrganizationReqBody,
-ResourceCreateBody,
-ResetPasswordReqBody,
-User,
-WorkPeriod,
+Resource,
+ResourceUpdateBody,
+GetClientsAndProjectsResBody,
+ReportReqBody,
+Report,
+Project,
+ProjectCreateBody,
+ProjectUpdateBody,
+Client,
+ClientUpdateBody,
+ClientCreateBody,
+ClientUpdateAccessBody,
 } from "models"
 
 function createAxiosInstance() {
@@ -48,6 +48,280 @@ function createUrl(params: { [key: string]: string }, route: string) {
 }
 
 export default {
+    workPeriod: {
+        async getAll(
+        ) : Promise<AxiosResponse<WorkPeriod[]>>
+        {
+            const route = "/work-period"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+            })
+        },
+        async create(
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/work-period"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async delete(
+            body: WorkPeriod,
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/work-period"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "delete",
+                url,
+                data: body,
+            })
+        },
+    },
+    user: {
+        async login(
+            body: LoginReqBody,
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/user/login"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async registerOrganization(
+            body: RegisterOrganizationReqBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/user/register-organization"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async inviteMember(
+            body: ResourceCreateBody,
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/user/invite-member"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async reInviteMember(
+            queries: { abbr: string, },
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/user/re-invite-member"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                params: queries,
+            })
+        },
+        async resetPassword(
+            body: ResetPasswordReqBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/user/reset-password"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async forgotPassword(
+            queries: { email: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/user/forgot-password"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                params: queries,
+            })
+        },
+        async me(
+        ) : Promise<AxiosResponse<User>>
+        {
+            const route = "/user/me"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+            })
+        },
+    },
+    timeTrack: {
+        async getAll(
+            queries: TTGetAllParams,
+        ) : Promise<AxiosResponse<TTGetAllResBody>>
+        {
+            const route = "/time-track"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+                params: queries,
+            })
+        },
+        async create(
+            body: TTCreateBody,
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/time-track"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async update(
+            body: TTUpdateBody,
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/time-track/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "patch",
+                url,
+                data: body,
+            })
+        },
+        async delete(
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/time-track/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "delete",
+                url,
+            })
+        },
+        async batchCreate(
+            body: TTBatchCreateBody,
+            params: { userId: string, },
+        ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
+        {
+            const route = "/time-track/batch/:userId"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+    },
+    resource: {
+        async getAll(
+            queries: { entityStatus: string, },
+        ) : Promise<AxiosResponse<Resource[]>>
+        {
+            const route = "/resource"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+                params: queries,
+            })
+        },
+        async update(
+            body: ResourceUpdateBody,
+            params: { id: string, },
+        ) : Promise<AxiosResponse<string>>
+        {
+            const route = "/resource/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "patch",
+                url,
+                data: body,
+            })
+        },
+        async getClientsAndProjects(
+            params: { id: string, },
+        ) : Promise<AxiosResponse<GetClientsAndProjectsResBody>>
+        {
+            const route = "/resource/:id/clients-and-projects"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+            })
+        },
+    },
+    report: {
+        async get(
+            body: ReportReqBody,
+        ) : Promise<AxiosResponse<Report[]>>
+        {
+            const route = "/report"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+    },
+    project: {
+        async getAll(
+            queries: { entityStatus: string, },
+        ) : Promise<AxiosResponse<Project[]>>
+        {
+            const route = "/project"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+                params: queries,
+            })
+        },
+        async create(
+            body: ProjectCreateBody,
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/project"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async update(
+            body: ProjectUpdateBody,
+            params: { id: string, },
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/project/:id"
+            const url = createUrl(params, route)
+            return await createAxiosInstance().request({
+                method: "patch",
+                url,
+                data: body,
+            })
+        },
+    },
     client: {
         async getAll(
             queries: { entityStatus: string, },
@@ -130,268 +404,6 @@ export default {
             return await createAxiosInstance().request({
                 method: "get",
                 url,
-            })
-        },
-    },
-    project: {
-        async getAll(
-            queries: { entityStatus: string, },
-        ) : Promise<AxiosResponse<Project[]>>
-        {
-            const route = "/project"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-                params: queries,
-            })
-        },
-        async create(
-            body: ProjectCreateBody,
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/project"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async update(
-            body: ProjectUpdateBody,
-            params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/project/:id"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "patch",
-                url,
-                data: body,
-            })
-        },
-    },
-    report: {
-        async get(
-            body: ReportReqBody,
-        ) : Promise<AxiosResponse<Report[]>>
-        {
-            const route = "/report"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-    },
-    resource: {
-        async getAll(
-            queries: { entityStatus: string, },
-        ) : Promise<AxiosResponse<Resource[]>>
-        {
-            const route = "/resource"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-                params: queries,
-            })
-        },
-        async update(
-            body: ResourceUpdateBody,
-            params: { id: string, },
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/resource/:id"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "patch",
-                url,
-                data: body,
-            })
-        },
-        async getClientsAndProjects(
-            params: { id: string, },
-        ) : Promise<AxiosResponse<GetClientsAndProjectsResBody>>
-        {
-            const route = "/resource/:id/clients-and-projects"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-            })
-        },
-    },
-    timeTrack: {
-        async getAll(
-            queries: TTGetAllParams,
-        ) : Promise<AxiosResponse<TTGetAllResBody>>
-        {
-            const route = "/time-track"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-                params: queries,
-            })
-        },
-        async create(
-            body: TTCreateBody,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/time-track"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async update(
-            body: TTUpdateBody,
-            params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/time-track/:id"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "patch",
-                url,
-                data: body,
-            })
-        },
-        async delete(
-            params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/time-track/:id"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "delete",
-                url,
-            })
-        },
-        async batchCreate(
-            body: TTBatchCreateBody,
-            params: { userId: string, },
-        ) : Promise<AxiosResponse<TTBatchCreateResBody[]>>
-        {
-            const route = "/time-track/batch/:userId"
-            const url = createUrl(params, route)
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-    },
-    user: {
-        async login(
-            body: LoginReqBody,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/user/login"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async registerOrganization(
-            body: RegisterOrganizationReqBody,
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/user/register-organization"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async inviteMember(
-            body: ResourceCreateBody,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/user/invite-member"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async resetPassword(
-            body: ResetPasswordReqBody,
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/user/reset-password"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async forgotPassword(
-            queries: { email: string, },
-        ) : Promise<AxiosResponse<any>>
-        {
-            const route = "/user/forgot-password"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                params: queries,
-            })
-        },
-        async me(
-        ) : Promise<AxiosResponse<User>>
-        {
-            const route = "/user/me"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-            })
-        },
-    },
-    workPeriod: {
-        async getAll(
-        ) : Promise<AxiosResponse<WorkPeriod[]>>
-        {
-            const route = "/work-period"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "get",
-                url,
-            })
-        },
-        async create(
-            body: WorkPeriod,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/work-period"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
-            })
-        },
-        async delete(
-            body: WorkPeriod,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/work-period"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "delete",
-                url,
-                data: body,
             })
         },
     },
