@@ -15,35 +15,20 @@ const rangePresets: {
   },
   {
     label: 'thisWeek',
-    value: [
-      dayjs().subtract(1, 'day').startOf('week').add(1, 'day'),
-      dayjs().subtract(1, 'day').endOf('week').add(1, 'day'),
-    ],
+    value: [dayjs().startOf('week'), dayjs().endOf('week')],
   },
   {
     label: 'lastWeek',
     value: [
-      dayjs()
-        .subtract(1, 'day')
-        .subtract(1, 'week')
-        .startOf('week')
-        .add(1, 'day'),
-      dayjs()
-        .subtract(1, 'day')
-        .subtract(1, 'week')
-        .endOf('week')
-        .add(1, 'day'),
+      dayjs().subtract(1, 'week').startOf('week'),
+      dayjs().subtract(1, 'week').endOf('week'),
     ],
   },
   {
     label: 'past2Weeks',
     value: [
-      dayjs()
-        .subtract(1, 'day')
-        .subtract(1, 'week')
-        .startOf('week')
-        .add(1, 'day'),
-      dayjs().subtract(1, 'day').endOf('week').add(1, 'day'),
+      dayjs().subtract(2, 'week').startOf('week'),
+      dayjs().subtract(1, 'week').endOf('week'),
     ],
   },
   {
