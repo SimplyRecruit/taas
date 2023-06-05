@@ -8,12 +8,14 @@ import {
 } from '@/pages/reports/components/constants'
 import { ReportReqBody, UserRole } from 'models'
 import { getUserFromCookies } from '@/auth/utils/AuthUtil'
+import { useTranslation } from 'next-i18next'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
 }
 
 export default function ReportsFilter({ onFilter }: RenderProps) {
+  const { t } = useTranslation('reports')
   const {
     data: allClients,
     call: getAllClients,
@@ -97,7 +99,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             <DropdownAutocomplete
               badgeCount={selectedResources.length}
               onChange={e => setSelectedResources(e)}
-              title="Team"
+              title={t('filter.team')}
               options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
               disabled={loadingGetAllResources}
             />
@@ -105,14 +107,14 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
           <DropdownAutocomplete
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}
-            title="Client"
+            title={t('filter.client')}
             options={clients}
             disabled={loadingGetAllClients || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
-            title="Project"
+            title={t('filter.project')}
             options={projects}
             disabled={loadingGetAllProjects || loadingGetClientsAndProjects}
           />
@@ -120,17 +122,20 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             badgeCount={selectedStatus.length}
             onChange={e => setSelectedStatus(e)}
             searchable={false}
-            title="Billable"
+            title={t('filter.billable')}
             options={[
-              { label: 'Billable', value: 'billable' },
-              { label: 'Not billable', value: 'notBillable' },
+              { label: t('filter.billable'), value: 'billable' },
+              { label: t('filter.notBillable'), value: 'notBillable' },
             ]}
           />
         </Space>
       </Card>
       <DatePicker.RangePicker
         allowClear={false}
-        presets={rangePresets}
+        presets={rangePresets.map(preset => ({
+          ...preset,
+          label: t('filter.' + preset.label),
+        }))}
         defaultValue={defaultRangePreset}
         onChange={values => {
           if (values) {

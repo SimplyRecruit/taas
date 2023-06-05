@@ -37,6 +37,7 @@ export default class ResourceController {
         active: true,
         hourlyRate: true,
         startDate: true,
+        status: true,
       },
     }
     if (entityStatus == 'active') query.where.active = true

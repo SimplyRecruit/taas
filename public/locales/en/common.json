@@ -9,5 +9,16 @@
         "settings": "Settings",
         "signOut": "Sign Out",
         "language": "Language: {{lang}}"
+    },
+    "navigationMenu": {
+        "timeTracker": "Time Tracker",
+        "teamTracking": "Team Tracking",
+        "reports": "Reports",
+        "manage": "Manage",
+        "periods": "Periods",
+        "team": "Team",
+        "clients": "Clients",
+        "projects": "Projects",
+        "settings": "Settings"
     }
 }

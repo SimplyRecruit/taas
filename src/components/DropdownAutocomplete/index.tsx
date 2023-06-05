@@ -18,7 +18,7 @@ interface RenderProps {
   options?: OptionType[]
   title: string
   searchable?: boolean
-  actionButtons?: boolean
+  hasActionButtons?: boolean
   badgeCount?: number
   children?: ReactNode
 }

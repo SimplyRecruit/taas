@@ -10,12 +10,14 @@ import ReportsFilter from '@/pages/reports/components/ReportsFilter'
 import { Card, Space, Spin } from 'antd'
 import { baseConfig } from '@/pages/reports/components/constants'
 import { formatDate } from '@/util'
+import { useTranslation } from 'next-i18next'
 const ColumnChart = dynamic(
   () => import('@ant-design/plots').then(({ Column }) => Column),
   { ssr: false }
 )
 
 export default function ReportsPage() {
+  const { t } = useTranslation('reports')
   const { data, call, loading } = useApi('report', 'get', [])
 
   const config: ColumnConfig = useMemo(() => {
@@ -76,7 +78,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   locale ??= 'en'
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common'])),
+      ...(await serverSideTranslations(locale, ['reports', 'common'])),
     },
   }
 }

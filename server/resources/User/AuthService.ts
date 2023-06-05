@@ -62,7 +62,8 @@ export async function currentOrganizationChecker(
 export function createResetPasswordLink(
   req: Request,
   token: string,
-  email: string
+  email: string,
+  isInvitation: boolean
 ) {
   return (
     req.protocol +
@@ -71,7 +72,9 @@ export function createResetPasswordLink(
     `/auth/reset-password?token=` +
     token +
     '&email=' +
-    encodeURIComponent(email)
+    encodeURIComponent(email) +
+    '&invitation=' +
+    isInvitation.toString()
   )
 }
 

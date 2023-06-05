@@ -14,6 +14,7 @@ import {
 import {
   Authorized,
   CurrentUser,
+  ForbiddenError,
   HeaderParam,
   InternalServerError,
   JsonController,
@@ -93,7 +94,7 @@ export default class UserController {
         })
 
         const token = await createSessionToken(user, em)
-        const link = createResetPasswordLink(req, token, email)
+        const link = createResetPasswordLink(req, token, email, true)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {
           name,
           link,
@@ -129,8 +130,8 @@ export default class UserController {
         })
         id = user.id
         const token = await createSessionToken(user, em)
-        const link = createResetPasswordLink(req, token, email)
-        const emailTemplate = new EmailTemplate.ResetPassword(language, {
+        const link = createResetPasswordLink(req, token, email, true)
+        const emailTemplate = new EmailTemplate.Invitation(language, {
           name,
           link,
         })
@@ -143,6 +144,41 @@ export default class UserController {
       }
     })
     return id
+  }
+
+  @Post(String, '/re-invite-member')
+  @Authorized(UserRole.ADMIN)
+  async reInviteMember(
+    @QueryParam('abbr') abbr: string,
+    @CurrentUser() currentUser: UserEntity,
+    @Req() req: Request,
+    @HeaderParam('Accept-Language') language: Language
+  ) {
+    await dataSource.transaction(async em => {
+      try {
+        const user = await em.findOneOrFail(UserEntity, {
+          where: {
+            organization: {
+              id: currentUser.organization.id,
+            },
+            abbr,
+          },
+        })
+        if (user.status != UserStatus.PENDING) throw new UnauthorizedError()
+        await em.delete(SessionTokenEntity, { user })
+        const token = await createSessionToken(user, em)
+        const link = createResetPasswordLink(req, token, user.email, true)
+        const emailTemplate = new EmailTemplate.Invitation(language, {
+          name: user.name,
+          link,
+        })
+        await sendEmail(user.email, emailTemplate)
+      } catch (error: any) {
+        //TODO error handling
+        console.log(error)
+      }
+    })
+    return 'Invite sent successfully'
   }
 
   @Post(undefined, '/reset-password')
@@ -187,16 +223,16 @@ export default class UserController {
   ) {
     try {
       const user = await UserEntity.findOneByOrFail({ email })
-      if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
+      if (user.status != UserStatus.CONFIRMED) throw new ForbiddenError()
       const token = await createSessionToken(user)
-      const link = createResetPasswordLink(req, token, email)
+      const link = createResetPasswordLink(req, token, email, false)
       const emailTemplate = new EmailTemplate.ResetPassword(language, {
         name: user.name,
         link,
       })
       await sendEmail(email, emailTemplate)
     } catch (error: unknown) {
-      if (error instanceof UnauthorizedError) throw error
+      if (error instanceof ForbiddenError) throw error
       if (error instanceof EntityNotFoundError)
         throw new NotFoundError('No user with given email')
       throw new InternalServerError('Internal Server Error')

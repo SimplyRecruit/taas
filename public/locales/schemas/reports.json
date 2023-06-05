@@ -7,69 +7,50 @@
             "type": "string",
             "minLength": 1
         },
-        "test": {
-            "type": "string",
-            "minLength": 1
-        },
-        "button": {
+        "filter": {
             "type": "object",
             "properties": {
-                "submit": {
+                "today": {
                     "type": "string",
                     "minLength": 1
                 },
-                "back": {
-                    "type": "string",
-                    "minLength": 1
-                }
-            },
-            "required": [
-                "submit",
-                "back"
-            ]
-        },
-        "profileMenu": {
-            "type": "object",
-            "properties": {
-                "settings": {
+                "yesterday": {
                     "type": "string",
                     "minLength": 1
                 },
-                "signOut": {
+                "thisWeek": {
                     "type": "string",
                     "minLength": 1
                 },
-                "language": {
-                    "type": "string",
-                    "minLength": 1
-                }
-            },
-            "required": [
-                "settings",
-                "signOut",
-                "language"
-            ]
-        },
-        "navigationMenu": {
-            "type": "object",
-            "properties": {
-                "timeTracker": {
+                "lastWeek": {
                     "type": "string",
                     "minLength": 1
                 },
-                "teamTracking": {
+                "past2Weeks": {
                     "type": "string",
                     "minLength": 1
                 },
-                "reports": {
+                "thisMonth": {
                     "type": "string",
                     "minLength": 1
                 },
-                "manage": {
+                "lastMonth": {
                     "type": "string",
                     "minLength": 1
                 },
-                "periods": {
+                "thisYear": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "lastYear": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "billable": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "notBillable": {
                     "type": "string",
                     "minLength": 1
                 },
@@ -77,38 +58,36 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "clients": {
+                "client": {
                     "type": "string",
                     "minLength": 1
                 },
-                "projects": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "settings": {
+                "project": {
                     "type": "string",
                     "minLength": 1
                 }
             },
             "required": [
-                "timeTracker",
-                "teamTracking",
-                "reports",
-                "manage",
-                "periods",
+                "today",
+                "yesterday",
+                "thisWeek",
+                "lastWeek",
+                "past2Weeks",
+                "thisMonth",
+                "lastMonth",
+                "thisYear",
+                "lastYear",
+                "billable",
+                "notBillable",
                 "team",
-                "clients",
-                "projects",
-                "settings"
+                "client",
+                "project"
             ]
         }
     },
     "required": [
         "$schema",
-        "test",
-        "button",
-        "profileMenu",
-        "navigationMenu"
+        "filter"
     ],
     "additionalProperties": false
 }

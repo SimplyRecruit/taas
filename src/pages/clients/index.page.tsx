@@ -1,7 +1,7 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useMemo, useState } from 'react'
-import { Button, message, Table, Tag } from 'antd'
+import { Button, message, Table, Tag, Typography } from 'antd'
 import EditClientDrawer from '@/pages/clients/components/EditClientDrawer'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { Client, ClientContractType, ClientUpdateBody } from 'models'
@@ -12,10 +12,12 @@ import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
+import useColor from '@/styles/useColor'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
 export default function Clients() {
+  const { getColor } = useColor()
   const columns: ColumnsType<Client> = [
     {
       title: 'Abbreviation',
@@ -97,7 +99,11 @@ export default function Clients() {
             <Tag color={record.everyoneHasAccess ? 'warning' : 'processing'}>
               {record.everyoneHasAccess ? 'Everyone' : 'Custom'}
             </Tag>
-            <FaExpandAlt size={16} style={{ color: 'blue', marginLeft: 4 }} />
+            <FaExpandAlt
+              size={16}
+              style={{ marginLeft: 4 }}
+              color={getColor('geekblue')}
+            />
           </div>
         </Button>
       ),

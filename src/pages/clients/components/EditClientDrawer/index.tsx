@@ -281,7 +281,7 @@ const EditClientDrawer = ({
                 <DropdownAutocomplete
                   onSave={onAddResources}
                   onReset={() => accessForm.setFieldValue('userIds', [])}
-                  actionButtons
+                  hasActionButtons
                   title="Members"
                   options={resources
                     .filter(e =>

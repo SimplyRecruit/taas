@@ -11,14 +11,13 @@ export default function ResetPasswordPage() {
   const { t } = useTranslation(['reset-password', 'common'])
   const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'resetPassword')
+  const { token, email, invitation } = router.query
   const [form] = Form.useForm()
 
   const onFinish = async ({ password }: { password: string }) => {
-    const { token, email } = router.query
     if (typeof token === 'string' && typeof email === 'string') {
       try {
         const body = ResetPasswordReqBody.create({ password, token, email })
-        console.log(body)
         await call(body)
         router.push(Route.Logout)
       } catch (e) {
@@ -29,46 +28,60 @@ export default function ResetPasswordPage() {
     }
   }
 
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
-  }
-
   return (
     <>
-      <Typography.Title level={3} style={{ marginTop: 0, marginBottom: 20 }}>
-        {error ? (
-          <span style={{ color: 'red' }}>{t('error')}</span>
-        ) : data ? (
-          <span style={{ color: 'green' }}>{t('success')}</span>
-        ) : (
-          t('title')
-        )}
-      </Typography.Title>
-      {!data ? (
-        <Form
-          form={form}
-          name="basic"
-          layout="vertical"
-          style={{ width: '100%' }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item
-            name="password"
-            rules={[{ validator: ResetPasswordReqBody.validator('password') }]}
+      {typeof token === 'string' && (
+        <>
+          <Typography.Title
+            level={3}
+            style={{ marginTop: 0, marginBottom: 20 }}
           >
-            <Input.Password placeholder="Enter your password" />
-          </Form.Item>
-          <Form.Item>
-            <Button loading={loading} block htmlType="submit">
-              {t('common:button.submit')}
-            </Button>
-          </Form.Item>
-        </Form>
-      ) : (
-        <Typography.Text>
-          Please wait while being redirected to the login page.
-        </Typography.Text>
+            {error ? (
+              <span style={{ color: 'red' }}>{t('error')}</span>
+            ) : data ? (
+              <span style={{ color: 'green' }}>{t('success')}</span>
+            ) : invitation == 'true' ? (
+              t('invitation')
+            ) : (
+              t('reset')
+            )}
+          </Typography.Title>
+          {!data ? (
+            <Form
+              form={form}
+              name="basic"
+              layout="vertical"
+              style={{ width: '100%' }}
+              onFinish={onFinish}
+            >
+              <Form.Item>
+                <Input disabled value={email} />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  { validator: ResetPasswordReqBody.validator('password') },
+                ]}
+              >
+                <Input.Password placeholder="Enter your password" />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  loading={loading}
+                  block
+                  htmlType="submit"
+                  type="primary"
+                >
+                  {t('common:button.submit')}
+                </Button>
+              </Form.Item>
+            </Form>
+          ) : (
+            <Typography.Text>
+              Please wait while being redirected to the login page.
+            </Typography.Text>
+          )}
+        </>
       )}
     </>
   )

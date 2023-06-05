@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input, Space } from 'antd'
+import { Button, Checkbox, Empty, Input, Space } from 'antd'
 import type { CheckboxValueType } from 'antd/es/checkbox/Group'
 import { useState } from 'react'
 
@@ -17,7 +17,7 @@ interface RenderProps {
   options?: OptionType[]
   title: string
   searchable?: boolean
-  actionButtons?: boolean
+  hasActionButtons?: boolean
 }
 
 export default function PopoverContent({
@@ -28,7 +28,7 @@ export default function PopoverContent({
   searchable = true,
   options,
   title,
-  actionButtons = false,
+  hasActionButtons = false,
 }: RenderProps) {
   const [searchText, setSearchText] = useState('')
   const filteredOptions = searchable
@@ -45,13 +45,19 @@ export default function PopoverContent({
           placeholder={'Search ' + title.toLocaleLowerCase()}
         />
       )}
+      {!filteredOptions?.length && <Empty></Empty>}
       <Checkbox.Group
         {...(value ? { value: value } : {})}
         style={{ maxHeight: 300, overflowY: 'auto' }}
         options={filteredOptions}
         onChange={onChange as (value: CheckboxValueType[]) => void}
       />
-      {actionButtons && (
+      {actionButtons()}
+    </Space>
+  )
+  function actionButtons() {
+    return (
+      hasActionButtons && (
         <Space>
           <Button onClick={onSave} type="primary" size="small">
             Save
@@ -60,7 +66,7 @@ export default function PopoverContent({
             Reset
           </Button>
         </Space>
-      )}
-    </Space>
-  )
+      )
+    )
+  }
 }
