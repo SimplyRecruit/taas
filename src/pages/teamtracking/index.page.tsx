@@ -123,7 +123,7 @@ export default function TeamTracking() {
     sorter: SorterResult<TT> | undefined = undefined
   ) {
     let sortBy: { column: string; direction: 'ASC' | 'DESC' }
-    if (sorter) {
+    if (sorter?.columnKey) {
       sortBy = {
         column: sorter.columnKey as string,
         direction: sorter.order == 'ascend' ? 'ASC' : 'DESC',
