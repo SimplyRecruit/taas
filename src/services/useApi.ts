@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import apis from '@/services/apis'
-import type { AxiosResponse } from 'axios'
+import type { AxiosError, AxiosResponse } from 'axios'
 import { useState } from 'react'
 
 type StripAxiosResponse<T> = T extends AxiosResponse<infer U> ? U : T
@@ -22,7 +22,7 @@ export default function useApi<
     : ApiReturnType<T, U>
   const [data, setData] = useState<StateType>(defaultValue ?? (null as any))
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+  const [error, setError] = useState<AxiosError | null>(null)
 
   const call = async (...args: ApiFunctionType<(typeof apis)[T][U]>) => {
     setLoading(true)

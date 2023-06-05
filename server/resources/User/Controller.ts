@@ -14,6 +14,7 @@ import {
 import {
   Authorized,
   CurrentUser,
+  ForbiddenError,
   HeaderParam,
   InternalServerError,
   JsonController,
@@ -222,7 +223,7 @@ export default class UserController {
   ) {
     try {
       const user = await UserEntity.findOneByOrFail({ email })
-      if (user.status != UserStatus.CONFIRMED) throw new UnauthorizedError()
+      if (user.status != UserStatus.CONFIRMED) throw new ForbiddenError()
       const token = await createSessionToken(user)
       const link = createResetPasswordLink(req, token, email, false)
       const emailTemplate = new EmailTemplate.ResetPassword(language, {
@@ -231,7 +232,7 @@ export default class UserController {
       })
       await sendEmail(email, emailTemplate)
     } catch (error: unknown) {
-      if (error instanceof UnauthorizedError) throw error
+      if (error instanceof ForbiddenError) throw error
       if (error instanceof EntityNotFoundError)
         throw new NotFoundError('No user with given email')
       throw new InternalServerError('Internal Server Error')

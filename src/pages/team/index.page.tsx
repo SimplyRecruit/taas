@@ -7,10 +7,10 @@ import { Resource, ResourceUpdateBody, UserRole, UserStatus } from 'models'
 import useApi from '@/services/useApi'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { ColumnsType } from 'antd/es/table'
-import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
 import useColor from '@/styles/useColor'
+import TeamTableActionColumn from '@/pages/team/components/TeamTableActionColumn'
 
 function getUserRoleTagColor(value: UserRole) {
   switch (value) {
@@ -105,7 +105,7 @@ export default function Team() {
       fixed: 'right',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (resource: Resource) => (
-        <TableActionColumn
+        <TeamTableActionColumn
           resource={resource}
           onSendEmail={() => onResendInvite(resource)}
           onEdit={() => {

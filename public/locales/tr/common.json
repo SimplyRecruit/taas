@@ -9,5 +9,16 @@
         "settings": "Ayarlar",
         "signOut": "Oturumu Kapat",
         "language": "Dil: {{lang}}"
+    },
+    "navigationMenu": {
+        "timeTracker": "Zaman Takipçisi",
+        "teamTracking": "Takım Takibi",
+        "reports": "Raporlar",
+        "manage": "Yönet",
+        "periods": "Dönemler",
+        "team": "Takım",
+        "clients": "Müşteriler",
+        "projects": "Projeler",
+        "settings": "Ayarlar"
     }
 }

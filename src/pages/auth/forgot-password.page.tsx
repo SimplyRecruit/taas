@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { GetStaticProps } from 'next/types'
 import { Route } from '@/constants'
+import { AxiosError } from 'axios'
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation(['forgot-password', 'common'])
@@ -19,15 +20,11 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo)
-  }
-
   return (
     <>
       <Typography.Title level={3} style={{ marginTop: 0, marginBottom: 20 }}>
         {error ? (
-          <span style={{ color: 'red' }}>{t('error')}</span>
+          <span style={{ color: 'red' }}>{errorText(error)}</span>
         ) : data ? (
           <span style={{ color: 'green' }}>{t('success')}</span>
         ) : (
@@ -40,7 +37,6 @@ export default function ForgotPasswordPage() {
         layout="vertical"
         style={{ width: '100%' }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item name="email">
           <Input type="email" placeholder="Enter your email" />
@@ -58,6 +54,17 @@ export default function ForgotPasswordPage() {
       </Link>
     </>
   )
+
+  function errorText(error: AxiosError) {
+    switch (error.response?.status) {
+      case 403:
+        return t('error-403')
+      case 404:
+        return t('error-404')
+      default:
+        return t('error-500')
+    }
+  }
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
