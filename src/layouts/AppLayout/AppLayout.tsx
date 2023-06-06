@@ -8,6 +8,7 @@ import { FiBell } from 'react-icons/fi'
 import { adminMenuItems, topMenuItems } from './menu-items'
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
+import Image from 'next/image'
 
 type MenuItem = {
   icon: JSX.Element
@@ -41,9 +42,25 @@ export default function AppLayout({ children }: AppLayoutProps) {
             height: '100%',
           }}
         >
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            Test
-          </Typography.Title>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <Image
+              alt="logo"
+              src="/logo.jpeg"
+              width={0}
+              height={0}
+              sizes="100vh"
+              style={{ width: 'auto', height: '100%' }} // optional
+            />
+            <Typography.Title level={5} style={{ margin: 0 }}>
+              TaaS Aktivite Sistemi
+            </Typography.Title>
+          </div>
           <Space size="large" align="center">
             <Button
               icon={<QuestionCircleOutlined />}
