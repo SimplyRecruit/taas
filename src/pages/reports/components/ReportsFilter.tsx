@@ -100,7 +100,9 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
               badgeCount={selectedResources.length}
               onChange={e => setSelectedResources(e)}
               title={t('filter.team')}
-              options={resources?.map(e => ({ value: e.id, label: e.abbr }))}
+              options={resources
+                ?.map(e => ({ value: e.id, label: e.abbr }))
+                .sort((a, b) => a.label.localeCompare(b.label))}
               disabled={loadingGetAllResources}
             />
           )}
@@ -108,14 +110,14 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}
             title={t('filter.client')}
-            options={clients}
+            options={clients?.sort((a, b) => a.label.localeCompare(b.label))}
             disabled={loadingGetAllClients || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
             title={t('filter.project')}
-            options={projects}
+            options={projects?.sort((a, b) => a.label.localeCompare(b.label))}
             disabled={loadingGetAllProjects || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete

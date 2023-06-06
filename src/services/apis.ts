@@ -13,7 +13,6 @@ ResetPasswordReqBody,
 User,
 TTGetAllParams,
 TTGetAllResBody,
-TTCreateBody,
 TTUpdateBody,
 TTBatchCreateBody,
 TTBatchCreateResBody,
@@ -179,18 +178,6 @@ export default {
                 method: "get",
                 url,
                 params: queries,
-            })
-        },
-        async create(
-            body: TTCreateBody,
-        ) : Promise<AxiosResponse<string>>
-        {
-            const route = "/time-track"
-            const url = route
-            return await createAxiosInstance().request({
-                method: "post",
-                url,
-                data: body,
             })
         },
         async update(

@@ -152,10 +152,12 @@ export default function AddBatchTT({
               <Select
                 showSearch
                 style={{ width: 250, marginBottom: 10 }}
-                options={allResources.map(e => ({
-                  value: e.id,
-                  label: e.abbr,
-                }))}
+                options={allResources
+                  .map(e => ({
+                    value: e.id,
+                    label: e.abbr,
+                  }))
+                  .sort((a, b) => a.label.localeCompare(b.label))}
                 onChange={id => {
                   setSelectedUserId(id)
                   console.log(id)

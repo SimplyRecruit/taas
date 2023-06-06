@@ -26,9 +26,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>taas app</title>
+        <title>TaaS Aktivite Sistemi</title>
         <link href="/favicon.ico" rel="shortcut icon" />
-        <link href="/logo192.png" rel="apple-touch-icon" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
       </Head>
       <ConfigProvider locale={antdLocales[lang] ?? antdLocales['en']}>
         <TaasLayout>

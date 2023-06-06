@@ -231,10 +231,12 @@ export default function AddClientDrawer({
               allowClear
               style={{ width: '100%' }}
               placeholder="Please select"
-              options={data.map(e => ({
-                value: e.id,
-                label: `${e.abbr} - ${e.name}`,
-              }))}
+              options={data
+                .map(e => ({
+                  value: e.id,
+                  label: `${e.abbr} - ${e.name}`,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label))}
             />
           </Form.Item>
         )}
