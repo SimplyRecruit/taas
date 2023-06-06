@@ -169,10 +169,12 @@ export default function EditProjectDrawer({
           <Select
             options={[
               { value: ALL_UUID, label: 'ALL' },
-              ...data.map(e => ({
-                value: e.id,
-                label: `${e.abbr} - ${e.name}`,
-              })),
+              ...data
+                .map(e => ({
+                  value: e.id,
+                  label: `${e.abbr} - ${e.name}`,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)),
             ]}
           />
         </Form.Item>

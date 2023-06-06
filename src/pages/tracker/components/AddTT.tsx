@@ -99,10 +99,12 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a client"
-            options={clientOptions?.map(e => ({
-              value: e.abbr,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={clientOptions
+              ?.map(e => ({
+                value: e.abbr,
+                label: `${e.abbr} - ${e.name}`,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))}
           />
         </Form.Item>
         <Form.Item
@@ -158,10 +160,12 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a project"
-            options={projectOptions?.map(e => ({
-              value: e.abbr,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={projectOptions
+              ?.map(e => ({
+                value: e.abbr,
+                label: `${e.abbr} - ${e.name}`,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))}
           />
         </Form.Item>
         <Button type="primary" htmlType="submit" loading={loading()}>

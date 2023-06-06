@@ -147,10 +147,12 @@ export default function EditProjectDrawer({
         >
           <Select
             placeholder="Select a client"
-            options={clientOptions?.map(e => ({
-              value: e.abbr,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={clientOptions
+              ?.map(e => ({
+                value: e.abbr,
+                label: `${e.abbr} - ${e.name}`,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))}
           />
         </Form.Item>
         <Form.Item
@@ -209,10 +211,12 @@ export default function EditProjectDrawer({
         >
           <Select
             placeholder="Select a project"
-            options={projectOptions?.map(e => ({
-              value: e.abbr,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={projectOptions
+              ?.map(e => ({
+                value: e.abbr,
+                label: `${e.abbr} - ${e.name}`,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))}
           />
         </Form.Item>
       </Form>
