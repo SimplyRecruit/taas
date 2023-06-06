@@ -20,7 +20,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import BatchSpreadSheet from '@/pages/tracker/components/BatchSpreadSheet'
+import BatchSpreadSheet from '@/pages/time-tracker/components/BatchSpreadSheet'
 import { RenderFunction } from 'antd/es/tooltip'
 
 interface Props {

@@ -12,7 +12,7 @@
     },
     "navigationMenu": {
         "timeTracker": "Time Tracker",
-        "teamTracking": "Team Tracking",
+        "teamTracker": "Team Tracker",
         "reports": "Reports",
         "manage": "Manage",
         "periods": "Periods",

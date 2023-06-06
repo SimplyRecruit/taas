@@ -5,14 +5,15 @@ import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
 import { TT, TTGetAllParams, WorkPeriod } from 'models'
-import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
+import AddBatchTT from '@/pages/time-tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { plainToClass } from 'class-transformer'
-import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
-import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
+import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionColumn'
+import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
+import AddTT from '@/pages/time-tracker/components/AddTT'
 
-export default function TeamTracking() {
+export default function Tracker() {
   const columns: ColumnsType<TT> = [
     {
       title: 'Date',
@@ -37,12 +38,6 @@ export default function TeamTracking() {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
-      sorter: true,
-    },
-    {
-      title: 'User',
-      dataIndex: 'userAbbr',
-      key: 'user.abbr',
       sorter: true,
     },
     {
@@ -97,23 +92,16 @@ export default function TeamTracking() {
     call: callTT,
     loading: loadingTT,
   } = useApi('timeTrack', 'getAll')
-
-  const { data: allClients, call: getAllClients } = useApi(
-    'client',
-    'getAll',
-    []
-  )
-  const { data: allProjects, call: getAllProjects } = useApi(
-    'project',
-    'getAll',
-    []
-  )
   const { data: workPeriods, call: getAllWorkPeriods } = useApi(
     'workPeriod',
     'getAll',
     []
   )
   const { call: deleteTT } = useApi('timeTrack', 'delete')
+  const { data: clientsAndProjects, call: getClientsAndProjects } = useApi(
+    'resource',
+    'getClientsAndProjects'
+  )
   const selectedRecord =
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
@@ -139,7 +127,6 @@ export default function TeamTracking() {
         sortBy: [sortBy],
         page: pageParam,
         pageSize: pageSizeParam,
-        userIds: ['all'],
       })
     )
   }
@@ -168,8 +155,7 @@ export default function TeamTracking() {
   }
 
   useEffect(() => {
-    getAllClients({ entityStatus: 'active' })
-    getAllProjects({ entityStatus: 'active' })
+    getClientsAndProjects({ id: 'me' })
     getAllWorkPeriods()
     getTTs(1, pageSize)
   }, [])
@@ -180,22 +166,32 @@ export default function TeamTracking() {
       <EditTTDrawer
         open={drawerOpen}
         value={selectedRecord}
-        clientOptions={allClients}
-        projectOptions={allProjects}
+        clientOptions={clientsAndProjects?.clients}
+        projectOptions={clientsAndProjects?.projects}
         onUpdate={onUpdate}
         onError={() => {
           messageApi.error('An error occured. Could not update timetrack.')
         }}
         onCancel={() => setDrawerOpen(false)}
       />
-
+      <AddTT
+        onAdd={() => {
+          getTTs(1, pageSize, sorter)
+          messageApi.success('Added timetrack succesfully!')
+        }}
+        onError={err => {
+          if (typeof err == 'string') messageApi.error(err)
+          else messageApi.error('An error occured. Could not add timetrack.')
+        }}
+        clientOptions={clientsAndProjects?.clients}
+        projectOptions={clientsAndProjects?.projects}
+      />
       <AddBatchTT
         onAdd={() => {
           getTTs(1, pageSize, sorter)
         }}
-        clientOptions={allClients}
-        projectOptions={allProjects}
-        userSelectable
+        clientOptions={clientsAndProjects?.clients}
+        projectOptions={clientsAndProjects?.projects}
       />
 
       <Table

@@ -57,7 +57,7 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "teamTracking": {
+                "teamTracker": {
                     "type": "string",
                     "minLength": 1
                 },
@@ -92,7 +92,7 @@
             },
             "required": [
                 "timeTracker",
-                "teamTracking",
+                "teamTracker",
                 "reports",
                 "manage",
                 "periods",
