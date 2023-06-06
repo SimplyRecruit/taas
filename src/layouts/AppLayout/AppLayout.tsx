@@ -31,7 +31,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         style={{
           height: HEADER_HEIGHT,
           borderBottom: '1px solid #ddd',
-          padding: '0 2rem 0 2rem',
+          padding: '0 2rem 0 1rem',
         }}
       >
         <div
