@@ -22,7 +22,6 @@ import {
 } from 'react'
 import BatchSpreadSheet from '@/pages/tracker/components/BatchSpreadSheet'
 import { RenderFunction } from 'antd/es/tooltip'
-import SortedSelect from '@/components/SortedSelect'
 
 interface Props {
   projectOptions?: ProjectRelation[]
