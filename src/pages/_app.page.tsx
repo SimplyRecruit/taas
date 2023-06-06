@@ -26,9 +26,26 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>taas app</title>
-        <link href="/favicon.ico" rel="shortcut icon" />
-        <link href="/logo192.png" rel="apple-touch-icon" />
+        <title>TaaS Aktivite Sistemi</title>
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <ConfigProvider locale={antdLocales[lang] ?? antdLocales['en']}>
         <TaasLayout>

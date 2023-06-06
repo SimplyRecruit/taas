@@ -292,7 +292,8 @@ const EditClientDrawer = ({
                     .map(e => ({
                       value: e.id,
                       label: `${e.abbr} - ${e.name}`,
-                    }))}
+                    }))
+                    .sort((a, b) => a.label.localeCompare(b.label))}
                 >
                   <DropdownAutocomplete.Activator>
                     <Button

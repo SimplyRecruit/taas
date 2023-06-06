@@ -11,8 +11,8 @@
         "language": "Dil: {{lang}}"
     },
     "navigationMenu": {
-        "timeTracker": "Zaman Takipçisi",
-        "teamTracking": "Takım Takibi",
+        "timeTracker": "Süre Takibi",
+        "teamTracker": "Takım Takibi",
         "reports": "Raporlar",
         "manage": "Yönet",
         "periods": "Dönemler",

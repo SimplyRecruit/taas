@@ -13,6 +13,7 @@ import {
   ProjectRelation,
   TimelessDate,
   TT,
+  TTBatchCreateBody,
   TTCreateBody,
 } from 'models'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
@@ -22,7 +23,7 @@ import { useEffect } from 'react'
 interface RenderProps {
   projectOptions?: ProjectRelation[]
   clientOptions?: ClientRelation[]
-  onAdd: (newTT: TT) => void
+  onAdd: () => void
   onError: (err: unknown) => void
 }
 export default function AddTT({
@@ -34,7 +35,7 @@ export default function AddTT({
   const [form] = Form.useForm<TTCreateBody>()
   const { call: callCreate, loading: loadingCreate } = useApi(
     'timeTrack',
-    'create'
+    'batchCreate'
   )
 
   useEffect(() => {
@@ -45,10 +46,12 @@ export default function AddTT({
 
   async function onFinish(body: TTCreateBody) {
     try {
-      const newTTId = await callCreate(body)
-      const { date, ...rest } = body
-      form.resetFields()
-      onAdd(TT.create({ id: newTTId, date: date.dateObject, ...rest }))
+      const batchBody = TTBatchCreateBody.create({ bodies: [body] })
+      const res = (await callCreate(batchBody, { userId: 'me' }))[0]
+      if (res.succeeded) {
+        form.resetFields()
+        onAdd()
+      } else onError(res.error)
     } catch (error) {
       onError(error)
     }
@@ -99,10 +102,12 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a client"
-            options={clientOptions?.map(e => ({
-              value: e.abbr,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={clientOptions
+              ?.map(e => ({
+                value: e.abbr,
+                label: `${e.abbr} - ${e.name}`,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))}
           />
         </Form.Item>
         <Form.Item
@@ -158,10 +163,12 @@ export default function AddTT({
         >
           <Select
             placeholder="Select a project"
-            options={projectOptions?.map(e => ({
-              value: e.abbr,
-              label: `${e.abbr} - ${e.name}`,
-            }))}
+            options={projectOptions
+              ?.map(e => ({
+                value: e.abbr,
+                label: `${e.abbr} - ${e.name}`,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))}
           />
         </Form.Item>
         <Button type="primary" htmlType="submit" loading={loading()}>

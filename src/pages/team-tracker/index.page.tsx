@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
 import { TT, TTGetAllParams, WorkPeriod } from 'models'
-import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
+import AddBatchTT from '@/pages/time-tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { plainToClass } from 'class-transformer'
-import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
-import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
+import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionColumn'
+import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
 
-export default function TeamTracking() {
+export default function TeamTracker() {
   const columns: ColumnsType<TT> = [
     {
       title: 'Date',

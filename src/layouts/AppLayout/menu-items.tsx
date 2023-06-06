@@ -18,8 +18,8 @@ const topItems = [
   },
   {
     icon: <FaUserClock size={18} />,
-    label: 'teamTracking',
-    path: Route.TeamTracking,
+    label: 'teamTracker',
+    path: Route.TeamTracker,
   },
   {
     icon: <FiBarChart2 size={iconSize} />,

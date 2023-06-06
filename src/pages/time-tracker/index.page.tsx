@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
 import { TT, TTGetAllParams, WorkPeriod } from 'models'
-import AddBatchTT from '@/pages/tracker/components/AddBatchTT'
+import AddBatchTT from '@/pages/time-tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
 import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { plainToClass } from 'class-transformer'
-import TTTableActionColumn from '@/pages/tracker/components/TTTableActionColumn'
-import EditTTDrawer from '@/pages/tracker/components/EditTTDrawer'
+import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionColumn'
+import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
+import AddTT from '@/pages/time-tracker/components/AddTT'
 
 export default function Tracker() {
   const columns: ColumnsType<TT> = [
@@ -155,7 +156,6 @@ export default function Tracker() {
 
   useEffect(() => {
     getClientsAndProjects({ id: 'me' })
-
     getAllWorkPeriods()
     getTTs(1, pageSize)
   }, [])
@@ -173,6 +173,18 @@ export default function Tracker() {
           messageApi.error('An error occured. Could not update timetrack.')
         }}
         onCancel={() => setDrawerOpen(false)}
+      />
+      <AddTT
+        onAdd={() => {
+          getTTs(1, pageSize, sorter)
+          messageApi.success('Added timetrack succesfully!')
+        }}
+        onError={err => {
+          if (typeof err == 'string') messageApi.error(err)
+          else messageApi.error('An error occured. Could not add timetrack.')
+        }}
+        clientOptions={clientsAndProjects?.clients}
+        projectOptions={clientsAndProjects?.projects}
       />
       <AddBatchTT
         onAdd={() => {
