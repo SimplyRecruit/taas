@@ -182,7 +182,7 @@ export default function EditProjectDrawer({
             },
           ]}
         >
-          <Input placeholder="Description" />
+          <Input.TextArea placeholder="Description" />
         </Form.Item>
         <Form.Item valuePropName="checked" name="billable" label="Billable">
           <Checkbox />
