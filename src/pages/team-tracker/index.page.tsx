@@ -67,7 +67,6 @@ export default function TeamTracker() {
     {
       title: '',
       key: 'action',
-      fixed: 'right',
       width: DEFAULT_ACTION_COLUMN_WIDTH,
       render: (_text: any, record: TT, index: number) =>
         workPeriods.some(
@@ -200,7 +199,7 @@ export default function TeamTracker() {
 
       <Table
         size="large"
-        scroll={{ x: 'max-content' }}
+      
         loading={loadingTT}
         rowKey={record => record.id}
         rowClassName={record => {
