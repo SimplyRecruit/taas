@@ -37,23 +37,24 @@ export default function PopoverContent({
       )
     : options
   return (
-    <Space className={styles.wrapper} direction="vertical">
-      {searchable && (
-        <Input
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-          placeholder={'Search ' + title.toLocaleLowerCase()}
+    <div>
+      <Space className={styles.wrapper} direction="vertical">
+        {searchable && (
+          <Input
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            placeholder={'Search ' + title.toLocaleLowerCase()}
+          />
+        )}
+        {!filteredOptions?.length && <Empty></Empty>}
+        <Checkbox.Group
+          {...(value ? { value: value } : {})}
+          options={filteredOptions}
+          onChange={onChange as (value: CheckboxValueType[]) => void}
         />
-      )}
-      {!filteredOptions?.length && <Empty></Empty>}
-      <Checkbox.Group
-        {...(value ? { value: value } : {})}
-        style={{ maxHeight: 300, overflowY: 'auto' }}
-        options={filteredOptions}
-        onChange={onChange as (value: CheckboxValueType[]) => void}
-      />
-      {actionButtons()}
-    </Space>
+        {actionButtons()}
+      </Space>
+    </div>
   )
   function actionButtons() {
     return (
