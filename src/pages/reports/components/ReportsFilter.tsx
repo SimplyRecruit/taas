@@ -101,7 +101,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
               onChange={e => setSelectedResources(e)}
               title={t('filter.team')}
               options={resources
-                ?.map(e => ({ value: e.id, label: e.abbr }))
+                ?.map(e => ({ value: e.id, label: e.name }))
                 .sort((a, b) => a.label.localeCompare(b.label))}
               disabled={loadingGetAllResources}
             />
