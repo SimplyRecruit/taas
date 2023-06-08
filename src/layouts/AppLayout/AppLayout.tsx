@@ -62,7 +62,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
               {t('appTitle')}
             </Typography.Title>
           </div>
-          <Space size="large" align="center">
+          {/* <Space size="large" align="center">
             <Button
               icon={<QuestionCircleOutlined />}
               target="_blank"
@@ -84,7 +84,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
               </Badge>
             </div>
             <ProfileMenu />
-          </Space>
+          </Space> */}
         </div>
       </Layout.Header>
       <Layout
