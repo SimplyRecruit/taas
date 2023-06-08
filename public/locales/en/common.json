@@ -1,6 +1,6 @@
 {
     "$schema": "../schemas/common.json",
-    "test": "test",
+    "appTitle": "Activity System",
     "button": {
         "submit": "Submit",
         "back": "Back"

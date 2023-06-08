@@ -31,7 +31,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         style={{
           height: HEADER_HEIGHT,
           borderBottom: '1px solid #ddd',
-          padding: '0 2rem 0 1rem',
+          padding: '0 2rem 0 0.8rem',
         }}
       >
         <div
@@ -47,18 +47,19 @@ export default function AppLayout({ children }: AppLayoutProps) {
               display: 'flex',
               alignItems: 'center',
               height: '100%',
+              padding: 18,
             }}
           >
             <Image
               alt="logo"
-              src="/logo.jpeg"
+              src="/logo.png"
               width={0}
               height={0}
               sizes="100vh"
               style={{ width: 'auto', height: '100%' }} // optional
             />
-            <Typography.Title level={5} style={{ margin: 0 }}>
-              TaaS Aktivite Sistemi
+            <Typography.Title level={5} style={{ margin: 0, marginLeft: 10 }}>
+              {t('appTitle')}
             </Typography.Title>
           </div>
           <Space size="large" align="center">

@@ -26,7 +26,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>TaaS Aktivite Sistemi</title>
+        <title>BASİSCİ Aktivite Sistemi</title>
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
         <link
           rel="apple-touch-icon"

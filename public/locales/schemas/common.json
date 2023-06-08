@@ -7,7 +7,7 @@
             "type": "string",
             "minLength": 1
         },
-        "test": {
+        "appTitle": {
             "type": "string",
             "minLength": 1
         },
@@ -105,7 +105,7 @@
     },
     "required": [
         "$schema",
-        "test",
+        "appTitle",
         "button",
         "profileMenu",
         "navigationMenu"
