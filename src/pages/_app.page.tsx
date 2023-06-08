@@ -17,8 +17,9 @@ dayjs.extend(updateLocale)
 const App = ({ Component, pageProps }: AppProps) => {
   const antdLocales: { [key in Language]: Locale } = { en, tr } as const
   const {
+    t,
     i18n: { language: l },
-  } = useTranslation()
+  } = useTranslation('common')
   const lang = l as Language
   dayjs.updateLocale(lang, {
     weekStart: 1,
@@ -26,7 +27,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>BASİSCİ Aktivite Sistemi</title>
+        <title>BASİSCİ {t('appTitle')}</title>
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
         <link
           rel="apple-touch-icon"
