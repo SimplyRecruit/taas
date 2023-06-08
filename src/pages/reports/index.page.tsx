@@ -58,19 +58,18 @@ export default function ReportsPage() {
 
   return (
     <>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <ReportsFilter onFilter={getReport} />
-        <Card
-          bodyStyle={{
-            height: 448,
-            textAlign: 'center',
-          }}
-        >
-          <Spin spinning={loading} size="large">
-            <ColumnChart {...config} />
-          </Spin>
-        </Card>
-      </Space>
+      <ReportsFilter onFilter={getReport} />
+      <Card
+        style={{ marginTop: 20, marginBottom: 20 }}
+        bodyStyle={{
+          height: 448,
+          textAlign: 'center',
+        }}
+      >
+        <Spin spinning={loading} size="large">
+          <ColumnChart {...config} />
+        </Spin>
+      </Card>
     </>
   )
 }
