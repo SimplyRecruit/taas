@@ -62,8 +62,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
               {t('appTitle')}
             </Typography.Title>
           </div>
-          {/* <Space size="large" align="center">
-            <Button
+          <Space size="large" align="center">
+            {/* <Button
               icon={<QuestionCircleOutlined />}
               target="_blank"
               type="text"
@@ -82,9 +82,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
               >
                 <FiBell size={18} />
               </Badge>
-            </div>
+            </div> */}
             <ProfileMenu />
-          </Space> */}
+          </Space>
         </div>
       </Layout.Header>
       <Layout
