@@ -25,11 +25,8 @@ const rangePresets: {
     ],
   },
   {
-    label: 'past2Weeks',
-    value: [
-      dayjs().subtract(2, 'week').startOf('week'),
-      dayjs().subtract(1, 'week').endOf('week'),
-    ],
+    label: 'last2Weeks',
+    value: [dayjs().subtract(1, 'week').startOf('week'), dayjs().endOf('week')],
   },
   {
     label: 'thisMonth',

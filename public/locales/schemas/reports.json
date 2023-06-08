@@ -26,7 +26,7 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "past2Weeks": {
+                "last2Weeks": {
                     "type": "string",
                     "minLength": 1
                 },
@@ -72,7 +72,7 @@
                 "yesterday",
                 "thisWeek",
                 "lastWeek",
-                "past2Weeks",
+                "last2Weeks",
                 "thisMonth",
                 "lastMonth",
                 "thisYear",
