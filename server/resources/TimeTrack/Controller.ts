@@ -37,22 +37,28 @@ export default class TimeTrackController {
   @Get(TTGetAllResBody)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
-    @QueryParams() { order, take, skip, userIds }: TTGetAllParams
+    @QueryParams()
+    { order, take, skip, userIds, clientIds, projectIds, isMe }: TTGetAllParams
   ) {
-    const me = !(userIds && userIds.length)
     try {
       let ttUserIds
-      if (me) ttUserIds = [currentUser.id]
+      if (isMe) ttUserIds = [currentUser.id]
       else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
       else ttUserIds = userIds
       const [entityObjects, count] = await TTEntity.findAndCount({
         where: {
           user: {
             organization: { id: currentUser.organization.id },
-            id: ttUserIds[0] == 'all' ? undefined : In(ttUserIds),
+            id: ttUserIds && ttUserIds.length ? In(ttUserIds) : undefined,
+          },
+          project: {
+            id: projectIds && projectIds.length ? In(projectIds) : undefined,
+          },
+          client: {
+            id: clientIds && clientIds.length ? In(clientIds) : undefined,
           },
         },
-        relations: { user: !me, client: true, project: true },
+        relations: { user: !isMe, client: true, project: true },
         order,
         take,
         skip,
@@ -64,7 +70,7 @@ export default class TimeTrackController {
           hour: true,
           ticketNo: true,
           user: {
-            abbr: !me,
+            abbr: !isMe,
           },
         },
       })

@@ -1,6 +1,6 @@
 {
     "$schema": "../schemas/common.json",
-    "test": "deneme",
+    "appTitle": "Aktivite Sistemi",
     "button": {
         "submit": "Gönder",
         "back": "Geri"

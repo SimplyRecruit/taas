@@ -9,7 +9,12 @@ import {
   Typography,
 } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
-import { ClientRelation, ProjectRelation, TTBatchCreateBody } from 'models'
+import {
+  ClientRelation,
+  ProjectRelation,
+  Resource,
+  TTBatchCreateBody,
+} from 'models'
 import { formatDate } from '@/util'
 import useApi from '@/services/useApi'
 import {
@@ -17,23 +22,22 @@ import {
   ReactElement,
   ReactFragment,
   ReactPortal,
-  useEffect,
   useState,
 } from 'react'
 import BatchSpreadSheet from '@/pages/time-tracker/components/BatchSpreadSheet'
 import { RenderFunction } from 'antd/es/tooltip'
 
 interface Props {
-  projectOptions?: ProjectRelation[]
-  clientOptions?: ClientRelation[]
+  projects?: ProjectRelation[]
+  clients?: ClientRelation[]
   onAdd: () => void
-  userSelectable?: boolean
+  resources?: Resource[]
   onCancel?: () => void
 }
 export default function AddBatchTT({
-  projectOptions,
-  clientOptions,
-  userSelectable,
+  projects,
+  clients,
+  resources,
   onAdd,
 }: Props) {
   const [showResultsModal, setShowResultsModal] = useState(false)
@@ -47,11 +51,6 @@ export default function AddBatchTT({
     loading: loadingBatchCreate,
     error: errorBatchCreate,
   } = useApi('timeTrack', 'batchCreate', [])
-  const { data: allResources, call: getAllResources } = useApi(
-    'resource',
-    'getAll',
-    []
-  )
 
   async function performBatchCreation() {
     try {
@@ -139,20 +138,17 @@ export default function AddBatchTT({
     },
   ]
 
-  useEffect(() => {
-    if (userSelectable) getAllResources({ entityStatus: 'active' })
-  }, [])
   return (
     <>
       <Collapse style={{ marginTop: 10, marginBottom: 10 }}>
         <Collapse.Panel header="Add TT" key="1">
-          {userSelectable && (
+          {resources && (
             <>
               <Typography.Text>User: </Typography.Text>
               <Select
                 showSearch
                 style={{ width: 250, marginBottom: 10 }}
-                options={allResources
+                options={resources
                   .map(e => ({
                     value: e.id,
                     label: e.abbr,
@@ -170,7 +166,7 @@ export default function AddBatchTT({
               />
             </>
           )}
-          {clientOptions && projectOptions && (
+          {clients && projects && (
             <>
               <BatchSpreadSheet
                 ssData={ssData}
@@ -178,8 +174,8 @@ export default function AddBatchTT({
                   setBatch(body)
                   setErrorExists(error)
                 }}
-                clientAbbrs={clientOptions.map(e => e.abbr)}
-                projectAbbrs={projectOptions.map(e => e.abbr)}
+                clientAbbrs={clients.map(e => e.abbr)}
+                projectAbbrs={projects.map(e => e.abbr)}
               />
               <AddButton />
             </>
