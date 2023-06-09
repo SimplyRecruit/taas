@@ -1,84 +1,19 @@
 import type { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import useApi from '@/services/useApi'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatDate } from '@/util'
 import { message, Table } from 'antd'
 import { TT, TTGetAllParams, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/time-tracker/components/AddBatchTT'
 import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
-import { DEFAULT_ACTION_COLUMN_WIDTH } from '@/constants'
 import { plainToClass } from 'class-transformer'
 import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionColumn'
 import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
 import AddTT from '@/pages/time-tracker/components/AddTT'
+import TTFilterType from '@/pages/time-tracker/types/TTFilterType'
 
 export default function Tracker() {
-  const columns: ColumnsType<TT> = [
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (value: Date) => <span>{formatDate(value)}</span>,
-      sorter: true,
-    },
-    {
-      title: 'Client',
-      dataIndex: 'clientAbbr',
-      key: 'client.abbr',
-      sorter: true,
-    },
-    {
-      title: 'Hour',
-      dataIndex: 'hour',
-      key: 'hour',
-      sorter: true,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      sorter: true,
-    },
-    {
-      title: 'Billable',
-      dataIndex: 'billable',
-      key: 'billable',
-      sorter: true,
-      render: (value: boolean) => (value ? 'YES' : 'NO'),
-    },
-    {
-      title: 'Ticket no',
-      dataIndex: 'ticketNo',
-      key: 'ticketNo',
-      sorter: true,
-    },
-    {
-      title: 'Project',
-      dataIndex: 'projectAbbr',
-      key: 'project.abbr',
-      sorter: true,
-    },
-    {
-      title: '',
-      key: 'action',
-      render: (_text: any, record: TT, index: number) =>
-        workPeriods.some(
-          e =>
-            plainToClass(WorkPeriod, e).periodString ===
-            WorkPeriod.fromDate(new Date(record.date)).periodString
-        ) ? (
-          <TTTableActionColumn
-            onEdit={() => {
-              setSelectedRowIndex(index)
-              setDrawerOpen(true)
-            }}
-            onDelete={() => onDelete(record.id)}
-          />
-        ) : null,
-    },
-  ]
-
   const [messageApi, contextHolder] = message.useMessage()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [page, setPage] = useState(1)
@@ -103,41 +38,131 @@ export default function Tracker() {
   const selectedRecord =
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
-  function getTTs(
-    pageParam = 1,
-    pageSizeParam = 20,
-    sorter: SorterResult<TT> | undefined = undefined
-  ) {
-    let sortBy: { column: string; direction: 'ASC' | 'DESC' }
-    if (sorter?.columnKey) {
-      sortBy = {
-        column: sorter.columnKey as string,
-        direction: sorter.order == 'ascend' ? 'ASC' : 'DESC',
+  const getTTs = useCallback(
+    (
+      pageParam = 1,
+      pageSizeParam = 20,
+      sorter: SorterResult<TT> | undefined = undefined,
+      filters: any | undefined = undefined
+    ) => {
+      let sortBy: { column: string; direction: 'ASC' | 'DESC' }
+      if (sorter?.columnKey) {
+        sortBy = {
+          column: sorter.columnKey as string,
+          direction: sorter.order === 'ascend' ? 'ASC' : 'DESC',
+        }
+      } else {
+        sortBy = { column: 'date', direction: 'DESC' }
       }
-    } else {
-      sortBy = { column: 'date', direction: 'DESC' }
-    }
-    setSorter(sorter)
-    setPage(pageParam)
-    setPageSize(pageSizeParam)
-    callTT(
-      TTGetAllParams.create({
-        sortBy: [sortBy],
-        page: pageParam,
-        pageSize: pageSizeParam,
-      })
-    )
-  }
+      console.log(filters, filters?.['client.abbr'])
+      setSorter(sorter)
+      setPage(pageParam)
+      setPageSize(pageSizeParam)
+      callTT(
+        TTGetAllParams.create({
+          sortBy: [sortBy],
+          page: pageParam,
+          pageSize: pageSizeParam,
+          clientIds: filters?.[`${TTFilterType.CLIENT}`],
+          projectIds: filters?.[`${TTFilterType.PROJECT}`],
+        })
+      )
+    },
+    [callTT, setSorter, setPage, setPageSize]
+  )
 
-  async function onDelete(id: string) {
-    try {
-      await deleteTT({ id })
-      getTTs(page, pageSize, sorter)
-      messageApi.success('Deleted timetrack successfully!')
-    } catch {
-      messageApi.error('An error occured. Could not delete timetrack.')
-    }
-  }
+  const onDelete = useCallback(
+    async (id: string) => {
+      try {
+        await deleteTT({ id })
+        getTTs(page, pageSize, sorter)
+        messageApi.success('Deleted timetrack successfully!')
+      } catch {
+        messageApi.error('An error occurred. Could not delete timetrack.')
+      }
+    },
+    [deleteTT, getTTs, messageApi, page, pageSize, sorter]
+  )
+  const columns: ColumnsType<TT> = useMemo(() => {
+    return [
+      {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        render: (value: Date) => <span>{formatDate(value)}</span>,
+        sorter: true,
+      },
+      {
+        title: 'Client',
+        dataIndex: 'clientAbbr',
+        key: 'client.abbr',
+        sorter: true,
+        filterSearch: true,
+        filters: clientsAndProjects?.clients
+          .sort((a, b) => a.abbr.localeCompare(b.abbr))
+          .map(e => ({
+            text: e.abbr,
+            value: e.id,
+          })),
+      },
+      {
+        title: 'Hour',
+        dataIndex: 'hour',
+        key: 'hour',
+        sorter: true,
+      },
+      {
+        title: 'Description',
+        dataIndex: 'description',
+        key: 'description',
+        sorter: true,
+      },
+      {
+        title: 'Billable',
+        dataIndex: 'billable',
+        key: 'billable',
+        sorter: true,
+        render: (value: boolean) => (value ? 'YES' : 'NO'),
+      },
+      {
+        title: 'Ticket no',
+        dataIndex: 'ticketNo',
+        key: 'ticketNo',
+        sorter: true,
+      },
+      {
+        title: 'Project',
+        dataIndex: 'projectAbbr',
+        key: 'project.abbr',
+        sorter: true,
+        filterSearch: true,
+        filters: clientsAndProjects?.projects
+          .sort((a, b) => a.abbr.localeCompare(b.abbr))
+          .map(e => ({
+            text: e.abbr,
+            value: e.id,
+          })),
+      },
+      {
+        title: '',
+        key: 'action',
+        render: (_text: any, record: TT, index: number) =>
+          workPeriods.some(
+            e =>
+              plainToClass(WorkPeriod, e).periodString ===
+              WorkPeriod.fromDate(new Date(record.date)).periodString
+          ) ? (
+            <TTTableActionColumn
+              onEdit={() => {
+                setSelectedRowIndex(index)
+                setDrawerOpen(true)
+              }}
+              onDelete={() => onDelete(record.id)}
+            />
+          ) : null,
+      },
+    ]
+  }, [clientsAndProjects, workPeriods, onDelete])
 
   function onUpdate(record: TT) {
     if (selectedRowIndex != null && dataTT?.data) {
@@ -204,8 +229,8 @@ export default function Tracker() {
         }}
         columns={columns}
         dataSource={dataTT?.data}
-        onChange={(e, _b, s) =>
-          getTTs(e.current, e.pageSize, s as SorterResult<TT>)
+        onChange={(e, filters, sorter) =>
+          getTTs(e.current, e.pageSize, sorter as SorterResult<TT>, filters)
         }
         pagination={{
           position: ['bottomCenter'],
