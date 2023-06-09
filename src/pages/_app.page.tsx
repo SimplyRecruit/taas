@@ -24,10 +24,11 @@ const App = ({ Component, pageProps }: AppProps) => {
   dayjs.updateLocale(lang, {
     weekStart: 1,
   })
+  const title = 'BASİSCİ ' + t('appTitle')
   return (
     <>
       <Head>
-        <title>BASİSCİ {t('appTitle')}</title>
+        <title>{title}</title>
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
         <link
           rel="apple-touch-icon"
