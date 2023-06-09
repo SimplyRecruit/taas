@@ -49,7 +49,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
-      <ConfigProvider locale={antdLocales[lang] ?? antdLocales['en']}>
+      <ConfigProvider locale={antdLocales[lang] ?? antdLocales['tr']}>
         <TaasLayout>
           <Component {...pageProps} />
         </TaasLayout>
