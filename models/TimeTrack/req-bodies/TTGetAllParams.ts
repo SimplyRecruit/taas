@@ -1,4 +1,4 @@
-import { IsArray, IsOptional } from 'class-validator'
+import { IsArray, IsBoolean, IsOptional } from 'class-validator'
 import TableQueryParameters from 'models/common/TableQueryParameters'
 export default class TTGetAllParams extends TableQueryParameters {
   @IsArray()
@@ -10,6 +10,8 @@ export default class TTGetAllParams extends TableQueryParameters {
   @IsArray()
   @IsOptional()
   projectIds?: string[]
+  @IsBoolean()
+  isMe: boolean
 
   public static create({
     sortBy,
@@ -18,6 +20,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     userIds,
     clientIds,
     projectIds,
+    isMe,
   }: {
     sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
     pageSize: number
@@ -25,6 +28,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     userIds?: string[]
     clientIds?: string[]
     projectIds?: string[]
+    isMe: boolean
   }) {
     const instance = TableQueryParameters.create({
       sortBy,
@@ -34,6 +38,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     instance.userIds = userIds
     instance.clientIds = clientIds
     instance.projectIds = projectIds
+    instance.isMe = isMe
     return instance
   }
 }

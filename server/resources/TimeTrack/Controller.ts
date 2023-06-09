@@ -38,9 +38,8 @@ export default class TimeTrackController {
   async getAll(
     @CurrentUser() currentUser: UserEntity,
     @QueryParams()
-    { order, take, skip, userIds, clientIds, projectIds }: TTGetAllParams
+    { order, take, skip, userIds, clientIds, projectIds, isMe }: TTGetAllParams
   ) {
-    const isMe = !(userIds && userIds.length)
     try {
       let ttUserIds
       if (isMe) ttUserIds = [currentUser.id]
@@ -50,7 +49,7 @@ export default class TimeTrackController {
         where: {
           user: {
             organization: { id: currentUser.organization.id },
-            id: ttUserIds[0] == 'all' ? undefined : In(ttUserIds),
+            id: ttUserIds && ttUserIds.length ? In(ttUserIds) : undefined,
           },
           project: {
             id: projectIds && projectIds.length ? In(projectIds) : undefined,

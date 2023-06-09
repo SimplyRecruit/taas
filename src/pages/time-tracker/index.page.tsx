@@ -64,6 +64,7 @@ export default function Tracker() {
           pageSize: pageSizeParam,
           clientIds: filters?.[`${TTFilterType.CLIENT}`],
           projectIds: filters?.[`${TTFilterType.PROJECT}`],
+          isMe: true,
         })
       )
     },
@@ -212,8 +213,8 @@ export default function Tracker() {
         onAdd={() => {
           getTTs(1, pageSize, sorter)
         }}
-        clientOptions={clientsAndProjects?.clients}
-        projectOptions={clientsAndProjects?.projects}
+        clients={clientsAndProjects?.clients}
+        projects={clientsAndProjects?.projects}
       />
 
       <Table
