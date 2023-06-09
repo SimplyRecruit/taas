@@ -54,7 +54,6 @@ export default function Tracker() {
       } else {
         sortBy = { column: 'date', direction: 'DESC' }
       }
-      console.log(filters, filters?.['client.abbr'])
       setSorter(sorter)
       setPage(pageParam)
       setPageSize(pageSizeParam)

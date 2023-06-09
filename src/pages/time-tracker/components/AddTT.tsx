@@ -105,7 +105,7 @@ export default function AddTT({
             options={clientOptions
               ?.map(e => ({
                 value: e.abbr,
-                label: `${e.abbr} - ${e.name}`,
+                label: e.abbr,
               }))
               .sort((a, b) => a.label.localeCompare(b.label))}
           />
@@ -166,7 +166,7 @@ export default function AddTT({
             options={projectOptions
               ?.map(e => ({
                 value: e.abbr,
-                label: `${e.abbr} - ${e.name}`,
+                label: e.abbr,
               }))
               .sort((a, b) => a.label.localeCompare(b.label))}
           />
