@@ -1,11 +1,4 @@
-import {
-  TT,
-  UserRole,
-  TTCreateBody,
-  WorkPeriod,
-  TTUpdateBody,
-  TTGetAllParams,
-} from 'models'
+import { TT, UserRole, WorkPeriod, TTUpdateBody, TTGetAllParams } from 'models'
 
 import {
   BadRequestError,
@@ -15,6 +8,7 @@ import {
   JsonController,
   NotFoundError,
   Param,
+  Res,
 } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
@@ -32,14 +26,15 @@ import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 import TTGetAllResBody from 'models/TimeTrack/res-bodies/TTGetAllResBody'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
 import { getAllTTs } from '~/resources/TimeTrack/Service'
+import ExcelJs from 'exceljs'
+import type { Response } from 'express'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
   @Get(TTGetAllResBody)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
-    @QueryParams()
-    params: TTGetAllParams
+    @QueryParams() params: TTGetAllParams
   ) {
     try {
       // Permission check
@@ -65,6 +60,44 @@ export default class TimeTrackController {
         throw new BadRequestError('Invalid column name for sorting')
       else throw new InternalServerError('Internal Server Error')
     }
+  }
+
+  @Get(undefined, '/spread-sheet')
+  async exportSpreadSheet(
+    @CurrentUser() currentUser: UserEntity,
+    @QueryParams() params: TTGetAllParams,
+    @Res() res: Response
+  ) {
+    // Permission check
+    if (params.isMe) params.userIds = [currentUser.id]
+    else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
+    // Fetching data
+    const [entityObjects] = await getAllTTs(params, currentUser, {
+      usePagination: false,
+    })
+    const tts: TT[] = entityObjects.map(({ client, project, user, ...rest }) =>
+      TT.create({
+        clientAbbr: client.abbr,
+        projectAbbr: project.abbr,
+        userAbbr: user?.abbr,
+        ...rest,
+      })
+    )
+    // Converting data to excel spreadsheet
+    const ttRows = tts.map(tt => [...Object.values(tt)])
+    const workbook = new ExcelJs.Workbook()
+    const worksheet = workbook.addWorksheet('Activities')
+    if (tts.length) worksheet.addRow(Object.keys(tts[0]))
+    worksheet.addRows(ttRows)
+    // Creating response
+    const filename = 'activities.xlsx'
+    const buffer = await workbook.xlsx.writeBuffer({ filename })
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    return buffer
   }
 
   @Patch(undefined, '/:id')
