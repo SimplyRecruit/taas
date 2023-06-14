@@ -31,6 +31,7 @@ import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBo
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 import TTGetAllResBody from 'models/TimeTrack/res-bodies/TTGetAllResBody'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
+import { getAllTTs } from '~/resources/TimeTrack/Service'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
@@ -38,41 +39,15 @@ export default class TimeTrackController {
   async getAll(
     @CurrentUser() currentUser: UserEntity,
     @QueryParams()
-    { order, take, skip, userIds, clientIds, projectIds, isMe }: TTGetAllParams
+    params: TTGetAllParams
   ) {
     try {
-      if (isMe) userIds = [currentUser.id]
+      // Permission check
+      if (params.isMe) params.userIds = [currentUser.id]
       else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
-      const [entityObjects, count] = await TTEntity.findAndCount({
-        where: {
-          user: {
-            organization: { id: currentUser.organization.id },
-            id: userIds && userIds.length ? In(userIds) : undefined,
-          },
-          project: {
-            id: projectIds && projectIds.length ? In(projectIds) : undefined,
-          },
-          client: {
-            id: clientIds && clientIds.length ? In(clientIds) : undefined,
-          },
-        },
-        relations: { user: !isMe, client: true, project: true },
-        order,
-        take,
-        skip,
-        select: {
-          id: true,
-          description: true,
-          date: true,
-          billable: true,
-          hour: true,
-          ticketNo: true,
-          user: {
-            abbr: !isMe,
-          },
-        },
-      })
-
+      // Fetching data
+      const [entityObjects, count] = await getAllTTs(params, currentUser)
+      // Creating response
       return TTGetAllResBody.create({
         data: entityObjects.map(({ client, project, user, ...rest }) =>
           TT.create({
@@ -86,9 +61,9 @@ export default class TimeTrackController {
       })
     } catch (error) {
       if (error instanceof EntityNotFoundError) throw new ForbiddenError()
-      else if (error instanceof EntityPropertyNotFoundError) {
+      else if (error instanceof EntityPropertyNotFoundError)
         throw new BadRequestError('Invalid column name for sorting')
-      } else throw new InternalServerError('Internal Server Error')
+      else throw new InternalServerError('Internal Server Error')
     }
   }
 
