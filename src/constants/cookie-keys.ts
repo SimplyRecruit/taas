@@ -3,6 +3,7 @@ const COOKIE_BASE = 'taas_'
 const cookieKeys = {
   COOKIE_USER_OBJECT: COOKIE_BASE + 'userObject',
   COOKIE_USER_TOKEN: COOKIE_BASE + 'userToken',
+  COOKIE_PAGE_SIZE: COOKIE_BASE + 'pageSize',
 }
 
 export default cookieKeys
