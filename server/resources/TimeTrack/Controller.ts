@@ -258,11 +258,10 @@ export default class TimeTrackController {
     @CurrentUser() currentUser: UserEntity
   ) {
     const resBodies: TTBatchCreateResBody[] = []
-    let ttUserId: string
-    if (userId == 'me') ttUserId = currentUser.id
+    if (userId == 'me') userId = currentUser.id
     else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
     else {
-      ;({ id: ttUserId } = await UserEntity.findOneOrFail({
+      ;({ id: userId } = await UserEntity.findOneOrFail({
         where: {
           id: userId,
           organization: { id: currentUser.organization.id },
@@ -294,7 +293,7 @@ export default class TimeTrackController {
             where: {
               abbr: body.clientAbbr,
               organization: { id: currentUser.organization.id },
-              clientUser: { userId: In([ALL_UUID, ttUserId]) },
+              clientUser: { userId: In([ALL_UUID, userId]) },
               active: true,
             },
 
@@ -327,7 +326,7 @@ export default class TimeTrackController {
             TTEntity.create({
               ...body,
               date: date.dateString,
-              user: { id: ttUserId },
+              user: { id: userId },
               client,
               project,
             })
