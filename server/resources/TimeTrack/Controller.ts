@@ -41,15 +41,13 @@ export default class TimeTrackController {
     { order, take, skip, userIds, clientIds, projectIds, isMe }: TTGetAllParams
   ) {
     try {
-      let ttUserIds
-      if (isMe) ttUserIds = [currentUser.id]
+      if (isMe) userIds = [currentUser.id]
       else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
-      else ttUserIds = userIds
       const [entityObjects, count] = await TTEntity.findAndCount({
         where: {
           user: {
             organization: { id: currentUser.organization.id },
-            id: ttUserIds && ttUserIds.length ? In(ttUserIds) : undefined,
+            id: userIds && userIds.length ? In(userIds) : undefined,
           },
           project: {
             id: projectIds && projectIds.length ? In(projectIds) : undefined,
