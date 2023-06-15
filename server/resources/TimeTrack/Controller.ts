@@ -62,7 +62,7 @@ export default class TimeTrackController {
     }
   }
 
-  @Get(undefined, '/spread-sheet')
+  @Get(Blob, '/spread-sheet')
   async exportSpreadSheet(
     @CurrentUser() currentUser: UserEntity,
     @QueryParams() params: TTGetAllParams,

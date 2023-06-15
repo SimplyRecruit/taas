@@ -3,6 +3,7 @@ import ActionMenu from '@/components/ActionMenu'
 import { FileExcelOutlined } from '@ant-design/icons'
 import useApi from '@/services/useApi'
 import { TTGetAllParams } from 'models'
+import { downloadFile } from '@/util'
 
 interface RenderProps {
   ttGetAllParams: TTGetAllParams
@@ -10,8 +11,9 @@ interface RenderProps {
 
 export default function TTTableActionHeader({ ttGetAllParams }: RenderProps) {
   const { call } = useApi('timeTrack', 'exportSpreadSheet')
-  function onExport() {
-    call(ttGetAllParams)
+  async function onExport() {
+    const blob = await call(ttGetAllParams)
+    downloadFile(blob, 'activities.xlsx')
   }
   const menuItems: MenuProps['items'] = [
     {
