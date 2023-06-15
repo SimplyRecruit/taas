@@ -11,6 +11,8 @@ import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
 import useColor from '@/styles/useColor'
 import TeamTableActionColumn from '@/pages/team/components/TeamTableActionColumn'
+import cookieKeys from '@/constants/cookie-keys'
+import useCookie from '@/services/useCookie'
 
 function getUserRoleTagColor(value: UserRole) {
   switch (value) {
@@ -135,6 +137,7 @@ export default function Team() {
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Resource | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
+  const [pageSize, setPageSize] = useCookie(cookieKeys.COOKIE_PAGE_SIZE, 20)
 
   const loading = loadingUpdate || loadingGetAll
   async function onResendInvite(resource: Resource) {
@@ -247,6 +250,7 @@ export default function Team() {
         loading={loading}
         columns={columns}
         dataSource={filteredData}
+        onChange={({ pageSize }) => setPageSize(pageSize ?? 20)}
         pagination={{
           position: ['bottomCenter'],
           responsive: true,
@@ -254,6 +258,7 @@ export default function Team() {
           showLessItems: true,
           showTotal: total => `Total ${total} members`,
           showSizeChanger: true,
+          pageSize,
         }}
       />
       <EditMemberDrawer
