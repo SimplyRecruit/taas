@@ -63,8 +63,8 @@ export default function Tracker() {
           sortBy: [sortBy],
           page: pageParam,
           pageSize: pageSizeParam,
-          clientIds: filters?.[`${TTFilterType.CLIENT}`],
-          projectIds: filters?.[`${TTFilterType.PROJECT}`],
+          clientIds: filters?.[TTFilterType.CLIENT],
+          projectIds: filters?.[TTFilterType.PROJECT],
           isMe: true,
         })
       )
