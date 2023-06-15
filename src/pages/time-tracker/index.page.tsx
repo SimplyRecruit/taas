@@ -12,6 +12,7 @@ import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionCo
 import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
 import AddTT from '@/pages/time-tracker/components/AddTT'
 import TTFilterType from '@/pages/time-tracker/types/TTFilterType'
+import TTTableActionHeader from '@/pages/time-tracker/components/TTTableActionHeader'
 
 export default function Tracker() {
   const [messageApi, contextHolder] = message.useMessage()
@@ -144,7 +145,7 @@ export default function Tracker() {
           })),
       },
       {
-        title: '',
+        title: () => <TTTableActionHeader />,
         key: 'action',
         render: (_text: any, record: TT, index: number) =>
           workPeriods.some(
