@@ -40,7 +40,8 @@ export default {
                 method: "{{this.method}}",
                 url,{{#if this.params.hasBody}}
                 data: body,{{/if}}{{#if this.params.hasQueries}}
-                params: queries,{{/if}}
+                params: queries,{{/if}}{{#if this.blob}}
+                responseType: "blob",{{/if}}
             })
         },
         {{/each}}
