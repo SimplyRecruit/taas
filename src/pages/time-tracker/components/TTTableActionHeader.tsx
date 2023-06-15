@@ -2,11 +2,16 @@ import { MenuProps, Space } from 'antd'
 import ActionMenu from '@/components/ActionMenu'
 import { FileExcelOutlined } from '@ant-design/icons'
 import useApi from '@/services/useApi'
+import { TTGetAllParams } from 'models'
 
-export default function TTTableActionHeader() {
+interface RenderProps {
+  ttGetAllParams: TTGetAllParams
+}
+
+export default function TTTableActionHeader({ ttGetAllParams }: RenderProps) {
   const { call } = useApi('timeTrack', 'exportSpreadSheet')
   function onExport() {
-    console.log('Export')
+    call(ttGetAllParams)
   }
   const menuItems: MenuProps['items'] = [
     {

@@ -6,7 +6,12 @@ import { formatDate } from '@/util'
 import { message, Table } from 'antd'
 import { TT, TTGetAllParams, WorkPeriod } from 'models'
 import AddBatchTT from '@/pages/time-tracker/components/AddBatchTT'
-import type { ColumnsType, SorterResult } from 'antd/es/table/interface'
+import type {
+  ColumnsType,
+  FilterValue,
+  SorterResult,
+  TablePaginationConfig,
+} from 'antd/es/table/interface'
 import { plainToClass } from 'class-transformer'
 import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionColumn'
 import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
@@ -20,6 +25,7 @@ export default function Tracker() {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
   const [sorter, setSorter] = useState<SorterResult<TT>>()
+  const [filters, setFilters] = useState<Record<string, FilterValue | null>>()
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const {
     data: dataTT,
@@ -39,50 +45,59 @@ export default function Tracker() {
   const selectedRecord =
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
+  const ttGetAllParams = useMemo(
+    () => createTTGetAllParams(page, pageSize, sorter, filters),
+    [filters, page, pageSize, sorter]
+  )
+
   const getTTs = useCallback(
     (
       pageParam = 1,
       pageSizeParam = 20,
-      sorter: SorterResult<TT> | undefined = undefined,
-      filters: any | undefined = undefined
+      sorterParam: SorterResult<TT> | undefined = undefined,
+      filtersParam: any | undefined = undefined
     ) => {
-      let sortBy: { column: string; direction: 'ASC' | 'DESC' }
-      if (sorter?.columnKey) {
-        sortBy = {
-          column: sorter.columnKey as string,
-          direction: sorter.order === 'ascend' ? 'ASC' : 'DESC',
-        }
-      } else {
-        sortBy = { column: 'date', direction: 'DESC' }
-      }
-      setSorter(sorter)
-      setPage(pageParam)
-      setPageSize(pageSizeParam)
-      callTT(
-        TTGetAllParams.create({
-          sortBy: [sortBy],
-          page: pageParam,
-          pageSize: pageSizeParam,
-          clientIds: filters?.[TTFilterType.CLIENT],
-          projectIds: filters?.[TTFilterType.PROJECT],
-          isMe: true,
-        })
+      const ttGetAllParams = createTTGetAllParams(
+        pageParam,
+        pageSizeParam,
+        sorterParam,
+        filtersParam
       )
+      callTT(ttGetAllParams)
     },
-    [callTT, setSorter, setPage, setPageSize]
+    [callTT]
+  )
+
+  const onTableChange = useCallback(
+    (
+      pagination: TablePaginationConfig,
+      filters: Record<string, FilterValue | null>,
+      sorter: SorterResult<TT> | SorterResult<TT>[]
+    ) => {
+      // Never array always single cuz no multisort
+      sorter = sorter as SorterResult<TT>
+      // Refresh table by fetching api with new table params
+      getTTs(pagination.current, pagination.pageSize, sorter, filters)
+      // Updating states
+      setPage(pagination.current!)
+      setPageSize(pagination.pageSize!)
+      setSorter(sorter)
+      setFilters(filters)
+    },
+    [getTTs]
   )
 
   const onDelete = useCallback(
     async (id: string) => {
       try {
         await deleteTT({ id })
-        getTTs(page, pageSize, sorter)
+        getTTs(page, pageSize, sorter, filters)
         messageApi.success('Deleted timetrack successfully!')
       } catch {
         messageApi.error('An error occurred. Could not delete timetrack.')
       }
     },
-    [deleteTT, getTTs, messageApi, page, pageSize, sorter]
+    [deleteTT, getTTs, messageApi, page, pageSize, sorter, filters]
   )
   const columns: ColumnsType<TT> = useMemo(() => {
     return [
@@ -145,7 +160,7 @@ export default function Tracker() {
           })),
       },
       {
-        title: () => <TTTableActionHeader />,
+        title: () => <TTTableActionHeader ttGetAllParams={ttGetAllParams} />,
         key: 'action',
         render: (_text: any, record: TT, index: number) =>
           workPeriods.some(
@@ -163,7 +178,13 @@ export default function Tracker() {
           ) : null,
       },
     ]
-  }, [clientsAndProjects, workPeriods, onDelete])
+  }, [
+    clientsAndProjects?.clients,
+    clientsAndProjects?.projects,
+    ttGetAllParams,
+    workPeriods,
+    onDelete,
+  ])
 
   function onUpdate(record: TT) {
     if (selectedRowIndex != null && dataTT?.data) {
@@ -181,7 +202,7 @@ export default function Tracker() {
   useEffect(() => {
     getClientsAndProjects({ id: 'me' })
     getAllWorkPeriods()
-    getTTs(1, pageSize)
+    getTTs(page, pageSize)
   }, [])
 
   return (
@@ -230,9 +251,7 @@ export default function Tracker() {
         }}
         columns={columns}
         dataSource={dataTT?.data}
-        onChange={(e, filters, sorter) =>
-          getTTs(e.current, e.pageSize, sorter as SorterResult<TT>, filters)
-        }
+        onChange={onTableChange}
         pagination={{
           position: ['bottomCenter'],
           showQuickJumper: false,
@@ -255,4 +274,30 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       ...(await serverSideTranslations(locale, ['common'])),
     },
   }
+}
+
+function createTTGetAllParams(
+  pageParam: number,
+  pageSizeParam: number,
+  sorterParam: SorterResult<TT> | undefined,
+  filtersParam: any
+) {
+  let sortBy: { column: string; direction: 'ASC' | 'DESC' }
+  if (sorterParam?.columnKey) {
+    sortBy = {
+      column: sorterParam.columnKey as string,
+      direction: sorterParam.order === 'ascend' ? 'ASC' : 'DESC',
+    }
+  } else {
+    sortBy = { column: 'date', direction: 'DESC' }
+  }
+  const ttGetAllParams = TTGetAllParams.create({
+    sortBy: [sortBy],
+    page: pageParam,
+    pageSize: pageSizeParam,
+    clientIds: filtersParam?.[TTFilterType.CLIENT],
+    projectIds: filtersParam?.[TTFilterType.PROJECT],
+    isMe: true,
+  })
+  return ttGetAllParams
 }
