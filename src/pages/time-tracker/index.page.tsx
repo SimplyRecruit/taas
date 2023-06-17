@@ -12,12 +12,14 @@ import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionCo
 import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
 import AddTT from '@/pages/time-tracker/components/AddTT'
 import TTFilterType from '@/pages/time-tracker/types/TTFilterType'
+import cookieKeys from '@/constants/cookie-keys'
+import useCookie from '@/services/useCookie'
 
 export default function Tracker() {
   const [messageApi, contextHolder] = message.useMessage()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
+  const [pageSize, setPageSize] = useCookie(cookieKeys.COOKIE_PAGE_SIZE, 20)
   const [sorter, setSorter] = useState<SorterResult<TT>>()
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const {
