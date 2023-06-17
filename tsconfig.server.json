@@ -9,7 +9,10 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "strictPropertyInitialization": false,
-        "lib": ["ES6"]
+        "lib": [
+            "ES6",
+            "DOM"
+        ]
     },
     "include": [
         "server/**/*.ts"
