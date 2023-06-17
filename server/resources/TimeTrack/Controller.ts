@@ -1,11 +1,4 @@
-import {
-  TT,
-  UserRole,
-  TTCreateBody,
-  WorkPeriod,
-  TTUpdateBody,
-  TTGetAllParams,
-} from 'models'
+import { TT, UserRole, WorkPeriod, TTUpdateBody, TTGetAllParams } from 'models'
 
 import {
   BadRequestError,
@@ -15,6 +8,7 @@ import {
   JsonController,
   NotFoundError,
   Param,
+  Res,
 } from 'routing-controllers'
 
 import UserEntity from '~/resources/User/Entity'
@@ -31,50 +25,24 @@ import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBo
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 import TTGetAllResBody from 'models/TimeTrack/res-bodies/TTGetAllResBody'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
+import { getAllTTs } from '~/resources/TimeTrack/Service'
+import ExcelJs from 'exceljs'
+import type { Response } from 'express'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
   @Get(TTGetAllResBody)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
-    @QueryParams()
-    { order, take, skip, userIds, clientIds, projectIds, isMe }: TTGetAllParams
+    @QueryParams() params: TTGetAllParams
   ) {
     try {
-      let ttUserIds
-      if (isMe) ttUserIds = [currentUser.id]
+      // Permission check
+      if (params.isMe) params.userIds = [currentUser.id]
       else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
-      else ttUserIds = userIds
-      const [entityObjects, count] = await TTEntity.findAndCount({
-        where: {
-          user: {
-            organization: { id: currentUser.organization.id },
-            id: ttUserIds && ttUserIds.length ? In(ttUserIds) : undefined,
-          },
-          project: {
-            id: projectIds && projectIds.length ? In(projectIds) : undefined,
-          },
-          client: {
-            id: clientIds && clientIds.length ? In(clientIds) : undefined,
-          },
-        },
-        relations: { user: !isMe, client: true, project: true },
-        order,
-        take,
-        skip,
-        select: {
-          id: true,
-          description: true,
-          date: true,
-          billable: true,
-          hour: true,
-          ticketNo: true,
-          user: {
-            abbr: !isMe,
-          },
-        },
-      })
-
+      // Fetching data
+      const [entityObjects, count] = await getAllTTs(params, currentUser)
+      // Creating response
       return TTGetAllResBody.create({
         data: entityObjects.map(({ client, project, user, ...rest }) =>
           TT.create({
@@ -88,10 +56,48 @@ export default class TimeTrackController {
       })
     } catch (error) {
       if (error instanceof EntityNotFoundError) throw new ForbiddenError()
-      else if (error instanceof EntityPropertyNotFoundError) {
+      else if (error instanceof EntityPropertyNotFoundError)
         throw new BadRequestError('Invalid column name for sorting')
-      } else throw new InternalServerError('Internal Server Error')
+      else throw new InternalServerError('Internal Server Error')
     }
+  }
+
+  @Get(Blob, '/spread-sheet')
+  async exportSpreadSheet(
+    @CurrentUser() currentUser: UserEntity,
+    @QueryParams() params: TTGetAllParams,
+    @Res() res: Response
+  ) {
+    // Permission check
+    if (params.isMe) params.userIds = [currentUser.id]
+    else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
+    // Fetching data
+    const [entityObjects] = await getAllTTs(params, currentUser, {
+      usePagination: false,
+    })
+    const tts: TT[] = entityObjects.map(({ client, project, user, ...rest }) =>
+      TT.create({
+        clientAbbr: client.abbr,
+        projectAbbr: project.abbr,
+        userAbbr: user?.abbr,
+        ...rest,
+      })
+    )
+    // Converting data to excel spreadsheet
+    const ttRows = tts.map(tt => [...Object.values(tt)])
+    const workbook = new ExcelJs.Workbook()
+    const worksheet = workbook.addWorksheet('Activities')
+    if (tts.length) worksheet.addRow(Object.keys(tts[0]))
+    worksheet.addRows(ttRows)
+    // Creating response
+    const filename = 'activities.xlsx'
+    const buffer = await workbook.xlsx.writeBuffer({ filename })
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    return buffer
   }
 
   @Patch(undefined, '/:id')
@@ -252,11 +258,10 @@ export default class TimeTrackController {
     @CurrentUser() currentUser: UserEntity
   ) {
     const resBodies: TTBatchCreateResBody[] = []
-    let ttUserId: string
-    if (userId == 'me') ttUserId = currentUser.id
+    if (userId == 'me') userId = currentUser.id
     else if (currentUser.role != UserRole.ADMIN) throw new ForbiddenError()
     else {
-      ;({ id: ttUserId } = await UserEntity.findOneOrFail({
+      ;({ id: userId } = await UserEntity.findOneOrFail({
         where: {
           id: userId,
           organization: { id: currentUser.organization.id },
@@ -288,7 +293,7 @@ export default class TimeTrackController {
             where: {
               abbr: body.clientAbbr,
               organization: { id: currentUser.organization.id },
-              clientUser: { userId: In([ALL_UUID, ttUserId]) },
+              clientUser: { userId: In([ALL_UUID, userId]) },
               active: true,
             },
 
@@ -321,7 +326,7 @@ export default class TimeTrackController {
             TTEntity.create({
               ...body,
               date: date.dateString,
-              user: { id: ttUserId },
+              user: { id: userId },
               client,
               project,
             })

@@ -180,6 +180,19 @@ export default {
                 params: queries,
             })
         },
+        async exportSpreadSheet(
+            queries: TTGetAllParams,
+        ) : Promise<AxiosResponse<Blob>>
+        {
+            const route = "/time-track/spread-sheet"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+                params: queries,
+                responseType: "blob",
+            })
+        },
         async update(
             body: TTUpdateBody,
             params: { id: string, },

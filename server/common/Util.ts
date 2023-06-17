@@ -23,6 +23,7 @@ export async function sendEmail(to: string, emailTemplate: EmailTemplate.Base) {
 export async function generateApiCalls() {
   type methodType = 'get' | 'post' | 'patch' | 'put' | 'delete'
   const primitiveTypes = ['String', 'Number', 'BigInt', 'Boolean', 'Symbol']
+  const noImportTypes = ['Blob']
   const apiMethods: {
     [key: string]: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,6 +33,7 @@ export async function generateApiCalls() {
         params: any
         promiseReturnType: string
         returnsArray: boolean
+        blob: boolean
       }
     }
   } = {}
@@ -83,9 +85,10 @@ export async function generateApiCalls() {
             break
           case 'body':
             finalParams.hasBody = true
-            if (!primitiveTypes.includes(explicitType!))
+            if (primitiveTypes.includes(explicitType!))
+              explicitType = explicitType!.toLowerCase()
+            else if (!noImportTypes.includes(explicitType!))
               imports.add(explicitType!)
-            else explicitType = explicitType!.toLowerCase()
             finalParams.bodyClass = explicitType!
             break
           case 'param':
@@ -94,9 +97,10 @@ export async function generateApiCalls() {
             break
           case 'params':
             finalParams.hasParams = true
-            if (!primitiveTypes.includes(explicitType!))
+            if (primitiveTypes.includes(explicitType!))
+              explicitType = explicitType!.toLowerCase()
+            else if (!noImportTypes.includes(explicitType!))
               imports.add(explicitType!)
-            else explicitType = explicitType!.toLowerCase()
             finalParams.paramsClass = explicitType!
             break
           case 'query':
@@ -105,9 +109,10 @@ export async function generateApiCalls() {
             break
           case 'queries':
             finalParams.hasQueries = true
-            if (!primitiveTypes.includes(explicitType!))
+            if (primitiveTypes.includes(explicitType!))
+              explicitType = explicitType!.toLowerCase()
+            else if (!noImportTypes.includes(explicitType!))
               imports.add(explicitType!)
-            else explicitType = explicitType!.toLowerCase()
             finalParams.queriesClass = explicitType!
             break
           default:
@@ -124,6 +129,8 @@ export async function generateApiCalls() {
       if (typeof promiseReturnTypeClass === 'function') {
         if (primitiveTypes.includes(promiseReturnTypeClass.name)) {
           promiseReturnType = promiseReturnTypeClass.name.toLowerCase()
+        } else if (noImportTypes.includes(promiseReturnTypeClass.name)) {
+          promiseReturnType = promiseReturnTypeClass.name
         } else {
           promiseReturnType = promiseReturnTypeClass.name
           imports.add(promiseReturnType)
@@ -136,6 +143,7 @@ export async function generateApiCalls() {
         params: finalParams,
         promiseReturnType,
         returnsArray,
+        blob: promiseReturnType === 'Blob',
       }
     }
   }
