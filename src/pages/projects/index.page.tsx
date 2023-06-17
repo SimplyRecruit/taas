@@ -11,6 +11,8 @@ import { ALL_UUID } from '~/common/Config'
 import { type ColumnsType } from 'antd/es/table'
 import TableActionColumn from '@/components/TableActionColumn'
 import DateCell from '@/components/DateCell'
+import cookieKeys from '@/constants/cookie-keys'
+import useCookie from '@/services/useCookie'
 
 export default function ProjectsPage() {
   const columns: ColumnsType<Project> = [
@@ -95,6 +97,7 @@ export default function ProjectsPage() {
   const [searchText, setSearchText] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+  const [pageSize, setPageSize] = useCookie(cookieKeys.COOKIE_PAGE_SIZE, 20)
 
   const loading = loadingUpdate || loadingGetAll
   const filteredData = useMemo(() => {
@@ -194,6 +197,7 @@ export default function ProjectsPage() {
           return ''
         }}
         dataSource={filteredData}
+        onChange={({ pageSize }) => setPageSize(pageSize ?? 20)}
         pagination={{
           position: ['bottomCenter'],
           responsive: true,
@@ -201,6 +205,7 @@ export default function ProjectsPage() {
           showLessItems: true,
           showTotal: total => `Total ${total} projects`,
           showSizeChanger: true,
+          pageSize,
         }}
       />
       <EditProjectModal

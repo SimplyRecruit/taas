@@ -13,6 +13,8 @@ import TableActionColumn from '@/components/TableActionColumn'
 import Filter from '@/components/Filter'
 import DateCell from '@/components/DateCell'
 import useColor from '@/styles/useColor'
+import cookieKeys from '@/constants/cookie-keys'
+import useCookie from '@/services/useCookie'
 
 type DrawerStatus = 'create' | 'edit' | 'none'
 
@@ -142,6 +144,7 @@ export default function Clients() {
   const [selectedStatus, setSelectedStatus] = useState('active')
   const [currentRecord, setCurrentRecord] = useState<Client | null>(null)
   const [selectedRowKey, setSelectedRowKey] = useState<string | null>(null)
+  const [pageSize, setPageSize] = useCookie(cookieKeys.COOKIE_PAGE_SIZE, 20)
 
   const loading = loadingUpdate || loadingGetAll
 
@@ -251,6 +254,7 @@ export default function Clients() {
         rowKey={record => record.id}
         columns={columns}
         dataSource={filteredData}
+        onChange={({ pageSize }) => setPageSize(pageSize ?? 20)}
         pagination={{
           position: ['bottomCenter'],
           responsive: true,
@@ -258,6 +262,7 @@ export default function Clients() {
           showLessItems: true,
           showTotal: total => `Total ${total} clients`,
           showSizeChanger: true,
+          pageSize,
         }}
       />
       {currentRecord && (
