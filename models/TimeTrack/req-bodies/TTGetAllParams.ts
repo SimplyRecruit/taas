@@ -1,4 +1,3 @@
-import TTFilterType from '@/pages/time-tracker/types/TTFilterType'
 import { SorterResult } from 'antd/es/table/interface'
 import { IsArray, IsBoolean, IsOptional } from 'class-validator'
 import TableQueryParameters from 'models/common/TableQueryParameters'
@@ -65,9 +64,9 @@ export default class TTGetAllParams extends TableQueryParameters {
       sortBy: [sortBy],
       page: pageParam,
       pageSize: pageSizeParam,
-      userIds: filtersParam?.[TTFilterType.USER],
-      clientIds: filtersParam?.[TTFilterType.CLIENT],
-      projectIds: filtersParam?.[TTFilterType.PROJECT],
+      userIds: filtersParam?.['user.abbr'],
+      clientIds: filtersParam?.['client.abbr'],
+      projectIds: filtersParam?.['project.abbr'],
       isMe,
     })
     return ttGetAllParams
