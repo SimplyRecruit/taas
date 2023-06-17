@@ -87,7 +87,7 @@ export default function Tracker() {
       setSorter(sorter)
       setFilters(filters)
     },
-    [getTTs]
+    [getTTs, setPage, setPageSize, setSorter, setFilters]
   )
 
   const onDelete = useCallback(
@@ -181,13 +181,7 @@ export default function Tracker() {
           ) : null,
       },
     ]
-  }, [
-    clientsAndProjects?.clients,
-    clientsAndProjects?.projects,
-    ttGetAllParams,
-    workPeriods,
-    onDelete,
-  ])
+  }, [clientsAndProjects, ttGetAllParams, workPeriods, onDelete])
 
   function onUpdate(record: TT) {
     if (selectedRowIndex != null && dataTT?.data) {

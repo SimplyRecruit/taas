@@ -93,7 +93,7 @@ export default function TeamTracker() {
       setSorter(sorter)
       setFilters(filters)
     },
-    [getTTs]
+    [getTTs, setPage, setPageSize, setSorter, setFilters]
   )
 
   const onDelete = useCallback(
