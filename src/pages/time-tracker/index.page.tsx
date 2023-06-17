@@ -46,7 +46,7 @@ export default function Tracker() {
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
   const ttGetAllParams = useMemo(
-    () => createTTGetAllParams(page, pageSize, sorter, filters),
+    () => TTGetAllParams.createFromParams(page, pageSize, sorter, filters),
     [filters, page, pageSize, sorter]
   )
 
@@ -57,7 +57,7 @@ export default function Tracker() {
       sorterParam: SorterResult<TT> | undefined = undefined,
       filtersParam: any | undefined = undefined
     ) => {
-      const ttGetAllParams = createTTGetAllParams(
+      const ttGetAllParams = TTGetAllParams.createFromParams(
         pageParam,
         pageSizeParam,
         sorterParam,
@@ -274,30 +274,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       ...(await serverSideTranslations(locale, ['common'])),
     },
   }
-}
-
-function createTTGetAllParams(
-  pageParam: number,
-  pageSizeParam: number,
-  sorterParam: SorterResult<TT> | undefined,
-  filtersParam: any
-) {
-  let sortBy: { column: string; direction: 'ASC' | 'DESC' }
-  if (sorterParam?.columnKey) {
-    sortBy = {
-      column: sorterParam.columnKey as string,
-      direction: sorterParam.order === 'ascend' ? 'ASC' : 'DESC',
-    }
-  } else {
-    sortBy = { column: 'date', direction: 'DESC' }
-  }
-  const ttGetAllParams = TTGetAllParams.create({
-    sortBy: [sortBy],
-    page: pageParam,
-    pageSize: pageSizeParam,
-    clientIds: filtersParam?.[TTFilterType.CLIENT],
-    projectIds: filtersParam?.[TTFilterType.PROJECT],
-    isMe: true,
-  })
-  return ttGetAllParams
 }
