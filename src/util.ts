@@ -6,3 +6,13 @@ export function formatDate(date: Date | string): string {
 export function stringToDate(value: string): Date {
   return moment(value, DEFAULT_DATE_FORMAT).toDate()
 }
+
+export function downloadFile(blob: Blob, fileName: string) {
+  const aElement = document.createElement('a')
+  aElement.setAttribute('download', fileName)
+  const href = URL.createObjectURL(blob as any)
+  aElement.href = href
+  aElement.setAttribute('target', '_blank')
+  aElement.click()
+  URL.revokeObjectURL(href)
+}
