@@ -16,7 +16,6 @@ import { plainToClass } from 'class-transformer'
 import TTTableActionColumn from '@/pages/time-tracker/components/TTTableActionColumn'
 import EditTTDrawer from '@/pages/time-tracker/components/EditTTDrawer'
 import AddTT from '@/pages/time-tracker/components/AddTT'
-import TTFilterType from '@/pages/time-tracker/types/TTFilterType'
 import TTTableActionHeader from '@/pages/time-tracker/components/TTTableActionHeader'
 
 export default function Tracker() {
@@ -46,7 +45,8 @@ export default function Tracker() {
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
 
   const ttGetAllParams = useMemo(
-    () => TTGetAllParams.createFromParams(page, pageSize, sorter, filters),
+    () =>
+      TTGetAllParams.createFromParams(page, pageSize, sorter, filters, true),
     [filters, page, pageSize, sorter]
   )
 
@@ -61,7 +61,8 @@ export default function Tracker() {
         pageParam,
         pageSizeParam,
         sorterParam,
-        filtersParam
+        filtersParam,
+        true
       )
       callTT(ttGetAllParams)
     },

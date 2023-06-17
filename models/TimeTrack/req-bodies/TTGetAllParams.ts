@@ -49,7 +49,8 @@ export default class TTGetAllParams extends TableQueryParameters {
     pageParam: number,
     pageSizeParam: number,
     sorterParam: SorterResult<TT> | undefined,
-    filtersParam: any
+    filtersParam: any,
+    isMe: boolean
   ) {
     let sortBy: { column: string; direction: 'ASC' | 'DESC' }
     if (sorterParam?.columnKey) {
@@ -64,9 +65,10 @@ export default class TTGetAllParams extends TableQueryParameters {
       sortBy: [sortBy],
       page: pageParam,
       pageSize: pageSizeParam,
+      userIds: filtersParam?.[TTFilterType.USER],
       clientIds: filtersParam?.[TTFilterType.CLIENT],
       projectIds: filtersParam?.[TTFilterType.PROJECT],
-      isMe: true,
+      isMe,
     })
     return ttGetAllParams
   }
