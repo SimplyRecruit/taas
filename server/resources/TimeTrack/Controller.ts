@@ -106,7 +106,7 @@ export default class TimeTrackController {
     @Param('id') id: string,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         /* Check period of TT */
         const tt = await em.findOneOrFail(TTEntity, {
@@ -216,7 +216,7 @@ export default class TimeTrackController {
     @Param('id') id: string,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         /* Check period of TT */
         const tt = await em.findOneOrFail(TTEntity, {
@@ -271,7 +271,7 @@ export default class TimeTrackController {
       }))
     }
 
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         for (const { date, ...body } of bodies) {
           const ttPeriod = WorkPeriod.fromDate(date.dateObject)

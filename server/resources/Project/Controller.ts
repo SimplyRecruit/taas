@@ -59,7 +59,7 @@ export default class ProjectController {
   ) {
     let id
     console.log(clientId, body)
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {
           where: { id: clientId },
@@ -97,7 +97,7 @@ export default class ProjectController {
     @Body({ patch: true }) { clientId, ...body }: ProjectUpdateBody,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         let updateBody: any = body
         if (clientId) {

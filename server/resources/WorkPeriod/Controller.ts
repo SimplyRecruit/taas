@@ -38,7 +38,7 @@ export default class WorkPeriodController {
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodString }: WorkPeriod
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       const existing = await em.findOneBy(WorkPeriodEntity, {
         period: periodString,
         organization: { id: currentUser.organization.id },
@@ -58,7 +58,7 @@ export default class WorkPeriodController {
     @CurrentUser() currentUser: UserEntity,
     @Body() { periodString }: WorkPeriod
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const workPeriod = await em.findOneOrFail(WorkPeriodEntity, {
           where: { period: periodString },

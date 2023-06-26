@@ -110,7 +110,7 @@ export default class ClientController {
     @Param('id') id: string,
     @Body({ patch: true }) body: ClientUpdateBody
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {
           where: { id },
@@ -135,7 +135,7 @@ export default class ClientController {
     @Body() body: ClientCreateBody
   ) {
     let id
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       const { userIds, everyoneHasAccess, ...rest } = body
       try {
         const client = await em.save(
@@ -170,7 +170,7 @@ export default class ClientController {
     @Param('id') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {
           where: { id: clientId },
@@ -194,7 +194,7 @@ export default class ClientController {
     @Param('clientId') clientId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {
           where: { id: clientId },
@@ -236,7 +236,7 @@ export default class ClientController {
     @Param('userId') userId: string,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {
           where: { id: clientId },

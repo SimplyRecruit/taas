@@ -53,7 +53,7 @@ export default class ResourceController {
     @Body({ patch: true })
     body: ResourceUpdateBody
   ) {
-    await dataSource.transaction(async em => {
+    await dataSource.manager.transaction(async em => {
       try {
         const user = await em.findOneOrFail(UserEntity, {
           where: { id: userId },

@@ -8,7 +8,7 @@ export async function getReport(
   { from, to, billable, clientIds, projectIds, userIds }: ReportReqBody
 ) {
   let t: Report[] = []
-  await dataSource.transaction(async em => {
+  await dataSource.manager.transaction(async em => {
     let query = em
       .createQueryBuilder()
       .select(`DATE_TRUNC('day', tt.date)`, 'date')
