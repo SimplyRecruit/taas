@@ -34,13 +34,6 @@ const dataSource = new DataSource({
   logging: false,
   synchronize: dev && true,
   namingStrategy: new SnakeNamingStrategy(),
-  extra: {
-    // based on  https://node-postgres.com/api/pool
-    // max connection pool size
-    max: 10,
-    // connection timeout
-    connectionTimeoutMillis: 1000,
-  },
 })
 
 dataSource

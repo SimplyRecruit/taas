@@ -79,7 +79,7 @@ export default class UserController {
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
   ) {
-    await dataSource.manager.transaction(async em => {
+    await dataSource.transaction(async em => {
       try {
         const organization = await em.save(OrganizationEntity, {
           name: organizationName,
@@ -120,7 +120,7 @@ export default class UserController {
     @HeaderParam('Accept-Language') language: Language
   ) {
     let id
-    await dataSource.manager.transaction(async em => {
+    await dataSource.transaction(async em => {
       try {
         const user = await em.save(UserEntity, {
           email,
@@ -154,7 +154,7 @@ export default class UserController {
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
   ) {
-    await dataSource.manager.transaction(async em => {
+    await dataSource.transaction(async em => {
       try {
         const user = await em.findOneOrFail(UserEntity, {
           where: {
@@ -186,7 +186,7 @@ export default class UserController {
     @Body()
     { token, email, password }: ResetPasswordReqBody
   ) {
-    await dataSource.manager.transaction(async em => {
+    await dataSource.transaction(async em => {
       try {
         const sessionToken = await em.findOneOrFail(SessionTokenEntity, {
           where: { user: { email } },
