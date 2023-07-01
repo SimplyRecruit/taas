@@ -32,7 +32,7 @@ const dataSource = new DataSource({
   ],
   parseInt8: true,
   logging: false,
-  synchronize: dev && true,
+  synchronize: dev || true,
   namingStrategy: new SnakeNamingStrategy(),
 })
 
