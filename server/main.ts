@@ -39,7 +39,7 @@ const dataSource = new DataSource({
     // max connection pool size
     max: 10,
     // connection timeout
-    connectionTimeoutMillis: 0,
+    connectionTimeoutMillis: 1000,
   },
 })
 
