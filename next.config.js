@@ -6,6 +6,9 @@ const nextConfig = {
   eslint: { dirs: ['src', 'models', 'server'] },
   pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js'],
   i18n,
+  images: {
+    unoptimized: true,
+  },
 }
 
 module.exports = nextConfig
