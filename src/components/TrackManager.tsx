@@ -174,6 +174,10 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
         dataIndex: 'billable',
         key: 'billable',
         sorter: true,
+        filters: [
+          { text: 'YES', value: true },
+          { text: 'NO', value: false },
+        ],
         render: (value: boolean) => (value ? 'YES' : 'NO'),
       },
       {

@@ -3,7 +3,16 @@ import { In } from 'typeorm'
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
 
 export async function getAllTTs(
-  { order, take, skip, userIds, clientIds, projectIds, isMe }: TTGetAllParams,
+  {
+    order,
+    take,
+    skip,
+    userIds,
+    clientIds,
+    projectIds,
+    billableValues,
+    isMe,
+  }: TTGetAllParams,
   currentUser: User,
   options = { usePagination: true }
 ) {
@@ -23,6 +32,10 @@ export async function getAllTTs(
       client: {
         id: clientIds && clientIds.length ? In(clientIds) : undefined,
       },
+      billable:
+        billableValues && billableValues.length
+          ? In(billableValues)
+          : undefined,
     },
     relations: { user: !isMe, client: true, project: true },
     order,

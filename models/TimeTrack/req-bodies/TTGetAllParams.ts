@@ -12,6 +12,9 @@ export default class TTGetAllParams extends TableQueryParameters {
   @IsArray()
   @IsOptional()
   projectIds?: string[]
+  @IsArray()
+  @IsOptional()
+  billableValues?: boolean[]
   @IsBoolean()
   isMe: boolean
 
@@ -22,6 +25,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     userIds,
     clientIds,
     projectIds,
+    billableValues,
     isMe,
   }: {
     sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
@@ -30,6 +34,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     userIds?: string[]
     clientIds?: string[]
     projectIds?: string[]
+    billableValues?: boolean[]
     isMe: boolean
   }) {
     const instance = TableQueryParameters.create({
@@ -40,6 +45,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     instance.userIds = userIds
     instance.clientIds = clientIds
     instance.projectIds = projectIds
+    instance.billableValues = billableValues
     instance.isMe = isMe
     return instance
   }
@@ -67,6 +73,7 @@ export default class TTGetAllParams extends TableQueryParameters {
       userIds: filtersParam?.['user.abbr'],
       clientIds: filtersParam?.['client.abbr'],
       projectIds: filtersParam?.['project.abbr'],
+      billableValues: filtersParam?.['billable'],
       isMe,
     })
     return ttGetAllParams
