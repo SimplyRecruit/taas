@@ -1,5 +1,5 @@
 import { SorterResult } from 'antd/es/table/interface'
-import { IsArray, IsBoolean, IsOptional } from 'class-validator'
+import { IsArray, IsBoolean, IsDate, IsOptional } from 'class-validator'
 import TableQueryParameters from 'models/common/TableQueryParameters'
 import TT from 'models/TimeTrack/TT'
 export default class TTGetAllParams extends TableQueryParameters {
@@ -17,6 +17,12 @@ export default class TTGetAllParams extends TableQueryParameters {
   billableValues?: boolean[]
   @IsBoolean()
   isMe: boolean
+  @IsOptional()
+  @IsDate()
+  dateAfter?: Date
+  @IsOptional()
+  @IsDate()
+  dateBefore?: Date
 
   public static create({
     sortBy,
@@ -27,6 +33,8 @@ export default class TTGetAllParams extends TableQueryParameters {
     projectIds,
     billableValues,
     isMe,
+    dateAfter,
+    dateBefore,
   }: {
     sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
     pageSize: number
@@ -36,6 +44,8 @@ export default class TTGetAllParams extends TableQueryParameters {
     projectIds?: string[]
     billableValues?: boolean[]
     isMe: boolean
+    dateAfter?: Date
+    dateBefore?: Date
   }) {
     const instance = TableQueryParameters.create({
       sortBy,
@@ -47,6 +57,8 @@ export default class TTGetAllParams extends TableQueryParameters {
     instance.projectIds = projectIds
     instance.billableValues = billableValues
     instance.isMe = isMe
+    instance.dateAfter = dateAfter
+    instance.dateBefore = dateBefore
     return instance
   }
 
@@ -55,7 +67,8 @@ export default class TTGetAllParams extends TableQueryParameters {
     pageSizeParam: number,
     sorterParam: SorterResult<TT> | undefined,
     filtersParam: any,
-    isMe: boolean
+    isMe: boolean,
+    dateFilter: [Date | undefined, Date | undefined]
   ) {
     let sortBy: { column: string; direction: 'ASC' | 'DESC' }
     if (sorterParam?.columnKey) {
@@ -75,6 +88,8 @@ export default class TTGetAllParams extends TableQueryParameters {
       projectIds: filtersParam?.['project.abbr'],
       billableValues: filtersParam?.['billable'],
       isMe,
+      dateAfter: dateFilter[0],
+      dateBefore: dateFilter[1],
     })
     return ttGetAllParams
   }

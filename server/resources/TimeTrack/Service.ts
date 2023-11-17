@@ -1,5 +1,5 @@
 import { TTGetAllParams, User } from 'models'
-import { In } from 'typeorm'
+import { In, MoreThanOrEqual, LessThanOrEqual, And } from 'typeorm'
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
 
 export async function getAllTTs(
@@ -12,6 +12,8 @@ export async function getAllTTs(
     projectIds,
     billableValues,
     isMe,
+    dateAfter,
+    dateBefore,
   }: TTGetAllParams,
   currentUser: User,
   options = { usePagination: true }
@@ -36,6 +38,7 @@ export async function getAllTTs(
         billableValues && billableValues.length
           ? In(billableValues)
           : undefined,
+      date: dateBetween(dateAfter, dateBefore),
     },
     relations: { user: !isMe, client: true, project: true },
     order,
@@ -53,4 +56,16 @@ export async function getAllTTs(
       },
     },
   })
+}
+
+function dateBetween(dateAfter?: Date, dateBefore?: Date) {
+  if (dateAfter && dateBefore) {
+    return And(MoreThanOrEqual(dateAfter), LessThanOrEqual(dateBefore))
+  } else if (dateAfter) {
+    return MoreThanOrEqual(dateAfter)
+  } else if (dateBefore) {
+    return LessThanOrEqual(dateBefore)
+  } else {
+    return undefined
+  }
 }

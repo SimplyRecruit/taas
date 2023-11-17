@@ -7,7 +7,7 @@ import TTTableActionHeader from '@/pages/time-tracker/components/TTTableActionHe
 import useApi from '@/services/useApi'
 import useCookie from '@/services/useCookie'
 import { formatDate } from '@/util'
-import { message, Table } from 'antd'
+import { DatePicker, message, Table } from 'antd'
 import {
   SorterResult,
   FilterValue,
@@ -31,6 +31,7 @@ interface RenderProps<IsMe extends 'time' | 'team'> {
   type: IsMe
   resources: IsMe extends 'team' ? Resource[] : undefined
 }
+type DateFilter = [Date | undefined, Date | undefined]
 
 export default function TrackManager<IsMe extends 'time' | 'team'>({
   resources,
@@ -45,6 +46,10 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
   const [pageSize, setPageSize] = useCookie(cookieKeys.COOKIE_PAGE_SIZE, 20)
   const [sorter, setSorter] = useState<SorterResult<TT>>()
   const [filters, setFilters] = useState<Record<string, FilterValue | null>>()
+  const [dateFilter, setDateFilter] = useState<DateFilter>([
+    undefined,
+    undefined,
+  ])
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const {
     data: dataTT,
@@ -63,8 +68,15 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
 
   const ttGetAllParams = useMemo(
     () =>
-      TTGetAllParams.createFromParams(page, pageSize, sorter, filters, isMe),
-    [filters, isMe, page, pageSize, sorter]
+      TTGetAllParams.createFromParams(
+        page,
+        pageSize,
+        sorter,
+        filters,
+        isMe,
+        dateFilter
+      ),
+    [filters, isMe, page, pageSize, sorter, dateFilter]
   )
 
   const getTTs = useCallback(
@@ -72,14 +84,16 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
       pageParam = 1,
       pageSizeParam = 20,
       sorterParam: SorterResult<TT> | undefined = undefined,
-      filtersParam: any | undefined = undefined
+      filtersParam: any | undefined = undefined,
+      dateFilter: DateFilter
     ) => {
       const ttGetAllParams = TTGetAllParams.createFromParams(
         pageParam,
         pageSizeParam,
         sorterParam,
         filtersParam,
-        isMe
+        isMe,
+        dateFilter
       )
       callTT(ttGetAllParams)
     },
@@ -95,7 +109,10 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
       // Never array always single cuz no multisort
       sorter = sorter as SorterResult<TT>
       // Refresh table by fetching api with new table params
-      getTTs(pagination.current, pagination.pageSize, sorter, filters)
+      getTTs(pagination.current, pagination.pageSize, sorter, filters, [
+        undefined,
+        undefined,
+      ])
       // Updating states
       setPage(pagination.current!)
       setPageSize(pagination.pageSize!)
@@ -109,16 +126,16 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
     async (id: string) => {
       try {
         await deleteTT({ id })
-        getTTs(page, pageSize, sorter, filters)
+        getTTs(page, pageSize, sorter, filters, dateFilter)
         messageApi.success('Deleted timetrack successfully!')
       } catch {
         messageApi.error('An error occurred. Could not delete timetrack.')
       }
     },
-    [deleteTT, getTTs, messageApi, page, pageSize, sorter, filters]
+    [deleteTT, getTTs, messageApi, page, pageSize, sorter, filters, dateFilter]
   )
 
-  const columns: ColumnsType<TT> = useMemo(() => {
+  const columns = useMemo<ColumnsType<TT>>(() => {
     return [
       {
         title: 'Date',
@@ -126,6 +143,24 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
         key: 'date',
         render: (value: Date) => <span>{formatDate(value)}</span>,
         sorter: true,
+        filterDropdown: ({ confirm }) => (
+          <div style={{ padding: 8 }}>
+            <DatePicker.RangePicker
+              allowClear={true}
+              onChange={values => {
+                const dates: DateFilter = [undefined, undefined]
+                if (values) {
+                  //If not cleared
+                  dates[0] = values[0]?.toDate()
+                  dates[1] = values[1]?.toDate()
+                }
+                setDateFilter(dates)
+                confirm()
+                getTTs(1, pageSize, sorter, undefined, dates)
+              }}
+            />
+          </div>
+        ),
       },
       {
         title: 'Client',
@@ -234,7 +269,7 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
       dataTT.data = [...dataTT.data]
       messageApi.success('Updated timetrack successfully!')
     } else {
-      console.log('this should not happen')
+      console.error('this should not happen')
       messageApi.error('Fatal error')
     }
     setDrawerOpen(false)
@@ -243,7 +278,7 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
 
   useEffect(() => {
     getAllWorkPeriods()
-    getTTs(page, pageSize)
+    getTTs(page, pageSize, undefined, undefined, dateFilter)
   }, [])
 
   return (
@@ -264,7 +299,7 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
       {type === 'time' && (
         <AddTT
           onAdd={() => {
-            getTTs(1, pageSize, sorter)
+            getTTs(1, pageSize, sorter, undefined, dateFilter)
             messageApi.success('Added timetrack succesfully!')
           }}
           onError={err => {
@@ -278,7 +313,7 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
 
       <AddBatchTT
         onAdd={() => {
-          getTTs(1, pageSize, sorter)
+          getTTs(1, pageSize, sorter, undefined, dateFilter)
         }}
         clients={clients}
         projects={projects}
