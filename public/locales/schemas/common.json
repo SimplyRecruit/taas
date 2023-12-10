@@ -31,7 +31,7 @@
         "profileMenu": {
             "type": "object",
             "properties": {
-                "settings": {
+                "change-password": {
                     "type": "string",
                     "minLength": 1
                 },
@@ -45,7 +45,7 @@
                 }
             },
             "required": [
-                "settings",
+                "change-password",
                 "signOut",
                 "language"
             ]

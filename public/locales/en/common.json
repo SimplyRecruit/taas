@@ -6,7 +6,7 @@
         "back": "Back"
     },
     "profileMenu": {
-        "settings": "Settings",
+        "change-password": "Change Password",
         "signOut": "Sign Out",
         "language": "Language: {{lang}}"
     },
