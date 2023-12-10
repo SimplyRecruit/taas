@@ -169,15 +169,15 @@ export default {
     },
     timeTrack: {
         async getAll(
-            queries: TTGetAllParams,
+            body: TTGetAllParams,
         ) : Promise<AxiosResponse<TTGetAllResBody>>
         {
             const route = "/time-track"
             const url = route
             return await createAxiosInstance().request({
-                method: "get",
+                method: "post",
                 url,
-                params: queries,
+                data: body,
             })
         },
         async exportSpreadSheet(
