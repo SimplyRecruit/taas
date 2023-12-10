@@ -31,10 +31,10 @@ import type { Response } from 'express'
 
 @JsonController('/time-track')
 export default class TimeTrackController {
-  @Get(TTGetAllResBody)
+  @Post(TTGetAllResBody)
   async getAll(
     @CurrentUser() currentUser: UserEntity,
-    @QueryParams() params: TTGetAllParams
+    @Body() params: TTGetAllParams
   ) {
     try {
       // Permission check

@@ -1,5 +1,5 @@
-import { Input, Radio, Space, Typography } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Radio, Space, Typography } from 'antd'
+import Search from '@/components/Search'
 
 interface StatusItem {
   value: string
@@ -42,13 +42,10 @@ const Filter = ({
           </Radio>
         ))}
       </Radio.Group>
-      <Input
-        prefix={<SearchOutlined />}
-        allowClear
+      <Search
+        onChange={onSearch}
         placeholder={searchPlaceholder}
         value={searchText}
-        onChange={e => onSearch(e.target.value)}
-        style={{ width: 200 }}
       />
     </Space>
   )

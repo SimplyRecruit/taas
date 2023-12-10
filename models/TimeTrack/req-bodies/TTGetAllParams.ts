@@ -1,7 +1,26 @@
 import { SorterResult } from 'antd/es/table/interface'
-import { IsArray, IsBoolean, IsDate, IsOptional } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 import TableQueryParameters from 'models/common/TableQueryParameters'
 import TT from 'models/TimeTrack/TT'
+
+export class SearchTexts {
+  @IsString()
+  hour = ''
+  @IsString()
+  description = ''
+  @IsString()
+  ticketNo = ''
+}
+
 export default class TTGetAllParams extends TableQueryParameters {
   @IsArray()
   @IsOptional()
@@ -19,10 +38,16 @@ export default class TTGetAllParams extends TableQueryParameters {
   isMe: boolean
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   dateAfter?: Date
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   dateBefore?: Date
+  @IsObject()
+  @ValidateNested()
+  @Type(() => SearchTexts)
+  searchTexts: SearchTexts
 
   public static create({
     sortBy,
@@ -35,6 +60,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     isMe,
     dateAfter,
     dateBefore,
+    searchTexts,
   }: {
     sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
     pageSize: number
@@ -46,6 +72,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     isMe: boolean
     dateAfter?: Date
     dateBefore?: Date
+    searchTexts: SearchTexts
   }) {
     const instance = TableQueryParameters.create({
       sortBy,
@@ -59,6 +86,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     instance.isMe = isMe
     instance.dateAfter = dateAfter
     instance.dateBefore = dateBefore
+    instance.searchTexts = searchTexts
     return instance
   }
 
@@ -68,7 +96,8 @@ export default class TTGetAllParams extends TableQueryParameters {
     sorterParam: SorterResult<TT> | undefined,
     filtersParam: any,
     isMe: boolean,
-    dateFilter: [Date | undefined, Date | undefined]
+    dateFilter: [Date | undefined, Date | undefined],
+    searchTexts: SearchTexts
   ) {
     let sortBy: { column: string; direction: 'ASC' | 'DESC' }
     if (sorterParam?.columnKey) {
@@ -90,6 +119,7 @@ export default class TTGetAllParams extends TableQueryParameters {
       isMe,
       dateAfter: dateFilter[0],
       dateBefore: dateFilter[1],
+      searchTexts,
     })
     return ttGetAllParams
   }
