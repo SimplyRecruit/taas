@@ -101,6 +101,7 @@ export default function AddTT({
           name="clientAbbr"
         >
           <Select
+            showSearch
             placeholder="Select a client"
             options={clientOptions
               ?.map(e => ({
@@ -162,6 +163,7 @@ export default function AddTT({
           name="projectAbbr"
         >
           <Select
+            showSearch
             placeholder="Select a project"
             options={projectOptions
               ?.map(e => ({
