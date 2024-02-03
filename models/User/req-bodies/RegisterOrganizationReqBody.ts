@@ -11,5 +11,9 @@ export default class RegisterOrganizationReqBody extends Model {
 
   @MinLength(2)
   @MaxLength(100)
-  name: string
+  adminName: string
+
+  @MinLength(1)
+  @MaxLength(100)
+  adminAbbr: string
 }

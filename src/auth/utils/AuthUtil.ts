@@ -3,7 +3,13 @@ import cookieKeys from '@/constants/cookie-keys'
 import { User } from 'models'
 import Cookies from 'universal-cookie'
 
-export const authRoutes: string[] = [Route.Login, Route.ForgotPassword]
+export const authRoutes: string[] = [
+  Route.Login,
+  Route.ForgotPassword,
+  Route.RegisterOrganization,
+]
+
+export const appRedirectRoutes: string[] = [Route.Login, Route.ForgotPassword]
 
 export const allWelcomeRoutes: string[] = [Route.ResetPassword]
 
@@ -28,7 +34,8 @@ export async function checkAuthentication(
         }
       )
     ).json()) as User
-    if (authRoutes.includes(path)) return { routeToRedirect: 'app', user }
+    if (appRedirectRoutes.includes(path))
+      return { routeToRedirect: 'app', user }
     return { routeToRedirect: null, user }
   } catch (error) {
     console.log(error)

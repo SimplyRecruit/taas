@@ -75,7 +75,13 @@ export default class UserController {
   @Post(undefined, '/register-organization')
   @Authorized(UserRole.SU)
   async registerOrganization(
-    @Body() { email, organizationName, name }: RegisterOrganizationReqBody,
+    @Body()
+    {
+      email,
+      organizationName,
+      adminName,
+      adminAbbr,
+    }: RegisterOrganizationReqBody,
     @Req() req: Request,
     @HeaderParam('Accept-Language') language: Language
   ) {
@@ -86,22 +92,25 @@ export default class UserController {
         })
         const user = await em.save(UserEntity, {
           email,
-          name,
+          name: adminName,
+          abbr: adminAbbr,
           role: UserRole.ADMIN,
           organization,
           hourlyRate: 0,
           startDate: new Date(),
         })
 
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaaa')
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email, true)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {
-          name,
+          name: adminName,
           link,
         })
         await sendEmail(email, emailTemplate)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
+        console.log(error)
         if (error.code == 23505)
           throw new AlreadyExistsError('User already exists')
         throw new InternalServerError('Internal Server Error')
@@ -247,7 +256,10 @@ export default class UserController {
       name: user.name,
       email: user.email,
       role: user.role,
-      organization: { id: user.organization.id, name: user.organization.name },
+      organization: {
+        id: user.organization?.id,
+        name: user.organization?.name,
+      },
     })
   }
 }
