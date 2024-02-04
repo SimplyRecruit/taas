@@ -43,7 +43,7 @@ export default function ReportsPage() {
         return {
           ...e,
           date: formatDate(new Date(e.date)),
-          billable: e.billable ? 'billable' : 'not billable',
+          billable: e.billable ? 'Billable' : 'Not billable',
         }
       }),
       annotations,
