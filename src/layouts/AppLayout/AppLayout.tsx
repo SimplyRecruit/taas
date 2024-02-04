@@ -6,6 +6,7 @@ import { adminMenuItems, topMenuItems } from './menu-items'
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
 import Image from 'next/image'
+import { UserRole } from 'models'
 
 type MenuItem = {
   icon: JSX.Element
@@ -16,20 +17,24 @@ type MenuItem = {
 
 interface AppLayoutProps {
   children: React.ReactNode
+  role: string
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout({ children, role }: AppLayoutProps) {
   const { t } = useTranslation('common')
   const router = useRouter()
 
-  const adminItems = [
-    {
-      label: '‏ ‏ ‏' + t('navigationMenu.manage'),
-      key: 'admin',
-      children: generateMenuItems(adminMenuItems),
-      type: 'group',
-    },
-  ]
+  const adminItems =
+    role === UserRole.ADMIN
+      ? [
+          {
+            label: '‏ ‏ ‏' + t('navigationMenu.manage'),
+            key: 'admin',
+            children: generateMenuItems(adminMenuItems),
+            type: 'group',
+          },
+        ]
+      : []
 
   return (
     <Layout>
