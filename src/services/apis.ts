@@ -406,6 +406,16 @@ export default {
                 url,
             })
         },
+        async getUniquePartnerNames(
+        ) : Promise<AxiosResponse<any>>
+        {
+            const route = "/client/partner-names"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "get",
+                url,
+            })
+        },
     },
     
 } 

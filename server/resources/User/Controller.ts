@@ -100,7 +100,6 @@ export default class UserController {
           startDate: new Date(),
         })
 
-        console.log('aaaaaaaaaaaaaaaaaaaaaaaaa')
         const token = await createSessionToken(user, em)
         const link = createResetPasswordLink(req, token, email, true)
         const emailTemplate = new EmailTemplate.ResetPassword(language, {

@@ -82,9 +82,6 @@ export default function AddTT({
           })}
         >
           <DatePicker
-            onChange={e => {
-              if (e) console.log(TimelessDate.fromDate(e.toDate()))
-            }}
             allowClear={false}
             format={DEFAULT_DATE_FORMAT}
             style={{ width: '100%' }}

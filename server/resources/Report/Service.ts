@@ -1,11 +1,20 @@
 import { ReportReqBody, Report } from 'models'
 import { dataSource } from '~/main'
+import ClientEntity from '~/resources/Client/Entity'
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
 import UserEntity from '~/resources/User/Entity'
 
 export async function getReport(
   organizationId: string,
-  { from, to, billable, clientIds, projectIds, userIds }: ReportReqBody
+  {
+    from,
+    to,
+    billable,
+    clientIds,
+    projectIds,
+    userIds,
+    partnerNames,
+  }: ReportReqBody
 ) {
   let t: Report[] = []
   await dataSource.transaction(async em => {
@@ -16,6 +25,7 @@ export async function getReport(
       .addSelect('SUM(tt.hour)', 'totalHours')
       .from(TimeTrackEntity, 'tt')
       .innerJoin(UserEntity, 'user', 'user.id = tt.user_id')
+      .innerJoin(ClientEntity, 'client', 'client.id = tt.client_id')
       .where('user.organization_id = :organizationId', {
         organizationId,
       })
@@ -37,6 +47,11 @@ export async function getReport(
     if (projectIds && projectIds.length) {
       query = query.andWhere('tt.project_id IN (:...projectIds)', {
         projectIds,
+      })
+    }
+    if (partnerNames && partnerNames.length) {
+      query = query.andWhere('client.partner_name IN (:...partnerNames)', {
+        partnerNames,
       })
     }
     if (typeof billable === 'boolean') {

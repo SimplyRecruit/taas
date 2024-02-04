@@ -5,7 +5,6 @@ import {
   FiCalendar,
   FiClock,
   FiFileText,
-  FiSettings,
   FiUsers,
 } from 'react-icons/fi'
 

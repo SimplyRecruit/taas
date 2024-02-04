@@ -46,7 +46,6 @@ export default function EditProjectDrawer({
   async function onSubmit() {
     form.validateFields().then(async ({ date, ...rest }) => {
       try {
-        console.log('click')
         if (value) {
           await call({ date, ...rest }, { id: value.id })
           onUpdate(
@@ -127,13 +126,7 @@ export default function EditProjectDrawer({
             value: moment(date.dateObject),
           })}
         >
-          <DatePicker
-            onChange={e => {
-              if (e) console.log(TimelessDate.fromDate(e.toDate()))
-            }}
-            allowClear={false}
-            format={DEFAULT_DATE_FORMAT}
-          />
+          <DatePicker allowClear={false} format={DEFAULT_DATE_FORMAT} />
         </Form.Item>
         <Form.Item
           rules={[
