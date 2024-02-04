@@ -9,6 +9,7 @@ import {
 import { ReportReqBody, UserRole } from 'models'
 import { getUserFromCookies } from '@/auth/utils/AuthUtil'
 import { useTranslation } from 'next-i18next'
+import { sortOptionTypeByLabel } from '@/util'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
@@ -38,11 +39,19 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     loading: loadingGetClientsAndProjects,
   } = useApi('resource', 'getClientsAndProjects')
 
+  const {
+    call: getPartnerNames,
+    data: partnerNames,
+    loading: loadingGetPartnerNames,
+  } = useApi('client', 'getUniquePartnerNames')
+
   const [isEndUser, setIsEndUser] = useState(true)
   const [selectedResources, setSelectedResources] = useState<string[]>([])
   const [selectedClients, setSelectedClients] = useState<string[]>([])
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
   const [selectedStatus, setSelectedStatus] = useState<string[]>([])
+  const [selectedPartnerNames, setSelectedPartner] = useState<string[]>([])
+
   const [dates, setDates] = useState<Date[]>(
     defaultRangePreset.map(e => e.toDate())
   )
@@ -58,6 +67,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   useEffect(() => {
     const role: UserRole = getUserFromCookies().role
     setIsEndUser(role == UserRole.END_USER)
+
     if (role != UserRole.END_USER) {
       getAllResources({ entityStatus: 'all' })
       getAllClients({ entityStatus: 'all' })
@@ -65,6 +75,8 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     } else {
       getClientsAndProjects({ id: 'me' })
     }
+
+    getPartnerNames()
   }, [])
 
   useEffect(() => {
@@ -75,6 +87,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         userIds: selectedResources,
         clientIds: selectedClients,
         projectIds: selectedProjects,
+        partnerNames: selectedPartnerNames,
       })
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,6 +96,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     selectedProjects,
     selectedClients,
     selectedStatus,
+    selectedPartnerNames,
     dates,
   ])
 
@@ -102,7 +116,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
               title={t('filter.team')}
               options={resources
                 ?.map(e => ({ value: e.id, label: e.name }))
-                .sort((a, b) => a.label.localeCompare(b.label))}
+                .sort(sortOptionTypeByLabel)}
               disabled={loadingGetAllResources}
             />
           )}
@@ -110,15 +124,25 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             badgeCount={selectedClients.length}
             onChange={e => setSelectedClients(e)}
             title={t('filter.client')}
-            options={clients?.sort((a, b) => a.label.localeCompare(b.label))}
+            options={clients?.sort(sortOptionTypeByLabel)}
             disabled={loadingGetAllClients || loadingGetClientsAndProjects}
           />
           <DropdownAutocomplete
             badgeCount={selectedProjects.length}
             onChange={e => setSelectedProjects(e)}
             title={t('filter.project')}
-            options={projects?.sort((a, b) => a.label.localeCompare(b.label))}
+            options={projects?.sort(sortOptionTypeByLabel)}
             disabled={loadingGetAllProjects || loadingGetClientsAndProjects}
+          />
+          <DropdownAutocomplete
+            badgeCount={selectedPartnerNames.length}
+            onChange={e => setSelectedPartner(e)}
+            title="Partner"
+            options={(partnerNames as string[])
+              ?.filter(e => !!e)
+              .map(e => ({ value: e, label: e }))
+              .sort(sortOptionTypeByLabel)}
+            disabled={loadingGetPartnerNames}
           />
           <DropdownAutocomplete
             badgeCount={selectedStatus.length}

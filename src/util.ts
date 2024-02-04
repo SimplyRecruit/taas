@@ -1,3 +1,4 @@
+import type { OptionType } from '@/components/DropdownAutocomplete'
 import { DEFAULT_DATE_FORMAT } from '@/constants'
 import moment from 'dayjs'
 export function formatDate(date: Date | string): string {
@@ -15,4 +16,8 @@ export function downloadFile(blob: Blob, fileName: string) {
   aElement.setAttribute('target', '_blank')
   aElement.click()
   URL.revokeObjectURL(href)
+}
+
+export function sortOptionTypeByLabel(a: OptionType, b: OptionType) {
+  return a.label.localeCompare(b.label)
 }

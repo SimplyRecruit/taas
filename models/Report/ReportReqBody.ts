@@ -23,4 +23,8 @@ export default class ReportReqBody extends Model {
   @IsOptional()
   @IsString({ each: true })
   projectIds?: string[]
+
+  @IsOptional()
+  @IsString({ each: true })
+  partnerNames?: string[]
 }

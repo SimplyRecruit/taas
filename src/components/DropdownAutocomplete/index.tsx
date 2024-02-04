@@ -4,7 +4,7 @@ import DropdownActivator from '@/components/DropdownActivator'
 import PopoverContent from '@/components/DropdownAutocomplete/PopoverContent'
 import React, { ReactNode } from 'react'
 
-type OptionType = {
+export type OptionType = {
   value: string
   label: string
 }

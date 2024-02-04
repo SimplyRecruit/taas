@@ -278,4 +278,21 @@ export default class ClientController {
       else throw new InternalServerError('Internal Server Error')
     }
   }
+
+  @Get(undefined, '/partner-names')
+  async getUniquePartnerNames(@CurrentUser() currentUser: UserEntity) {
+    try {
+      const uniquePartnerNames = await ClientEntity.createQueryBuilder('client')
+        .select('DISTINCT client.partner_name', 'partnerName')
+        .getRawMany()
+
+      console.log({ uniquePartnerNames })
+      return uniquePartnerNames.map(e => e.partnerName)
+    } catch (error) {
+      console.log(error)
+      if (error instanceof EntityNotFoundError) throw new NotFoundError()
+      else if (error instanceof ForbiddenError) throw new ForbiddenError()
+      else throw new InternalServerError('Internal Server Error')
+    }
+  }
 }
