@@ -58,7 +58,7 @@ export default class ProjectController {
     @CurrentUser() currentUser: UserEntity
   ) {
     let id
-    console.log(clientId, body)
+
     await dataSource.transaction(async em => {
       try {
         const client = await em.findOneOrFail(ClientEntity, {

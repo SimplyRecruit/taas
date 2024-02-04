@@ -282,11 +282,15 @@ export default class ClientController {
   @Get(undefined, '/partner-names')
   async getUniquePartnerNames(@CurrentUser() currentUser: UserEntity) {
     try {
+      const organizationId = currentUser.organization.id
+
       const uniquePartnerNames = await ClientEntity.createQueryBuilder('client')
         .select('DISTINCT client.partner_name', 'partnerName')
+        .where('client.organization_id = :organizationId', {
+          organizationId,
+        })
         .getRawMany()
 
-      console.log({ uniquePartnerNames })
       return uniquePartnerNames.map(e => e.partnerName)
     } catch (error) {
       console.log(error)
