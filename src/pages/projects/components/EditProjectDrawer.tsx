@@ -167,6 +167,7 @@ export default function EditProjectDrawer({
           label="Client"
         >
           <Select
+            showSearch
             options={[
               { value: ALL_UUID, label: 'ALL' },
               ...data

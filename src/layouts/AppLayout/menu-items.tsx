@@ -49,11 +49,11 @@ const adminItems = [
     label: 'clients',
     path: Route.Clients,
   },
-  {
-    icon: <FiSettings size={iconSize} />,
-    label: 'settings',
-    path: Route.OrganizationSettings,
-  },
+  // {
+  //   icon: <FiSettings size={iconSize} />,
+  //   label: 'settings',
+  //   path: Route.OrganizationSettings,
+  // },
 ]
 export const topMenuItems = topItems
 export const adminMenuItems = adminItems

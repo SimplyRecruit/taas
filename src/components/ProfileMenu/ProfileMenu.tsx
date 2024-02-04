@@ -1,5 +1,13 @@
 import { ICON_TOP_MARGIN_FIX, Route } from '@/constants'
-import { Avatar, Button, Dropdown, MenuProps, Space, Typography } from 'antd'
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  MenuProps,
+  message,
+  Space,
+  Typography,
+} from 'antd'
 import { User } from 'models'
 import Language, { LANGUAGES, LANGUAGE_NAMES } from 'models/common/Language'
 import { useRouter } from 'next/router'
@@ -9,22 +17,26 @@ import {
   FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
+  FiLock,
   FiLogOut,
   FiSettings,
 } from 'react-icons/fi'
 import { MdLanguage } from 'react-icons/md'
 import Cookies from 'universal-cookie'
 import { getUserFromCookies } from '@/auth/utils/AuthUtil'
+import useApi from '@/services/useApi'
 
 type MenuType = 'main' | 'lang'
 
 export default function ProfileMenu() {
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<User>(null!)
   const [ppSrc, setPpSrc] = useState<string>()
   const [currentMenuType, setCurrentMenuType] = useState<MenuType>('main')
   const [open, setOpen] = useState<boolean>(false)
   const router = useRouter()
   const { t, i18n } = useTranslation('common')
+  const [messageApi, contextHolder] = message.useMessage()
+  const { call: sendPasswordResetEmail } = useApi('user', 'forgotPassword')
 
   useEffect(() => {
     const currentUser = getUserFromCookies()
@@ -64,11 +76,16 @@ export default function ProfileMenu() {
   const items: { [key in MenuType]: Exclude<MenuProps['items'], undefined> } = {
     main: [
       {
-        key: 'settings',
-        icon: <FiSettings />,
-        label: t('profileMenu.settings'),
-        onClick: () => {
-          router.push(Route.ProfileSettings)
+        key: 'change-password',
+        icon: <FiLock />,
+        label: t('profileMenu.change-password'),
+        onClick: async () => {
+          await sendPasswordResetEmail({ email: user.email })
+          await new Promise(resolve => setTimeout(resolve, 3000))
+          router.push(Route.Logout)
+          messageApi.success(
+            'Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.'
+          )
         },
       },
       {
@@ -113,8 +130,10 @@ export default function ProfileMenu() {
     })),
   }
 
+  if (!user) return null
   return (
     <div>
+      {contextHolder}
       <Dropdown
         open={open}
         onOpenChange={handleOpenChange}
@@ -134,7 +153,7 @@ export default function ProfileMenu() {
             </Avatar>
             <div>
               <div>
-                <Typography.Text>{user?.name}</Typography.Text>
+                <Typography.Text>{user.name}</Typography.Text>
               </div>
               <div>
                 <Typography.Text
@@ -144,7 +163,7 @@ export default function ProfileMenu() {
                     fontWeight: 'bold',
                   }}
                 >
-                  {user?.role}
+                  {user.role}
                 </Typography.Text>
               </div>
             </div>

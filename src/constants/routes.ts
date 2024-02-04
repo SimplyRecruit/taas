@@ -14,6 +14,7 @@ enum Route {
   Clients = '/clients',
   OrganizationSettings = '/settings',
   ProfileSettings = '/settings/account',
+  RegisterOrganization = '/auth/register-organization',
 }
 
 export { Route }

@@ -12,7 +12,6 @@ import {
   ClientRelation,
   ProjectRelation,
   TimelessDate,
-  TT,
   TTBatchCreateBody,
   TTCreateBody,
 } from 'models'
@@ -69,8 +68,8 @@ export default function AddTT({
         onFinish={onFinish}
         initialValues={TTCreateBody.createPartially({
           date: TimelessDate.fromDate(new Date()),
-          hour: 1,
           description: '',
+          hour: null as unknown as number,
           billable: false,
           ticketNo: '',
         })}
@@ -101,6 +100,7 @@ export default function AddTT({
           name="clientAbbr"
         >
           <Select
+            showSearch
             placeholder="Select a client"
             options={clientOptions
               ?.map(e => ({
@@ -114,8 +114,7 @@ export default function AddTT({
           name="hour"
           rules={[
             {
-              validator: TT.validator('hour'),
-              required: true,
+              validator: TTCreateBody.validator('hour'),
               message: 'Please enter a positive value',
             },
           ]}
@@ -130,7 +129,7 @@ export default function AddTT({
           name="description"
           rules={[
             {
-              validator: TT.validator('description'),
+              validator: TTCreateBody.validator('description'),
               message: 'Please enter a value',
             },
           ]}
@@ -145,7 +144,7 @@ export default function AddTT({
           name="ticketNo"
           rules={[
             {
-              validator: TT.validator('ticketNo'),
+              validator: TTCreateBody.validator('ticketNo'),
               message: 'Max length is 255',
             },
           ]}
@@ -162,6 +161,7 @@ export default function AddTT({
           name="projectAbbr"
         >
           <Select
+            showSearch
             placeholder="Select a project"
             options={projectOptions
               ?.map(e => ({

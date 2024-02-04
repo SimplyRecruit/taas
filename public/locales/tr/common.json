@@ -6,7 +6,7 @@
         "back": "Geri"
     },
     "profileMenu": {
-        "settings": "Ayarlar",
+        "change-password": "Şifreyi değiştir",
         "signOut": "Oturumu Kapat",
         "language": "Dil: {{lang}}"
     },
