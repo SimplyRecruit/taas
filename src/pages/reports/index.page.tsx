@@ -39,7 +39,6 @@ export default function ReportsPage() {
     return {
       ...baseConfig,
       data: data.map(e => {
-        console.log(e)
         return {
           ...e,
           date: formatDate(new Date(e.date)),
