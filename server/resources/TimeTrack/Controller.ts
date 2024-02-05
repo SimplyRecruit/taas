@@ -62,10 +62,10 @@ export default class TimeTrackController {
     }
   }
 
-  @Get(Blob, '/spread-sheet')
+  @Post(Blob, '/spread-sheet')
   async exportSpreadSheet(
     @CurrentUser() currentUser: UserEntity,
-    @QueryParams() params: TTGetAllParams,
+    @Body() params: TTGetAllParams,
     @Res() res: Response
   ) {
     // Permission check

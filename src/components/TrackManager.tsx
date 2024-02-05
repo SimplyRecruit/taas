@@ -85,7 +85,7 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
         dateFilter,
         searchTexts
       ),
-    [filters, isMe, page, pageSize, sorter, dateFilter]
+    [filters, isMe, page, pageSize, sorter, dateFilter, searchTexts]
   )
 
   const getTTs = useCallback(
