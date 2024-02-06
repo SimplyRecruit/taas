@@ -13,7 +13,6 @@ import type { Locale } from 'antd/es/locale'
 import { Language, User, UserRole } from 'models'
 import TaasLayout from '@/layouts/TaasLayout'
 import cookieKeys from '@/constants/cookie-keys'
-import { GetServerSideProps } from 'next'
 import Cookies from 'universal-cookie'
 dayjs.extend(updateLocale)
 
@@ -75,8 +74,6 @@ TaasApp.getInitialProps = async (context: AppContext) => {
   const initialProps = await App.getInitialProps(context)
 
   const user = getUserFromCookies(context.ctx.req)
-
-  console.log({ req: context.ctx.req, user })
 
   const role = user ? user.role : null
 
