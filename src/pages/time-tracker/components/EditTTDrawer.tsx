@@ -31,7 +31,7 @@ interface RenderProps {
   onError: () => void
   onCancel: () => void
 }
-export default function EditProjectDrawer({
+export default function EditTTDrawer({
   projectOptions,
   clientOptions,
   open,
@@ -48,11 +48,17 @@ export default function EditProjectDrawer({
       try {
         if (value) {
           await call({ date, ...rest }, { id: value.id })
+
+          const selectedClient = clientOptions?.find(
+            e => e.abbr === rest.clientAbbr
+          )
+
           onUpdate(
             TT.create({
               id: value.id,
               date: date.dateObject,
               userAbbr: value.userAbbr,
+              partnerName: selectedClient?.partnerName,
               ...rest,
             })
           )

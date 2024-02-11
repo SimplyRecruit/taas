@@ -10,8 +10,15 @@ export default function Tracker() {
     'getClientsAndProjects'
   )
 
+  const { data: partnerNames, call: getAllPartnerNames } = useApi(
+    'client',
+    'getUniquePartnerNames',
+    []
+  )
+
   useEffect(() => {
     getClientsAndProjects({ id: 'me' })
+    getAllPartnerNames({ isMe: 'true' })
   }, [])
 
   return clientsAndProjects ? (
@@ -19,6 +26,7 @@ export default function Tracker() {
       type={'time'}
       clients={clientsAndProjects.clients}
       projects={clientsAndProjects.projects}
+      partnerNames={partnerNames}
       resources={undefined}
     />
   ) : null

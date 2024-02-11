@@ -59,6 +59,8 @@ export async function getReport(
         billable,
       })
     }
+
+    console.log(query.getSql())
     t = await query.printSql().getRawMany()
     console.log(t)
   })

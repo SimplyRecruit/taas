@@ -30,6 +30,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 interface RenderProps<IsMe extends 'time' | 'team'> {
   clients: ClientRelation[]
   projects: ProjectRelation[]
+  partnerNames: string[]
   type: IsMe
   resources: IsMe extends 'team' ? Resource[] : undefined
 }
@@ -39,6 +40,7 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
   resources,
   clients,
   projects,
+  partnerNames,
   type,
 }: RenderProps<IsMe>) {
   const isMe = type === 'time'
@@ -188,6 +190,18 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
           .map(e => ({
             text: e.abbr,
             value: e.id,
+          })),
+      },
+      {
+        title: 'Partner name',
+        dataIndex: 'partnerName',
+        key: 'client.partnerName',
+        filterSearch: true,
+        filters: partnerNames
+          .sort((a, b) => a.localeCompare(b))
+          .map(e => ({
+            text: e,
+            value: e,
           })),
       },
       {
