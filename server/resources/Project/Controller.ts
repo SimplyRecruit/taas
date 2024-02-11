@@ -47,8 +47,10 @@ export default class ProjectController {
         startDate: true,
       },
     }
+
     if (entityStatus == 'active') query.where.active = true
     else if (entityStatus == 'archived') query.where.active = false
+
     return ProjectEntity.find(query)
   }
 

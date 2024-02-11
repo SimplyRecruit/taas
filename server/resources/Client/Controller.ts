@@ -28,8 +28,8 @@ import ClientUserEntity from '~/resources/relations/ClientResource'
 import UserEntity from '~/resources/User/Entity'
 
 @JsonController('/client')
-@Authorized(UserRole.ADMIN)
 export default class ClientController {
+  @Authorized(UserRole.ADMIN)
   @Get([Client])
   async getAll(
     @CurrentUser() currentUser: UserEntity,
@@ -104,6 +104,7 @@ export default class ClientController {
     )
   }
 
+  @Authorized(UserRole.ADMIN)
   @Patch(undefined, '/:id')
   async update(
     @CurrentUser() currentUser: UserEntity,
@@ -129,6 +130,7 @@ export default class ClientController {
     return 'Client Update Successful'
   }
 
+  @Authorized(UserRole.ADMIN)
   @Post(String)
   async create(
     @CurrentUser() currentUser: UserEntity,
@@ -165,6 +167,7 @@ export default class ClientController {
     return id
   }
 
+  @Authorized(UserRole.ADMIN)
   @Delete(undefined, '/:id')
   async delete(
     @Param('id') clientId: string,
@@ -188,6 +191,7 @@ export default class ClientController {
     return 'Client Deletion Successful'
   }
 
+  @Authorized(UserRole.ADMIN)
   @Post(undefined, '/resource/:clientId')
   async updateAccess(
     @Body() { everyoneHasAccess, userIds }: ClientUpdateAccessBody,
@@ -230,6 +234,7 @@ export default class ClientController {
     return 'Client Deletion Successful'
   }
 
+  @Authorized(UserRole.ADMIN)
   @Delete(undefined, '/:clientId/resource/:userId')
   async removeResource(
     @Param('clientId') clientId: string,
@@ -254,6 +259,7 @@ export default class ClientController {
     return 'Client Deletion Successful'
   }
 
+  @Authorized(UserRole.ADMIN)
   @Get(undefined, '/:id/resources')
   async getResourcesOf(
     @CurrentUser() currentUser: UserEntity,
@@ -279,19 +285,34 @@ export default class ClientController {
     }
   }
 
-  @Get(undefined, '/partner-names')
-  async getUniquePartnerNames(@CurrentUser() currentUser: UserEntity) {
+  @Authorized()
+  @Get([String], '/partner-names')
+  async getUniquePartnerNames(
+    @QueryParam('isMe') isMe: boolean,
+    @CurrentUser() currentUser: UserEntity
+  ) {
     try {
       const organizationId = currentUser.organization.id
 
-      const uniquePartnerNames = await ClientEntity.createQueryBuilder('client')
+      let query = ClientEntity.createQueryBuilder('client')
         .select('DISTINCT client.partner_name', 'partnerName')
         .where('client.organization_id = :organizationId', {
           organizationId,
         })
-        .getRawMany()
 
-      return uniquePartnerNames.map(e => e.partnerName)
+      if (isMe || currentUser.role !== UserRole.ADMIN) {
+        query = query
+          .innerJoin(
+            ClientUserEntity,
+            'client_user',
+            'client_user.client_id = client.id'
+          )
+          .andWhere('client_user.user_id = :userId', { userId: currentUser.id })
+      }
+
+      const uniquePartnerNames = await query.getRawMany()
+
+      return uniquePartnerNames.map(e => e.partnerName).filter(e => !!e)
     } catch (error) {
       console.log(error)
       if (error instanceof EntityNotFoundError) throw new NotFoundError()

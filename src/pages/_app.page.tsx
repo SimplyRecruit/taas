@@ -3,18 +3,24 @@ import '@/styles/globals.css'
 import { ConfigProvider } from 'antd'
 import dayjs from 'dayjs'
 import { appWithTranslation, useTranslation } from 'next-i18next'
-import type { AppProps } from 'next/app'
+import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import tr from 'antd/locale/tr_TR'
 import en from 'antd/locale/en_US'
 import 'dayjs/locale/tr'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import type { Locale } from 'antd/es/locale'
-import { Language } from 'models'
+import { Language, User, UserRole } from 'models'
 import TaasLayout from '@/layouts/TaasLayout'
+import cookieKeys from '@/constants/cookie-keys'
+import Cookies from 'universal-cookie'
 dayjs.extend(updateLocale)
 
-const App = ({ Component, pageProps }: AppProps) => {
+const TaasApp = ({
+  Component,
+  pageProps,
+  role,
+}: AppProps & { role: UserRole }) => {
   const antdLocales: { [key in Language]: Locale } = { en, tr } as const
   const {
     t,
@@ -50,7 +56,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <ConfigProvider locale={antdLocales[lang] ?? antdLocales['tr']}>
-        <TaasLayout>
+        <TaasLayout role={role}>
           <Component {...pageProps} />
         </TaasLayout>
       </ConfigProvider>
@@ -58,4 +64,23 @@ const App = ({ Component, pageProps }: AppProps) => {
   )
 }
 
-export default appWithTranslation(App)
+export function getUserFromCookies(req: any): User | null {
+  const cookies = new Cookies(req.headers.cookie)
+  const user = cookies.get(cookieKeys.COOKIE_USER_OBJECT) as User
+  return user ? user : null
+}
+
+TaasApp.getInitialProps = async (context: AppContext) => {
+  const initialProps = await App.getInitialProps(context)
+
+  const user = getUserFromCookies(context.ctx.req)
+
+  const role = user ? user.role : null
+
+  return {
+    ...initialProps,
+    role,
+  }
+}
+
+export default appWithTranslation(TaasApp)

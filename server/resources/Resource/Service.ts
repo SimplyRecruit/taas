@@ -25,6 +25,7 @@ export async function getClientsAndProjectsOf(
         id: true,
         abbr: true,
         name: true,
+        partnerName: true,
       },
     })) as ClientRelation[]
 

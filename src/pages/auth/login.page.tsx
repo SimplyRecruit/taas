@@ -14,6 +14,7 @@ export default function LoginPage() {
   const { t } = useTranslation(['login', 'common'])
   const router = useRouter()
   const { data, error, loading, call } = useApi('user', 'login')
+  const { call: callMe } = useApi('user', 'me')
   const [form] = Form.useForm()
 
   const onFinish = async (values: LoginReqBody) => {
@@ -21,6 +22,10 @@ export default function LoginPage() {
     try {
       const token = await call(values)
       new Cookies().set(cookieKeys.COOKIE_USER_TOKEN, token, { path: '/' })
+      const userObject = await callMe()
+      new Cookies().set(cookieKeys.COOKIE_USER_OBJECT, userObject, {
+        path: '/',
+      })
       await router.replace(Route.TimeTracker)
     } catch (e) {
       /* Invalid Credentials */

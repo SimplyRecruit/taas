@@ -5,14 +5,16 @@ import AppLayout from '@/layouts/AppLayout'
 import AuthLayout from '@/layouts/AuthLayout'
 import ColorProvider from '@/layouts/theme/ColorProvider'
 import ThemeProvider from '@/layouts/theme/ThemeProvider'
+import { UserRole } from 'models'
 
 import { useRouter } from 'next/router'
 
 interface TaasLayoutProps {
   children: React.ReactNode
+  role: UserRole
 }
 
-export default function TaasLayout({ children }: TaasLayoutProps) {
+export default function TaasLayout({ children, role }: TaasLayoutProps) {
   const router = useRouter()
   let layout: React.ReactNode
   if (
@@ -21,7 +23,7 @@ export default function TaasLayout({ children }: TaasLayoutProps) {
   )
     layout = <AuthLayout>{children}</AuthLayout>
   else if (router.pathname === '/_error') layout = <div>{children}</div>
-  else layout = <AppLayout>{children}</AppLayout>
+  else layout = <AppLayout role={role}>{children}</AppLayout>
   return (
     <ColorProvider>
       <ThemeProvider>{layout}</ThemeProvider>

@@ -49,6 +49,7 @@ export default class TimeTrackController {
             clientAbbr: client.abbr,
             projectAbbr: project.abbr,
             userAbbr: user?.abbr,
+            partnerName: client.partnerName,
             ...rest,
           })
         ),
@@ -80,6 +81,7 @@ export default class TimeTrackController {
         clientAbbr: client.abbr,
         projectAbbr: project.abbr,
         userAbbr: user?.abbr,
+        partnerName: client.partnerName,
         ...rest,
       })
     )
