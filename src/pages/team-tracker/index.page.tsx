@@ -16,11 +16,17 @@ export default function TeamTracker() {
     'getAll',
     []
   )
+  const { data: partnerNames, call: getAllPartnerNames } = useApi(
+    'client',
+    'getUniquePartnerNames',
+    []
+  )
 
   useEffect(() => {
     getAllClients({ entityStatus: 'active' })
     getAllProjects({ entityStatus: 'active' })
     getAllResources({ entityStatus: 'active' })
+    getAllPartnerNames({ isMe: 'false' })
   }, [])
 
   return (
@@ -29,6 +35,7 @@ export default function TeamTracker() {
       clients={clients}
       projects={projects}
       resources={resources}
+      partnerNames={partnerNames}
     />
   )
 }

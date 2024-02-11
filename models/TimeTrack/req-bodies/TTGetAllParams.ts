@@ -24,26 +24,37 @@ export class SearchTexts {
 export default class TTGetAllParams extends TableQueryParameters {
   @IsArray()
   @IsOptional()
-  userIds?: string[]
+  userIds: string[] | undefined
+
   @IsArray()
   @IsOptional()
-  clientIds?: string[]
+  clientIds: string[] | undefined
+
   @IsArray()
   @IsOptional()
-  projectIds?: string[]
+  partnerNames: string[] | undefined
+
   @IsArray()
   @IsOptional()
-  billableValues?: boolean[]
+  projectIds: string[] | undefined
+
+  @IsArray()
+  @IsOptional()
+  billableValues: boolean[] | undefined
+
   @IsBoolean()
   isMe: boolean
+
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  dateAfter?: Date
+  dateAfter: Date | undefined
+
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  dateBefore?: Date
+  dateBefore: Date | undefined
+
   @IsObject()
   @ValidateNested()
   @Type(() => SearchTexts)
@@ -55,6 +66,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     page,
     userIds,
     clientIds,
+    partnerNames,
     projectIds,
     billableValues,
     isMe,
@@ -62,13 +74,14 @@ export default class TTGetAllParams extends TableQueryParameters {
     dateBefore,
     searchTexts,
   }: {
-    sortBy?: { column: string; direction: 'ASC' | 'DESC' }[]
+    sortBy: { column: string; direction: 'ASC' | 'DESC' }[]
     pageSize: number
     page: number
-    userIds?: string[]
-    clientIds?: string[]
-    projectIds?: string[]
-    billableValues?: boolean[]
+    userIds: string[]
+    clientIds: string[]
+    partnerNames: string[]
+    projectIds: string[]
+    billableValues: boolean[]
     isMe: boolean
     dateAfter?: Date
     dateBefore?: Date
@@ -81,6 +94,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     }) as TTGetAllParams
     instance.userIds = userIds
     instance.clientIds = clientIds
+    instance.partnerNames = partnerNames
     instance.projectIds = projectIds
     instance.billableValues = billableValues
     instance.isMe = isMe
@@ -114,6 +128,7 @@ export default class TTGetAllParams extends TableQueryParameters {
       pageSize: pageSizeParam,
       userIds: filtersParam?.['user.abbr'],
       clientIds: filtersParam?.['client.abbr'],
+      partnerNames: filtersParam?.['client.partnerName'],
       projectIds: filtersParam?.['project.abbr'],
       billableValues: filtersParam?.['billable'],
       isMe,
