@@ -1,5 +1,5 @@
 import ProfileMenu from '@/components/ProfileMenu'
-import { HEADER_HEIGHT, SIDER_WIDTH } from '@/constants'
+import { HEADER_HEIGHT, Route, SIDER_WIDTH } from '@/constants'
 import { Layout, Menu, Space, Typography } from 'antd'
 import { useRouter } from 'next/router'
 import { adminMenuItems, topMenuItems } from './menu-items'
@@ -23,6 +23,11 @@ interface AppLayoutProps {
 export default function AppLayout({ children, role }: AppLayoutProps) {
   const { t } = useTranslation('common')
   const router = useRouter()
+  // TODO : find a better way to handle role based routes
+  const topItems =
+    role === UserRole.ADMIN
+      ? topMenuItems
+      : topMenuItems.filter(e => e.path !== Route.TeamTracker)
 
   const adminItems =
     role === UserRole.ADMIN
@@ -85,7 +90,7 @@ export default function AppLayout({ children, role }: AppLayoutProps) {
       >
         <Layout.Sider theme="light" width={SIDER_WIDTH}>
           <Menu
-            items={[...generateMenuItems(topMenuItems), ...adminItems]}
+            items={[...generateMenuItems(topItems), ...adminItems]}
             mode="inline"
             selectedKeys={[router.pathname.split('/')[1]]}
           />
