@@ -43,7 +43,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
     call: getPartnerNames,
     data: partnerNames,
     loading: loadingGetPartnerNames,
-  } = useApi('client', 'getUniquePartnerNames')
+  } = useApi('client', 'getUniquePartnerNames', [])
 
   const [isEndUser, setIsEndUser] = useState(true)
   const [selectedResources, setSelectedResources] = useState<string[]>([])
@@ -72,11 +72,11 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
       getAllResources({ entityStatus: 'all' })
       getAllClients({ entityStatus: 'all' })
       getAllProjects({ entityStatus: 'all' })
+      getPartnerNames({ isMe: 'false' })
     } else {
       getClientsAndProjects({ id: 'me' })
+      getPartnerNames({ isMe: 'true' })
     }
-
-    getPartnerNames()
   }, [])
 
   useEffect(() => {
@@ -138,8 +138,7 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
             badgeCount={selectedPartnerNames.length}
             onChange={e => setSelectedPartner(e)}
             title="Partner"
-            options={(partnerNames as string[])
-              ?.filter(e => !!e)
+            options={partnerNames
               .map(e => ({ value: e, label: e }))
               .sort(sortOptionTypeByLabel)}
             disabled={loadingGetPartnerNames}
