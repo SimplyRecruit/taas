@@ -36,20 +36,11 @@ const dataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
 })
 
-dataSource
-  .initialize()
-  .then(() => {
-    console.info('Connected to DB')
-  })
-  .catch((error: unknown) => {
-    console.error('Error connecting to DB:')
-    console.error(error)
-  })
-
 // Set SMTP API Key
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 smtp.setApiKey(process.env.SMTP_KEY!)
 ;(async () => {
+  await initializeDbConnection()
   try {
     // Create express server
     await app.prepare()
@@ -102,3 +93,18 @@ smtp.setApiKey(process.env.SMTP_KEY!)
 })()
 
 export { dataSource, smtp }
+
+async function initializeDbConnection() {
+  while (!dataSource.isInitialized) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      console.info('Connecting to DB...')
+      await dataSource.initialize()
+      console.info('Connected to DB')
+      break
+    } catch (error: unknown) {
+      console.error('Error connecting to DB:')
+      console.error(error)
+    }
+  }
+}
