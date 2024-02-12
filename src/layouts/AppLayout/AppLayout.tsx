@@ -24,22 +24,31 @@ export default function AppLayout({ children, role }: AppLayoutProps) {
   const { t } = useTranslation('common')
   const router = useRouter()
   // TODO : find a better way to handle role based routes
-  const topItems =
-    role === UserRole.ADMIN
-      ? topMenuItems
-      : topMenuItems.filter(e => e.path !== Route.TeamTracker)
+  const topItems = topMenuItems
+  const adminItems = [
+    {
+      label: '‏ ‏ ‏' + t('navigationMenu.manage'),
+      key: 'admin',
+      children: generateMenuItems(adminMenuItems),
+      type: 'group',
+    },
+  ]
+  // const topItems =
+  //   role === UserRole.ADMIN
+  //     ? topMenuItems
+  //     : topMenuItems.filter(e => e.path !== Route.TeamTracker)
 
-  const adminItems =
-    role === UserRole.ADMIN
-      ? [
-          {
-            label: '‏ ‏ ‏' + t('navigationMenu.manage'),
-            key: 'admin',
-            children: generateMenuItems(adminMenuItems),
-            type: 'group',
-          },
-        ]
-      : []
+  // const adminItems =
+  //   role === UserRole.ADMIN
+  //     ? [
+  //         {
+  //           label: '‏ ‏ ‏' + t('navigationMenu.manage'),
+  //           key: 'admin',
+  //           children: generateMenuItems(adminMenuItems),
+  //           type: 'group',
+  //         },
+  //       ]
+  //     : []
 
   return (
     <Layout>
