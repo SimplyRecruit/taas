@@ -1,5 +1,6 @@
 import { TTGetAllParams, User } from 'models'
-import { In, MoreThanOrEqual, LessThanOrEqual, And, ILike } from 'typeorm'
+import { In, MoreThanOrEqual, LessThanOrEqual, And } from 'typeorm'
+import { includesText } from '~/common/Util'
 import TimeTrackEntity from '~/resources/TimeTrack/Entity'
 
 export async function getAllTTs(
@@ -46,8 +47,8 @@ export async function getAllTTs(
           ? In(billableValues)
           : undefined,
       date: dateBetween(dateAfter, dateBefore),
-      description: includes(searchTexts.description),
-      ticketNo: includes(searchTexts.ticketNo),
+      description: includesText(searchTexts.description),
+      ticketNo: includesText(searchTexts.ticketNo),
     },
     relations: { user: !isMe, client: true, project: true },
     order,
@@ -77,8 +78,4 @@ function dateBetween(dateAfter?: Date, dateBefore?: Date) {
   } else {
     return undefined
   }
-}
-
-function includes(text: string) {
-  return ILike(`%${text}%`)
 }

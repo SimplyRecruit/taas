@@ -5,6 +5,7 @@ import Fs from 'fs/promises'
 import { getMetadataArgsStorage } from 'routing-controllers'
 import { join } from 'path'
 import Handlebars from 'handlebars'
+import { ILike } from 'typeorm'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Class = Function
@@ -183,6 +184,10 @@ export function mergeDeep<T extends object>(
   }
 
   return mergeDeep(target, ...sources)
+}
+
+export function includesText(text: string) {
+  return ILike(`%${text}%`)
 }
 
 /**

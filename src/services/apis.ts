@@ -21,6 +21,7 @@ ResourceUpdateBody,
 GetClientsAndProjectsResBody,
 ReportReqBody,
 Report,
+GetTrackerHoursReqBody,
 Project,
 ProjectCreateBody,
 ProjectUpdateBody,
@@ -275,6 +276,18 @@ export default {
         ) : Promise<AxiosResponse<Report[]>>
         {
             const route = "/report"
+            const url = route
+            return await createAxiosInstance().request({
+                method: "post",
+                url,
+                data: body,
+            })
+        },
+        async getTrackerHours(
+            body: GetTrackerHoursReqBody,
+        ) : Promise<AxiosResponse<number>>
+        {
+            const route = "/report/tracker-hours"
             const url = route
             return await createAxiosInstance().request({
                 method: "post",

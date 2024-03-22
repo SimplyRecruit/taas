@@ -34,3 +34,4 @@ export { default as ProjectCreateBody } from 'models/Project/req-bodies/ProjectC
 export { default as ProjectUpdateBody } from 'models/Project/req-bodies/ProjectUpdateBody'
 export { default as ReportReqBody } from 'models/Report/ReportReqBody'
 export { default as Report } from 'models/Report/Report'
+export { default as GetTrackerHoursReqBody } from 'models/Report/GetTrackerHoursReqBody'

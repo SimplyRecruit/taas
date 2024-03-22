@@ -8,7 +8,7 @@ import TTTableActionHeader from '@/pages/time-tracker/components/TTTableActionHe
 import useApi from '@/services/useApi'
 import useCookie from '@/services/useCookie'
 import { formatDate } from '@/util'
-import { DatePicker, message, Table } from 'antd'
+import { DatePicker, message, Row, Space, Table, Typography } from 'antd'
 import {
   SorterResult,
   FilterValue,
@@ -72,6 +72,12 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
     []
   )
   const { call: deleteTT } = useApi('timeTrack', 'delete')
+
+  const {
+    data: report,
+    call: callGetTotalHoursReport,
+    loading: reportsLoading,
+  } = useApi('report', 'getTrackerHours')
 
   const selectedRecord =
     selectedRowIndex != null ? dataTT?.data[selectedRowIndex] : undefined
@@ -323,6 +329,38 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
     getTTs(page, pageSize)
   }, [])
 
+  useEffect(() => {
+    const {
+      dateBefore,
+      dateAfter,
+      userIds,
+      clientIds,
+      projectIds,
+      partnerNames,
+      billableValues,
+    } = TTGetAllParams.createFromParams(
+      page,
+      pageSize,
+      sorter,
+      filters,
+      isMe,
+      dateFilter,
+      searchTexts
+    )
+
+    callGetTotalHoursReport({
+      dateAfter,
+      dateBefore,
+      userIds,
+      clientIds,
+      projectIds,
+      partnerNames,
+      billableValues,
+      isMe,
+      searchTexts,
+    })
+  }, [filters, isMe, sorter, dateFilter, searchTexts])
+
   return (
     <>
       {contextHolder}
@@ -361,6 +399,15 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
         projects={projects}
         resources={resources}
       />
+
+      <Row justify="end">
+        <Space>
+          <Typography.Text strong>Total hours:</Typography.Text>
+          <Typography.Title level={5} style={{ display: 'contents' }}>
+            {report}
+          </Typography.Title>
+        </Space>
+      </Row>
 
       <Table
         size="middle"

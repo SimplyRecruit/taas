@@ -82,8 +82,8 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
   useEffect(() => {
     onFilter(
       ReportReqBody.create({
-        from: dates[0],
-        to: dates[1],
+        dateAfter: dates[0],
+        dateBefore: dates[1],
         userIds: selectedResources,
         clientIds: selectedClients,
         projectIds: selectedProjects,
