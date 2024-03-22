@@ -3,10 +3,10 @@ import Model from 'models/common/Model'
 
 export default class ReportReqBody extends Model {
   @IsDateString()
-  from: Date
+  dateAfter: Date
 
   @IsDateString()
-  to: Date
+  dateBefore: Date
 
   @IsOptional()
   @IsBoolean()

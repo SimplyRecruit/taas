@@ -14,14 +14,22 @@ import TT from 'models/TimeTrack/TT'
 
 export class SearchTexts {
   @IsString()
-  hour = ''
-  @IsString()
   description = ''
   @IsString()
   ticketNo = ''
 }
 
 export default class TTGetAllParams extends TableQueryParameters {
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  dateAfter: Date | undefined
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  dateBefore: Date | undefined
+
   @IsArray()
   @IsOptional()
   userIds: string[] | undefined
@@ -32,11 +40,11 @@ export default class TTGetAllParams extends TableQueryParameters {
 
   @IsArray()
   @IsOptional()
-  partnerNames: string[] | undefined
+  projectIds: string[] | undefined
 
   @IsArray()
   @IsOptional()
-  projectIds: string[] | undefined
+  partnerNames: string[] | undefined
 
   @IsArray()
   @IsOptional()
@@ -44,16 +52,6 @@ export default class TTGetAllParams extends TableQueryParameters {
 
   @IsBoolean()
   isMe: boolean
-
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  dateAfter: Date | undefined
-
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  dateBefore: Date | undefined
 
   @IsObject()
   @ValidateNested()
