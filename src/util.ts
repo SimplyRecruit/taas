@@ -8,6 +8,10 @@ export function stringToDate(value: string): Date {
   return moment(value, DEFAULT_DATE_FORMAT).toDate()
 }
 
+export function convertLocalTimeToUTC(date: Date): Date {
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+}
+
 export function downloadFile(blob: Blob, fileName: string) {
   const aElement = document.createElement('a')
   aElement.setAttribute('download', fileName)

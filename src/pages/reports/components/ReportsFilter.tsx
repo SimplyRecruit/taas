@@ -9,7 +9,7 @@ import {
 import { ReportReqBody, UserRole } from 'models'
 import { getUserFromCookies } from '@/auth/utils/AuthUtil'
 import { useTranslation } from 'next-i18next'
-import { sortOptionTypeByLabel } from '@/util'
+import { convertLocalTimeToUTC, sortOptionTypeByLabel } from '@/util'
 
 interface RenderProps {
   onFilter: (values: ReportReqBody) => void
@@ -164,7 +164,8 @@ export default function ReportsFilter({ onFilter }: RenderProps) {
         defaultValue={defaultRangePreset}
         onChange={values => {
           if (values) {
-            setDates([values[0]!.toDate(), values[1]!.toDate()])
+            const dates = values.map(e => convertLocalTimeToUTC(e!.toDate()))
+            setDates(dates)
           }
         }}
       />
