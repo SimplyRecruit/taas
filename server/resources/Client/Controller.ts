@@ -294,21 +294,21 @@ export default class ClientController {
     try {
       const organizationId = currentUser.organization.id
 
-      let query = ClientEntity.createQueryBuilder('client')
+      const query = ClientEntity.createQueryBuilder('client')
         .select('DISTINCT client.partner_name', 'partnerName')
         .where('client.organization_id = :organizationId', {
           organizationId,
         })
 
-      if (isMe || currentUser.role !== UserRole.ADMIN) {
-        query = query
-          .innerJoin(
-            ClientUserEntity,
-            'client_user',
-            'client_user.client_id = client.id'
-          )
-          .andWhere('client_user.user_id = :userId', { userId: currentUser.id })
-      }
+      // if (isMe || currentUser.role !== UserRole.ADMIN) {
+      //  query = query
+      //   .innerJoin(
+      //    ClientUserEntity,
+      //   'client_user',
+      //   'client_user.client_id = client.id'
+      // )
+      // .andWhere('client_user.user_id = :userId', { userId: currentUser.id })
+      //  }
 
       const uniquePartnerNames = await query.getRawMany()
 
