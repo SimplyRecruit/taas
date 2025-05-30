@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 export default function DashboardPage() {
   return (
     <>
-      <div style={{ height: '100%' }}> asdasd</div>
+      <div style={{ height: '100%' }}> Dashboard </div>
     </>
   )
 }

@@ -1,7 +1,47 @@
 import { Route } from '@/constants'
 import cookieKeys from '@/constants/cookie-keys'
-import { User } from 'models'
+import { User, UserRole } from 'models'
 import Cookies from 'universal-cookie'
+
+const allowedRoutesPerRole: Record<UserRole, string[]> = {
+  [UserRole.SU]: [
+    Route.Clients,
+    Route.DashBoard,
+    Route.Index,
+    Route.OrganizationSettings,
+    Route.Periods,
+    Route.ProfileSettings,
+    Route.Projects,
+    Route.RegisterOrganization,
+    Route.Reports,
+    Route.Team,
+    Route.TeamTracker,
+    Route.TimeTracker,
+  ],
+  [UserRole.ADMIN]: [
+    Route.Clients,
+    Route.DashBoard,
+    Route.Index,
+    Route.OrganizationSettings,
+    Route.Periods,
+    Route.ProfileSettings,
+    Route.Projects,
+    Route.RegisterOrganization,
+    Route.Reports,
+    Route.Team,
+    Route.TeamTracker,
+    Route.TimeTracker,
+  ],
+  [UserRole.END_USER]: [
+    Route.DashBoard,
+    Route.Index,
+    Route.Periods,
+    Route.ProfileSettings,
+    Route.Reports,
+    Route.TimeTracker,
+  ],
+  [UserRole.TT_MANAGER]: [],
+}
 
 export const authRoutes: string[] = [
   Route.Login,
@@ -36,9 +76,12 @@ export async function checkAuthentication(
     ).json()) as User
     if (appRedirectRoutes.includes(path))
       return { routeToRedirect: 'app', user }
+    if (!allowedRoutesPerRole[user.role].includes(path))
+      return { routeToRedirect: 'app', user }
     return { routeToRedirect: null, user }
   } catch (error) {
-    console.log(error)
+    if (!(error instanceof Error && error.message === 'no token'))
+      console.error(error)
     if (!authRoutes.includes(path) && !allWelcomeRoutes.includes(path))
       return { routeToRedirect: 'login', user: null }
     return { routeToRedirect: null, user: null }
