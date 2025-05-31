@@ -47,18 +47,15 @@ export default function EditTTDrawer({
     form.validateFields().then(async ({ date, ...rest }) => {
       try {
         if (value) {
-          await call({ date, ...rest }, { id: value.id })
-
-          const selectedClient = clientOptions?.find(
-            e => e.abbr === rest.clientAbbr
-          )
+          const updatedTT = await call({ date, ...rest }, { id: value.id })
 
           onUpdate(
             TT.create({
-              id: value.id,
+              id: updatedTT.id,
               date: date.dateObject,
-              userAbbr: value.userAbbr,
-              partnerName: selectedClient?.partnerName,
+              userAbbr: updatedTT.userAbbr,
+              partnerName: updatedTT.partnerName,
+              updatedByAbbr: updatedTT.updatedByAbbr,
               ...rest,
             })
           )

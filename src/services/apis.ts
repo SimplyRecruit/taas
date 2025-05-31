@@ -14,6 +14,7 @@ User,
 TTGetAllParams,
 TTGetAllResBody,
 TTUpdateBody,
+TT,
 TTBatchCreateBody,
 TTBatchCreateResBody,
 Resource,
@@ -197,7 +198,7 @@ export default {
         async update(
             body: TTUpdateBody,
             params: { id: string, },
-        ) : Promise<AxiosResponse<any>>
+        ) : Promise<AxiosResponse<TT>>
         {
             const route = "/time-track/:id"
             const url = createUrl(params, route)

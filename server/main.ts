@@ -92,7 +92,7 @@ smtp.setApiKey(process.env.SMTP_KEY!)
   }
 })()
 
-export { dataSource, smtp }
+export { dataSource, smtp, dev }
 
 async function initializeDbConnection() {
   while (!dataSource.isInitialized) {

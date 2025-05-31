@@ -251,6 +251,19 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
                   value: e.id,
                 })),
             },
+            {
+              title: 'Last updated by',
+              dataIndex: 'updatedByAbbr',
+              key: 'updatedBy.abbr',
+              sorter: true,
+              filterSearch: true,
+              filters: resources!
+                .sort((a, b) => a.abbr.localeCompare(b.abbr))
+                .map(e => ({
+                  text: e.abbr,
+                  value: e.id,
+                })),
+            },
           ]),
       {
         title: 'Billable',

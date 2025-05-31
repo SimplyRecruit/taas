@@ -16,7 +16,7 @@ import UserEntity from '~/resources/User/Entity'
 import { Delete, Patch, Post } from '~/decorators/CustomApiMethods'
 import TTEntity from '~/resources/TimeTrack/Entity'
 import { Body } from '~/decorators/CustomRequestParams'
-import { dataSource } from '~/main'
+import { dataSource, dev } from '~/main'
 import { EntityNotFoundError, EntityPropertyNotFoundError, In } from 'typeorm'
 import { ALL_UUID } from '~/common/Config'
 import ProjectEntity from '~/resources/Project/Entity'
@@ -25,7 +25,7 @@ import TTBatchCreateResBody from 'models/TimeTrack/res-bodies/TTBatchCreateResBo
 import TTBatchCreateBody from 'models/TimeTrack/req-bodies/TTBatchCreateBody'
 import TTGetAllResBody from 'models/TimeTrack/res-bodies/TTGetAllResBody'
 import WorkPeriodEntity from '~/resources/WorkPeriod/Entity'
-import { getAllTTs } from '~/resources/TimeTrack/Service'
+import { getAllTTs, getTT } from '~/resources/TimeTrack/Service'
 import ExcelJs from 'exceljs'
 import type { Response } from 'express'
 
@@ -44,18 +44,21 @@ export default class TimeTrackController {
       const [entityObjects, count] = await getAllTTs(params, currentUser)
       // Creating response
       return TTGetAllResBody.create({
-        data: entityObjects.map(({ client, project, user, ...rest }) =>
-          TT.create({
-            clientAbbr: client.abbr,
-            projectAbbr: project.abbr,
-            userAbbr: user?.abbr,
-            partnerName: client.partnerName,
-            ...rest,
-          })
+        data: entityObjects.map(
+          ({ client, project, user, updatedBy, ...rest }) =>
+            TT.create({
+              clientAbbr: client.abbr,
+              projectAbbr: project.abbr,
+              userAbbr: user?.abbr,
+              updatedByAbbr: updatedBy?.abbr,
+              partnerName: client.partnerName,
+              ...rest,
+            })
         ),
         count,
       })
     } catch (error) {
+      if (dev) console.error(error)
       if (error instanceof EntityNotFoundError) throw new ForbiddenError()
       else if (error instanceof EntityPropertyNotFoundError)
         throw new BadRequestError('Invalid column name for sorting')
@@ -76,14 +79,16 @@ export default class TimeTrackController {
     const [entityObjects] = await getAllTTs(params, currentUser, {
       usePagination: false,
     })
-    const tts: TT[] = entityObjects.map(({ client, project, user, ...rest }) =>
-      TT.create({
-        clientAbbr: client.abbr,
-        projectAbbr: project.abbr,
-        userAbbr: user?.abbr,
-        partnerName: client.partnerName,
-        ...rest,
-      })
+    const tts: TT[] = entityObjects.map(
+      ({ client, project, user, updatedBy, ...rest }) =>
+        TT.create({
+          clientAbbr: client.abbr,
+          projectAbbr: project.abbr,
+          userAbbr: user.abbr,
+          updatedByAbbr: updatedBy.abbr,
+          partnerName: client.partnerName,
+          ...rest,
+        })
     )
     // Converting data to excel spreadsheet
     const ttRows = tts.map(tt => [...Object.values(tt)])
@@ -102,13 +107,13 @@ export default class TimeTrackController {
     return buffer
   }
 
-  @Patch(undefined, '/:id')
+  @Patch(TT, '/:id')
   async update(
     @Body() { clientAbbr, projectAbbr, date, ...body }: TTUpdateBody,
     @Param('id') id: string,
     @CurrentUser() currentUser: UserEntity
   ) {
-    await dataSource.transaction(async em => {
+    const updatedTT = await dataSource.transaction(async em => {
       try {
         /* Check period of TT */
         const tt = await em.findOneOrFail(TTEntity, {
@@ -201,7 +206,10 @@ export default class TimeTrackController {
           date: date.dateString,
           client,
           project,
+          updatedBy: { id: currentUser.id },
         })
+
+        return await getTT(id, em)
       } catch (error) {
         console.log(error)
         if (error instanceof EntityNotFoundError) throw new NotFoundError()
@@ -210,7 +218,7 @@ export default class TimeTrackController {
       }
     })
 
-    return id
+    return updatedTT
   }
 
   @Delete(undefined, '/:id')
@@ -241,6 +249,9 @@ export default class TimeTrackController {
           }))
         )
           throw new ForbiddenError()
+        await em.update(TTEntity, id, {
+          updatedBy: { id: currentUser.id },
+        })
         await em.delete(TTEntity, { id })
       } catch (error) {
         console.log(error)

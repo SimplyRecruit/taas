@@ -36,6 +36,10 @@ export default class TTGetAllParams extends TableQueryParameters {
 
   @IsArray()
   @IsOptional()
+  updatedByIds: string[] | undefined
+
+  @IsArray()
+  @IsOptional()
   clientIds: string[] | undefined
 
   @IsArray()
@@ -63,6 +67,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     pageSize,
     page,
     userIds,
+    updatedByIds,
     clientIds,
     partnerNames,
     projectIds,
@@ -76,6 +81,7 @@ export default class TTGetAllParams extends TableQueryParameters {
     pageSize: number
     page: number
     userIds: string[]
+    updatedByIds: string[]
     clientIds: string[]
     partnerNames: string[]
     projectIds: string[]
@@ -91,6 +97,7 @@ export default class TTGetAllParams extends TableQueryParameters {
       page,
     }) as TTGetAllParams
     instance.userIds = userIds
+    instance.updatedByIds = updatedByIds
     instance.clientIds = clientIds
     instance.partnerNames = partnerNames
     instance.projectIds = projectIds
@@ -125,6 +132,7 @@ export default class TTGetAllParams extends TableQueryParameters {
       page: pageParam,
       pageSize: pageSizeParam,
       userIds: filtersParam?.['user.abbr'],
+      updatedByIds: filtersParam?.['updatedBy.abbr'],
       clientIds: filtersParam?.['client.abbr'],
       partnerNames: filtersParam?.['client.partnerName'],
       projectIds: filtersParam?.['project.abbr'],
