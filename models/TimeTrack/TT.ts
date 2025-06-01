@@ -6,4 +6,5 @@ export default class TT extends TTBase {
   userAbbr: string | undefined
   updatedByAbbr: string | undefined
   partnerName: string | undefined
+  updatedAt: Date
 }

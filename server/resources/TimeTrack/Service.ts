@@ -78,6 +78,7 @@ export async function getAllTTs(
       updatedBy: {
         abbr: !isMe,
       },
+      updatedAt: true,
     },
   })
 }
@@ -97,6 +98,7 @@ export async function getTT(id: string, em?: EntityManager) {
       updatedBy: {
         abbr: true,
       },
+      updatedAt: true,
     },
   }
   const ttEntity = em
@@ -114,6 +116,7 @@ export async function getTT(id: string, em?: EntityManager) {
     ticketNo: ttEntity.ticketNo,
     updatedByAbbr: ttEntity.updatedBy.abbr,
     userAbbr: ttEntity.user.abbr,
+    updatedAt: ttEntity.updatedAt,
   })
 }
 

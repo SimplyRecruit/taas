@@ -56,6 +56,7 @@ export default function EditTTDrawer({
               userAbbr: updatedTT.userAbbr,
               partnerName: updatedTT.partnerName,
               updatedByAbbr: updatedTT.updatedByAbbr,
+              updatedAt: updatedTT.updatedAt,
               ...rest,
             })
           )

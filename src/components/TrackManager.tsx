@@ -296,6 +296,31 @@ export default function TrackManager<IsMe extends 'time' | 'team'>({
           })),
       },
       {
+        title: 'Last updated at',
+        dataIndex: 'updatedAt',
+        key: 'updatedAt',
+        render: (value: Date) => <span>{formatDate(value)}</span>,
+        sorter: true,
+        filterDropdown: ({ confirm }) => (
+          <div style={{ padding: 8 }}>
+            <DatePicker.RangePicker
+              allowClear={true}
+              onChange={values => {
+                const dates: DateFilter = [undefined, undefined]
+                if (values) {
+                  //If not cleared
+                  dates[0] = values[0]?.toDate()
+                  dates[1] = values[1]?.toDate()
+                }
+                setDateFilter(dates)
+                confirm()
+                getTTs(1, pageSize, sorter, filters, dates, searchTexts)
+              }}
+            />
+          </div>
+        ),
+      },
+      {
         title: () => <TTTableActionHeader ttGetAllParams={ttGetAllParams} />,
         key: 'action',
         render: (_text: any, record: TT, index: number) =>
